@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Switch } from 'react-router'
+import { Routes, Route } from 'react-router-dom'
 import PrivateRoute from '../components/PrivateRoute'
 import Permissions from '../model/Permissions'
 import ViewPatients from './list/ViewPatients'
@@ -12,34 +12,45 @@ import { RootState } from '../store'
 const Patients = () => {
   const permissions = useSelector((state: RootState) => state.user.permissions)
   return (
-    <Switch>
-      <PrivateRoute
-        isAuthenticated={permissions.includes(Permissions.ReadPatients)}
-        exact
-        path="/patients"
-        component={ViewPatients}
-      />
-      <PrivateRoute
-        isAuthenticated={permissions.includes(Permissions.WritePatients)}
-        exact
-        path="/patients/new"
-        component={NewPatient}
-      />
-      <PrivateRoute
-        isAuthenticated={
-          permissions.includes(Permissions.WritePatients) &&
-          permissions.includes(Permissions.ReadPatients)
+    <Routes>
+      <Route
+        path=""
+        element={
+          <PrivateRoute isAuthenticated={permissions.includes(Permissions.ReadPatients)}>
+            <ViewPatients />
+          </PrivateRoute>
         }
-        exact
-        path="/patients/edit/:id"
-        component={EditPatient}
       />
-      <PrivateRoute
-        isAuthenticated={permissions.includes(Permissions.ReadPatients)}
-        path="/patients/:id"
-        component={ViewPatient}
+      <Route
+        path="new"
+        element={
+          <PrivateRoute isAuthenticated={permissions.includes(Permissions.WritePatients)}>
+            <NewPatient />
+          </PrivateRoute>
+        }
       />
-    </Switch>
+      <Route
+        path="edit/:id"
+        element={
+          <PrivateRoute
+            isAuthenticated={
+              permissions.includes(Permissions.WritePatients) &&
+              permissions.includes(Permissions.ReadPatients)
+            }
+          >
+            <EditPatient />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path=":id"
+        element={
+          <PrivateRoute isAuthenticated={permissions.includes(Permissions.ReadPatients)}>
+            <ViewPatient />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
   )
 }
 

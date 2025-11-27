@@ -1,7 +1,7 @@
 import React, { useState, CSSProperties } from 'react'
 import { List, ListItem, Icon } from '@hospitalrun/components'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useHistory } from 'react-router'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../store'
 import { updateSidebar } from './component-slice'
@@ -12,12 +12,12 @@ const Sidebar = () => {
 
   const { t } = useTranslation()
   const path = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { pathname } = path
   const splittedPath = pathname.split('/')
 
   const navigateTo = (location: string) => {
-    history.push(location)
+    navigate(location)
   }
 
   const listItemStyle: CSSProperties = {

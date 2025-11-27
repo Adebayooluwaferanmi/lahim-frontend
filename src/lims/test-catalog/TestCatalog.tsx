@@ -3,11 +3,11 @@ import useTitle from '../../page-header/useTitle'
 import { useTranslation } from 'react-i18next'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import { Button } from '@hospitalrun/components'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 const TestCatalog = () => {
   const { t } = useTranslation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const setButtons = useButtonToolbarSetter()
   useTitle(t('lims.testCatalog.label'))
 
@@ -17,7 +17,7 @@ const TestCatalog = () => {
     return [
       <Button
         icon="add"
-        onClick={() => history.push('/lims/test-catalog/new')}
+        onClick={() => navigate('/lims/test-catalog/new')}
         outlined
         color="success"
         key="testCatalog.new"
@@ -25,7 +25,7 @@ const TestCatalog = () => {
         {t('lims.testCatalog.new')}
       </Button>,
     ]
-  }, [history, t])
+  }, [navigate, t])
 
   useEffect(() => {
     const fetch = async () => {

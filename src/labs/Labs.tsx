@@ -1,6 +1,6 @@
 import React from 'react'
 import PrivateRoute from 'components/PrivateRoute'
-import { Switch } from 'react-router'
+import { Routes, Route } from 'react-router-dom'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
 import { useSelector } from 'react-redux'
 import Permissions from 'model/Permissions'
@@ -20,26 +20,32 @@ const Labs = () => {
   useAddBreadcrumbs(breadcrumbs, true)
 
   return (
-    <Switch>
-      <PrivateRoute
-        isAuthenticated={permissions.includes(Permissions.ViewLabs)}
-        exact
-        path="/labs"
-        component={LabRequests}
+    <Routes>
+      <Route
+        path=""
+        element={
+          <PrivateRoute isAuthenticated={permissions.includes(Permissions.ViewLabs)}>
+            <LabRequests />
+          </PrivateRoute>
+        }
       />
-      <PrivateRoute
-        isAuthenticated={permissions.includes(Permissions.RequestLab)}
-        exact
-        path="/labs/new"
-        component={NewLabRequest}
+      <Route
+        path="new"
+        element={
+          <PrivateRoute isAuthenticated={permissions.includes(Permissions.RequestLab)}>
+            <NewLabRequest />
+          </PrivateRoute>
+        }
       />
-      <PrivateRoute
-        isAuthenticated={permissions.includes(Permissions.ViewLab)}
-        exact
-        path="/labs/:id"
-        component={ViewLab}
+      <Route
+        path=":id"
+        element={
+          <PrivateRoute isAuthenticated={permissions.includes(Permissions.ViewLab)}>
+            <ViewLab />
+          </PrivateRoute>
+        }
       />
-    </Switch>
+    </Routes>
   )
 }
 

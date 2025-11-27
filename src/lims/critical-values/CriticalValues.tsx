@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next'
 import format from 'date-fns/format'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import { Button } from '@hospitalrun/components'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 const CriticalValues = () => {
   const { t } = useTranslation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const setButtons = useButtonToolbarSetter()
   useTitle(t('lims.criticalValues.label'))
 

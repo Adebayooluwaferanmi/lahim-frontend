@@ -1,12 +1,12 @@
 import React from 'react'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Breadcrumb, BreadcrumbItem } from '@hospitalrun/components'
 import { RootState } from '../store'
 
 const Breadcrumbs = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { t } = useTranslation()
   const { breadcrumbs } = useSelector((state: RootState) => state.breadcrumbs)
 
@@ -18,7 +18,7 @@ const Breadcrumbs = () => {
     <Breadcrumb>
       {breadcrumbs.map(({ i18nKey, text, location }, index) => {
         const isLast = index === breadcrumbs.length - 1
-        const onClick = !isLast ? () => history.push(location) : undefined
+        const onClick = !isLast ? () => navigate(location) : undefined
 
         return (
           <BreadcrumbItem key={location} active={isLast} onClick={onClick}>

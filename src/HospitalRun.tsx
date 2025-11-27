@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Toaster } from '@hospitalrun/components'
 import Appointments from 'scheduling/appointments/Appointments'
@@ -43,40 +43,71 @@ const HospitalRun = () => {
               </div>
               <Breadcrumbs />
               <div>
-                <Switch>
-                  <Route exact path="/" component={Dashboard} />
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
 
-                  <PrivateRoute
-                    isAuthenticated={permissions.includes(Permissions.ReadAppointments)}
-                    exact
+                  <Route
                     path="/appointments"
-                    component={Appointments}
-                  />
-                  <PrivateRoute
-                    isAuthenticated={permissions.includes(Permissions.WriteAppointments)}
-                    exact
-                    path="/appointments/new"
-                    component={NewAppointment}
-                  />
-                  <PrivateRoute
-                    isAuthenticated={
-                      permissions.includes(Permissions.WriteAppointments) &&
-                      permissions.includes(Permissions.ReadAppointments)
+                    element={
+                      <PrivateRoute isAuthenticated={permissions.includes(Permissions.ReadAppointments)}>
+                        <Appointments />
+                      </PrivateRoute>
                     }
-                    exact
+                  />
+                  <Route
+                    path="/appointments/new"
+                    element={
+                      <PrivateRoute isAuthenticated={permissions.includes(Permissions.WriteAppointments)}>
+                        <NewAppointment />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
                     path="/appointments/edit/:id"
-                    component={EditAppointment}
+                    element={
+                      <PrivateRoute
+                        isAuthenticated={
+                          permissions.includes(Permissions.WriteAppointments) &&
+                          permissions.includes(Permissions.ReadAppointments)
+                        }
+                      >
+                        <EditAppointment />
+                      </PrivateRoute>
+                    }
                   />
-                  <PrivateRoute
-                    isAuthenticated={permissions.includes(Permissions.ReadAppointments)}
-                    exact
+                  <Route
                     path="/appointments/:id"
-                    component={ViewAppointment}
+                    element={
+                      <PrivateRoute isAuthenticated={permissions.includes(Permissions.ReadAppointments)}>
+                        <ViewAppointment />
+                      </PrivateRoute>
+                    }
                   />
-                  <PrivateRoute isAuthenticated path="/patients" component={Patients} />
-                  <PrivateRoute isAuthenticated path="/labs" component={Labs} />
-                  <PrivateRoute isAuthenticated path="/lims" component={LIMS} />
-                </Switch>
+                  <Route
+                    path="/patients/*"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Patients />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/labs/*"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Labs />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/lims/*"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <LIMS />
+                      </PrivateRoute>
+                    }
+                  />
+                </Routes>
               </div>
               <Toaster autoClose={5000} hideProgressBar draggable />
             </main>
