@@ -10,6 +10,7 @@ import Breadcrumbs from 'breadcrumbs/Breadcrumbs'
 import { ButtonBarProvider } from 'page-header/ButtonBarProvider'
 import ButtonToolBar from 'page-header/ButtonToolBar'
 import Labs from 'labs/Labs'
+import LIMS from './lims/LIMS'
 import Sidebar from './components/Sidebar'
 import Permissions from './model/Permissions'
 import Dashboard from './dashboard/Dashboard'
@@ -74,6 +75,7 @@ const HospitalRun = () => {
                   />
                   <PrivateRoute isAuthenticated path="/patients" component={Patients} />
                   <PrivateRoute isAuthenticated path="/labs" component={Labs} />
+                  <PrivateRoute isAuthenticated path="/lims" component={LIMS} />
                 </Switch>
               </div>
               <Toaster autoClose={5000} hideProgressBar draggable />

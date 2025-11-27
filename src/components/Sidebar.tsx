@@ -39,6 +39,8 @@ const Sidebar = () => {
       ? 'appointment'
       : splittedPath[1].includes('labs')
       ? 'labs'
+      : splittedPath[1].includes('lims')
+      ? 'lims'
       : 'none',
   )
 
@@ -230,6 +232,106 @@ const Sidebar = () => {
     </>
   )
 
+  const getLIMSLinks = () => (
+    <>
+      <ListItem
+        active={splittedPath[1].includes('lims')}
+        onClick={() => {
+          navigateTo('/lims/test-catalog')
+          setExpansion('lims')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <Icon
+          icon={
+            splittedPath[1].includes('lims') && expandedItem === 'lims'
+              ? 'down-arrow'
+              : 'right-arrow'
+          }
+          style={expandibleArrow}
+        />
+        <Icon icon="lab" /> {!sidebarCollapsed && t('lims.label')}
+      </ListItem>
+      {splittedPath[1].includes('lims') && expandedItem === 'lims' && (
+        <List layout="flush" className="nav flex-column">
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyleNew}
+            onClick={() => navigateTo('/lims/test-catalog')}
+            active={splittedPath[2] === 'test-catalog'}
+          >
+            <Icon icon="settings" style={iconMargin} />
+            {!sidebarCollapsed && t('lims.testCatalog.label')}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/lims/lab-orders')}
+            active={splittedPath[2] === 'lab-orders'}
+          >
+            <Icon icon="add" style={iconMargin} />
+            {!sidebarCollapsed && t('lims.labOrders.label')}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/lims/specimens')}
+            active={splittedPath[2] === 'specimens'}
+          >
+            <Icon icon="lab" style={iconMargin} />
+            {!sidebarCollapsed && t('lims.specimens.label')}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/lims/qc-results')}
+            active={splittedPath[2] === 'qc-results'}
+          >
+            <Icon icon="check" style={iconMargin} />
+            {!sidebarCollapsed && t('lims.qcResults.label')}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/lims/instruments')}
+            active={splittedPath[2] === 'instruments'}
+          >
+            <Icon icon="settings" style={iconMargin} />
+            {!sidebarCollapsed && t('lims.instruments.label')}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/lims/reports')}
+            active={splittedPath[2] === 'reports'}
+          >
+            <Icon icon="document" style={iconMargin} />
+            {!sidebarCollapsed && t('lims.reports.label')}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/lims/worklists')}
+            active={splittedPath[2] === 'worklists'}
+          >
+            <Icon icon="list" style={iconMargin} />
+            {!sidebarCollapsed && t('lims.worklists.label')}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/lims/critical-values')}
+            active={splittedPath[2] === 'critical-values'}
+          >
+            <Icon icon="warning" style={iconMargin} />
+            {!sidebarCollapsed && t('lims.criticalValues.label')}
+          </ListItem>
+        </List>
+      )}
+    </>
+  )
+
   return (
     <nav
       className="col-md-2 d-none d-md-block bg-light sidebar"
@@ -251,6 +353,7 @@ const Sidebar = () => {
           {getPatientLinks()}
           {getAppointmentLinks()}
           {getLabLinks()}
+          {getLIMSLinks()}
         </List>
       </div>
     </nav>
