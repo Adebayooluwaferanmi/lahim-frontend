@@ -1,79 +1,124 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import useTitle from '../../page-header/useTitle'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import format from 'date-fns/format'
+import { Button, Container, Row, Column, TextInput } from '@hospitalrun/components'
+import { useQCResults } from '../../hooks/useQCResults'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
-import { Button } from '@hospitalrun/components'
-import { useHistory } from 'react-router'
+import useTitle from '../../page-header/useTitle'
 
 const QCResults = () => {
   const { t } = useTranslation()
-  const history = useHistory()
-  const setButtons = useButtonToolbarSetter()
-  useTitle(t('lims.qcResults.label'))
+  const navigate = useNavigate()
+  useTitle(t('lims.qcResults.label', 'QC Results'))
+  const setButtonToolBar = useButtonToolbarSetter()
 
-  const [results, setResults] = useState<any[]>([])
+  const [testCodeFilter, setTestCodeFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
 
-  const getButtons = useCallback(() => {
-    return [
+  const { data: qcResults = [], isLoading, error } = useQCResults({
+    testCode: testCodeFilter || undefined,
+    status: statusFilter || undefined,
+  })
+
+  React.useEffect(() => {
+    setButtonToolBar([
       <Button
-        icon="add"
-        onClick={() => history.push('/lims/qc-results/new')}
-        outlined
+        key="newQCResultButton"
         color="success"
-        key="qcResults.new"
+        icon="add"
+        iconLocation="left"
+        onClick={() => navigate('/lims/qc-results/new')}
       >
-        {t('lims.qcResults.new')}
+        {t('lims.qcResults.new', 'New QC Result')}
       </Button>,
-    ]
-  }, [history, t])
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await fetch('/qc-results')
-        const data = await response.json()
-        setResults(data.results || [])
-      } catch (error) {
-        console.error('Failed to fetch QC results:', error)
-      }
-    }
-
-    setButtons(getButtons())
-    fetch()
+    ])
 
     return () => {
-      setButtons([])
+      setButtonToolBar([])
     }
-  }, [getButtons, setButtons])
+  }, [setButtonToolBar, navigate, t])
 
-  const onTableRowClick = (result: any) => {
-    history.push(`/lims/qc-results/${result._id}`)
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>
   }
 
   return (
-    <>
-      <table className="table table-hover">
-        <thead className="thead-light">
-          <tr>
-            <th>{t('lims.qcResults.testCode')}</th>
-            <th>{t('lims.qcResults.materialId')}</th>
-            <th>{t('lims.qcResults.runDate')}</th>
-            <th>{t('lims.qcResults.result')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {results.map((result) => (
-            <tr onClick={() => onTableRowClick(result)} key={result._id}>
-              <td>{result.testCode?.coding?.[0]?.code || result.testCode || '-'}</td>
-              <td>{result.materialId || '-'}</td>
-              <td>{result.runDate ? format(new Date(result.runDate), 'yyyy-MM-dd hh:mm a') : '-'}</td>
-              <td>{result.result || '-'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+    <Container>
+      <Row>
+        <Column md={6}>
+          <TextInput
+            placeholder={t('lims.qcResults.testCodePlaceholder', 'Test Code')}
+            value={testCodeFilter}
+            onChange={(e) => setTestCodeFilter(e.target.value)}
+          />
+        </Column>
+        <Column md={6}>
+          <select
+            className="form-control"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">{t('lims.qcResults.allStatus', 'All Status')}</option>
+            <option value="pass">{t('lims.qcResults.status.pass', 'Pass')}</option>
+            <option value="fail">{t('lims.qcResults.status.fail', 'Fail')}</option>
+            <option value="warning">{t('lims.qcResults.status.warning', 'Warning')}</option>
+          </select>
+        </Column>
+      </Row>
+
+      <Row>
+        <Column>
+          {qcResults.length === 0 ? (
+            <div>{t('lims.qcResults.noResults', 'No QC results found')}</div>
+          ) : (
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th>{t('lims.qcResults.testName', 'Test Name')}</th>
+                  <th>{t('lims.qcResults.material', 'Material')}</th>
+                  <th>{t('lims.qcResults.lotNumber', 'Lot Number')}</th>
+                  <th>{t('lims.qcResults.measuredValue', 'Measured Value')}</th>
+                  <th>{t('lims.qcResults.targetValue', 'Target Value')}</th>
+                  <th>{t('lims.qcResults.status', 'Status')}</th>
+                  <th>{t('lims.qcResults.runDate', 'Run Date')}</th>
+                  <th>{t('actions.view', 'View')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {qcResults.map((result) => (
+                  <tr key={result.id || result._id}>
+                    <td>{result.testName || '-'}</td>
+                    <td>{result.materialName || '-'}</td>
+                    <td>{result.materialLot || '-'}</td>
+                    <td>{result.measuredValue || '-'}</td>
+                    <td>{result.targetValue || '-'}</td>
+                    <td>
+                      <span className={`badge badge-${result.status === 'pass' ? 'success' : result.status === 'fail' ? 'danger' : 'warning'}`}>
+                        {result.status || '-'}
+                      </span>
+                    </td>
+                    <td>{result.runDate ? new Date(result.runDate).toLocaleDateString() : '-'}</td>
+                    <td>
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => navigate(`/lims/qc-results/${result.id || result._id}`)}
+                      >
+                        {t('actions.view', 'View')}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Column>
+      </Row>
+    </Container>
   )
 }
 

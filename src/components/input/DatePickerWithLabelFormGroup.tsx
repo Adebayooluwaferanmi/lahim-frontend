@@ -1,5 +1,5 @@
 import React from 'react'
-import { Label, DateTimePicker } from '@hospitalrun/components'
+import { Label } from '@hospitalrun/components'
 
 interface Props {
   name: string
@@ -26,28 +26,46 @@ const DatePickerWithLabelFormGroup = (props: Props) => {
     maxDate,
   } = props
   const id = `${name}DatePicker`
+  
+  const formatDateForInput = (date: Date | undefined): string => {
+    if (!date) return ''
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+  
+  const formatMaxDate = (date: Date | undefined): string => {
+    if (!date) return ''
+    return formatDateForInput(date)
+  }
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange && e.target.value) {
+      onChange(new Date(e.target.value))
+    } else if (onChange) {
+      onChange(new Date())
+    }
+  }
+
   return (
     <div className="form-group">
       <Label text={label} htmlFor={id} isRequired={isRequired} />
-      <DateTimePicker
-        dateFormat="MM/dd/yyyy"
-        dateFormatCalendar="LLLL yyyy"
-        dropdownMode="scroll"
-        maxDate={maxDate}
-        selected={value}
-        timeIntervals={30}
-        withPortal={false}
+      <input
+        type="date"
+        id={id}
+        className={`form-control ${isInvalid ? 'is-invalid' : ''}`}
+        value={formatDateForInput(value)}
+        onChange={handleChange}
         disabled={!isEditable}
-        feedback={feedback}
-        isInvalid={isInvalid}
-        onChange={(inputDate) => {
-          if (onChange) {
-            onChange(inputDate)
-          }
-        }}
+        max={formatMaxDate(maxDate)}
       />
+      {isInvalid && feedback && (
+        <div className="invalid-feedback d-block">{feedback}</div>
+      )}
     </div>
   )
 }
 
 export default DatePickerWithLabelFormGroup
+

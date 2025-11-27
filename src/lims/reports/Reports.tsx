@@ -1,79 +1,110 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import useTitle from '../../page-header/useTitle'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import format from 'date-fns/format'
+import { Button, Container, Row, Column } from '@hospitalrun/components'
+import { useReports } from '../../hooks/useReports'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
-import { Button } from '@hospitalrun/components'
-import { useHistory } from 'react-router'
+import useTitle from '../../page-header/useTitle'
 
 const Reports = () => {
   const { t } = useTranslation()
-  const history = useHistory()
-  const setButtons = useButtonToolbarSetter()
-  useTitle(t('lims.reports.label'))
+  const navigate = useNavigate()
+  useTitle(t('lims.reports.label', 'Reports'))
+  const setButtonToolBar = useButtonToolbarSetter()
 
-  const [reports, setReports] = useState<any[]>([])
+  const [statusFilter, setStatusFilter] = useState('')
 
-  const getButtons = useCallback(() => {
-    return [
+  const { data: reports = [], isLoading, error } = useReports({
+    status: statusFilter || undefined,
+  })
+
+  React.useEffect(() => {
+    setButtonToolBar([
       <Button
-        icon="add"
-        onClick={() => history.push('/lims/reports/generate')}
-        outlined
+        key="generateReportButton"
         color="success"
-        key="reports.generate"
+        icon="add"
+        iconLocation="left"
+        onClick={() => navigate('/lims/reports/generate')}
       >
-        {t('lims.reports.generate')}
+        {t('lims.reports.generate', 'Generate Report')}
       </Button>,
-    ]
-  }, [history, t])
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await fetch('/reports')
-        const data = await response.json()
-        setReports(data.reports || [])
-      } catch (error) {
-        console.error('Failed to fetch reports:', error)
-      }
-    }
-
-    setButtons(getButtons())
-    fetch()
+    ])
 
     return () => {
-      setButtons([])
+      setButtonToolBar([])
     }
-  }, [getButtons, setButtons])
+  }, [setButtonToolBar, navigate, t])
 
-  const onTableRowClick = (report: any) => {
-    history.push(`/lims/reports/${report._id}`)
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>
   }
 
   return (
-    <>
-      <table className="table table-hover">
-        <thead className="thead-light">
-          <tr>
-            <th>{t('lims.reports.reportId')}</th>
-            <th>{t('lims.reports.reportType')}</th>
-            <th>{t('lims.reports.generatedOn')}</th>
-            <th>{t('lims.reports.status')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reports.map((report) => (
-            <tr onClick={() => onTableRowClick(report)} key={report._id}>
-              <td>{report._id}</td>
-              <td>{report.reportType || '-'}</td>
-              <td>{report.generatedOn ? format(new Date(report.generatedOn), 'yyyy-MM-dd hh:mm a') : '-'}</td>
-              <td>{report.status || '-'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+    <Container>
+      <Row>
+        <Column md={6}>
+          <select
+            className="form-control"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">{t('lims.reports.allStatus', 'All Status')}</option>
+            <option value="draft">{t('lims.reports.status.draft', 'Draft')}</option>
+            <option value="final">{t('lims.reports.status.final', 'Final')}</option>
+            <option value="signed">{t('lims.reports.status.signed', 'Signed')}</option>
+            <option value="delivered">{t('lims.reports.status.delivered', 'Delivered')}</option>
+          </select>
+        </Column>
+      </Row>
+
+      <Row>
+        <Column>
+          {reports.length === 0 ? (
+            <div>{t('lims.reports.noReports', 'No reports found')}</div>
+          ) : (
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th>{t('lims.reports.reportNumber', 'Report Number')}</th>
+                  <th>{t('lims.reports.patientName', 'Patient Name')}</th>
+                  <th>{t('lims.reports.status', 'Status')}</th>
+                  <th>{t('lims.reports.reportDate', 'Report Date')}</th>
+                  <th>{t('actions.view', 'View')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reports.map((report) => (
+                  <tr key={report.id || report._id}>
+                    <td>{report.reportNumber || '-'}</td>
+                    <td>{report.patientName || '-'}</td>
+                    <td>
+                      <span className={`badge badge-${report.status === 'delivered' ? 'success' : 'warning'}`}>
+                        {report.status || '-'}
+                      </span>
+                    </td>
+                    <td>{report.reportDate ? new Date(report.reportDate).toLocaleDateString() : '-'}</td>
+                    <td>
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => navigate(`/lims/reports/${report.id || report._id}`)}
+                      >
+                        {t('actions.view', 'View')}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Column>
+      </Row>
+    </Container>
   )
 }
 

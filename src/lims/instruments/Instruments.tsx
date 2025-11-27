@@ -1,76 +1,81 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import useTitle from '../../page-header/useTitle'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Button, Container, Row, Column } from '@hospitalrun/components'
+import { useInstruments } from '../../hooks/useInstruments'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
-import { Button } from '@hospitalrun/components'
-import { useHistory } from 'react-router'
+import useTitle from '../../page-header/useTitle'
 
 const Instruments = () => {
   const { t } = useTranslation()
-  const history = useHistory()
-  const setButtons = useButtonToolbarSetter()
-  useTitle(t('lims.instruments.label'))
+  const navigate = useNavigate()
+  useTitle(t('lims.instruments.label', 'Instruments'))
+  const setButtonToolBar = useButtonToolbarSetter()
 
-  const [instruments, setInstruments] = useState<any[]>([])
+  const { data: instruments = [], isLoading, error } = useInstruments()
 
-  const getButtons = useCallback(() => {
-    return [
-      <Button
-        icon="add"
-        onClick={() => history.push('/lims/instruments/new')}
-        outlined
-        color="success"
-        key="instruments.new"
-      >
-        {t('lims.instruments.new')}
-      </Button>,
-    ]
-  }, [history, t])
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await fetch('/instruments')
-        const data = await response.json()
-        setInstruments(data.instruments || [])
-      } catch (error) {
-        console.error('Failed to fetch instruments:', error)
-      }
-    }
-
-    setButtons(getButtons())
-    fetch()
-
+  React.useEffect(() => {
+    setButtonToolBar([])
     return () => {
-      setButtons([])
+      setButtonToolBar([])
     }
-  }, [getButtons, setButtons])
+  }, [setButtonToolBar])
 
-  const onTableRowClick = (instrument: any) => {
-    history.push(`/lims/instruments/${instrument._id}`)
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>
   }
 
   return (
-    <>
-      <table className="table table-hover">
-        <thead className="thead-light">
-          <tr>
-            <th>{t('lims.instruments.name')}</th>
-            <th>{t('lims.instruments.type')}</th>
-            <th>{t('lims.instruments.status')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {instruments.map((instrument) => (
-            <tr onClick={() => onTableRowClick(instrument)} key={instrument._id}>
-              <td>{instrument.name}</td>
-              <td>{instrument.type || '-'}</td>
-              <td>{instrument.status || '-'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+    <Container>
+      <Row>
+        <Column>
+          {instruments.length === 0 ? (
+            <div>{t('lims.instruments.noInstruments', 'No instruments found')}</div>
+          ) : (
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th>{t('lims.instruments.name', 'Name')}</th>
+                  <th>{t('lims.instruments.manufacturer', 'Manufacturer')}</th>
+                  <th>{t('lims.instruments.model', 'Model')}</th>
+                  <th>{t('lims.instruments.section', 'Section')}</th>
+                  <th>{t('lims.instruments.status', 'Status')}</th>
+                  <th>{t('actions.view', 'View')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {instruments.map((instrument) => (
+                  <tr key={instrument.id || instrument._id}>
+                    <td>{instrument.name || '-'}</td>
+                    <td>{instrument.manufacturer || '-'}</td>
+                    <td>{instrument.model || '-'}</td>
+                    <td>{instrument.section || '-'}</td>
+                    <td>
+                      <span className={`badge badge-${instrument.status === 'active' ? 'success' : 'warning'}`}>
+                        {instrument.status || '-'}
+                      </span>
+                    </td>
+                    <td>
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => navigate(`/lims/instruments/${instrument.id || instrument._id}`)}
+                      >
+                        {t('actions.view', 'View')}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Column>
+      </Row>
+    </Container>
   )
 }
 
