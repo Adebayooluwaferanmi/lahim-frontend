@@ -14,16 +14,17 @@ const ViewLabOrder = () => {
   const { data: labOrder, isLoading, error } = useLabOrder(id)
   const setButtonToolBar = useButtonToolbarSetter()
 
-  useTitle(labOrder ? `${t('lims.labOrders.view', 'View Lab Order')} - ${labOrder.orderNumber || id}` : t('lims.labOrders.view', 'View Lab Order'))
+  useTitle(labOrder ? `${String(t('lims.labOrders.view', 'View Lab Order'))} - ${labOrder.orderNumber || id}` : t('lims.labOrders.view', 'View Lab Order'))
 
-  useEffect(() => {
-    if (labOrder) {
-      useAddBreadcrumbs([
-        { i18nKey: 'lims.labOrders.label', location: '/lims/lab-orders' },
-        { i18nKey: 'lims.labOrders.view', location: `/lims/lab-orders/${id}` },
-      ], true)
-    }
-  }, [labOrder, id])
+  useAddBreadcrumbs(
+    id
+      ? [
+          { i18nKey: 'lims.labOrders.label', location: '/lims/lab-orders' },
+          { i18nKey: 'lims.labOrders.view', location: `/lims/lab-orders/${id}` },
+        ]
+      : [],
+    true
+  )
 
   useEffect(() => {
     setButtonToolBar([
@@ -34,7 +35,7 @@ const ViewLabOrder = () => {
         iconLocation="left"
         onClick={() => navigate(`/lims/lab-orders/${id}/edit`)}
       >
-        {t('actions.edit', 'Edit')}
+        {String(t('actions.edit', 'Edit'))}
       </Button>,
       <Button
         key="backButton"
@@ -44,7 +45,7 @@ const ViewLabOrder = () => {
         iconLocation="left"
         onClick={() => navigate('/lims/lab-orders')}
       >
-        {t('actions.back', 'Back')}
+        {String(t('actions.back', 'Back'))}
       </Button>,
     ])
 
@@ -60,65 +61,63 @@ const ViewLabOrder = () => {
   if (error || !labOrder) {
     return (
       <Container>
-        <Alert color="danger" title={t('states.error', 'Error')} message={error?.message || t('lims.labOrders.notFound', 'Lab order not found')} />
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error?.message || t('lims.labOrders.notFound', 'Lab order not found'))} />
       </Container>
     )
   }
 
   return (
     <Container>
-      <Panel>
-        <Panel.Header title={`${t('lims.labOrders.view', 'View Lab Order')} - ${labOrder.orderNumber || id}`} />
-        <Panel.Body>
+      <Panel title={`${String(t('lims.labOrders.view', 'View Lab Order'))} - ${labOrder.orderNumber || id}`}>
           <Row>
             <Column md={6}>
-              <h4>{t('lims.labOrders.orderInformation', 'Order Information')}</h4>
+              <h4>{String(t('lims.labOrders.orderInformation', 'Order Information'))}</h4>
               <table className="table">
                 <tbody>
                   <tr>
-                    <td><strong>{t('lims.labOrders.orderNumber', 'Order Number')}</strong></td>
+                    <td><strong>{String(t('lims.labOrders.orderNumber', 'Order Number'))}</strong></td>
                     <td>{labOrder.orderNumber || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.labOrders.patientName', 'Patient Name')}</strong></td>
+                    <td><strong>{String(t('lims.labOrders.patientName', 'Patient Name'))}</strong></td>
                     <td>{labOrder.patientName || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.labOrders.patientId', 'Patient ID')}</strong></td>
+                    <td><strong>{String(t('lims.labOrders.patientId', 'Patient ID'))}</strong></td>
                     <td>{labOrder.patientId || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.labOrders.status', 'Status')}</strong></td>
+                    <td><strong>{String(t('lims.labOrders.status', 'Status'))}</strong></td>
                     <td>
                       <span className={`badge badge-${labOrder.status === 'completed' ? 'success' : 'warning'}`}>
-                        {labOrder.status || '-'}
+                        {labOrder.status ? String(t(`lims.labOrders.statusValues.${labOrder.status}`, labOrder.status)) : '-'}
                       </span>
                     </td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.labOrders.priority', 'Priority')}</strong></td>
-                    <td>{labOrder.priority || '-'}</td>
+                    <td><strong>{String(t('lims.labOrders.priority', 'Priority'))}</strong></td>
+                    <td>{labOrder.priority ? String(t(`lims.labOrders.priorityValues.${labOrder.priority}`, labOrder.priority)) : '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.labOrders.orderedDate', 'Ordered Date')}</strong></td>
+                    <td><strong>{String(t('lims.labOrders.orderedDate', 'Ordered Date'))}</strong></td>
                     <td>{labOrder.orderedDate ? new Date(labOrder.orderedDate).toLocaleString() : '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.labOrders.orderedBy', 'Ordered By')}</strong></td>
+                    <td><strong>{String(t('lims.labOrders.orderedBy', 'Ordered By'))}</strong></td>
                     <td>{labOrder.orderedBy || '-'}</td>
                   </tr>
                 </tbody>
               </table>
             </Column>
             <Column md={6}>
-              <h4>{t('lims.labOrders.tests', 'Tests')}</h4>
+              <h4>{String(t('lims.labOrders.tests', 'Tests'))}</h4>
               {labOrder.tests && labOrder.tests.length > 0 ? (
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>{t('lims.labOrders.testCode', 'Test Code')}</th>
-                      <th>{t('lims.labOrders.testName', 'Test Name')}</th>
-                      <th>{t('lims.labOrders.section', 'Section')}</th>
+                      <th>{String(t('lims.labOrders.testCode', 'Test Code'))}</th>
+                      <th>{String(t('lims.labOrders.testName', 'Test Name'))}</th>
+                      <th>{String(t('lims.labOrders.section', 'Section'))}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -132,17 +131,16 @@ const ViewLabOrder = () => {
                   </tbody>
                 </table>
               ) : (
-                <p>{t('lims.labOrders.noTests', 'No tests ordered')}</p>
+                <p>{String(t('lims.labOrders.noTests', 'No tests ordered'))}</p>
               )}
               {labOrder.notes && (
                 <div>
-                  <h4>{t('lims.labOrders.notes', 'Notes')}</h4>
+                  <h4>{String(t('lims.labOrders.notes', 'Notes'))}</h4>
                   <p>{labOrder.notes}</p>
                 </div>
               )}
             </Column>
           </Row>
-        </Panel.Body>
       </Panel>
     </Container>
   )

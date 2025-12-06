@@ -1,9 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCreateMutation } from '../lib/mutations'
 import { LabOrder } from './useLabOrders'
 
-const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
-
-interface CreateLabOrderData {
+export interface CreateLabOrderData {
   patientId: string
   patientName?: string
   orderedBy?: string
@@ -16,29 +14,14 @@ interface CreateLabOrderData {
   notes?: string
 }
 
+/**
+ * Create a new lab order with optimistic updates
+ * Uses optimized mutation hook with automatic cache invalidation
+ */
 export const useCreateLabOrder = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation<LabOrder, Error, CreateLabOrderData>({
-    mutationFn: async (data) => {
-      const response = await fetch(`${apiUrl}/lab-orders`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: response.statusText }))
-        throw new Error(error.message || `Failed to create lab order: ${response.statusText}`)
-      }
-
-      return response.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['lab-orders'] })
-    },
+  return useCreateMutation<LabOrder, CreateLabOrderData>('/lab-orders', {
+    queryKey: ['lab-orders'],
+    invalidateQueries: [['lab-orders']],
   })
 }
 

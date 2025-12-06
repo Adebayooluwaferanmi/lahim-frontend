@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Container, Row, Column, TextInput } from '@hospitalrun/components'
+import { Button, Container, Row, Column, TextInput, Spinner, Alert } from '@hospitalrun/components'
 import { useSpecimens } from '../../hooks/useSpecimens'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import useTitle from '../../page-header/useTitle'
+import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
+
+const breadcrumbs = [{ i18nKey: 'lims.specimens.label', location: '/lims/specimens' }]
 
 const Specimens = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   useTitle(t('lims.specimens.label', 'Specimens'))
+  useAddBreadcrumbs(breadcrumbs, true)
   const setButtonToolBar = useButtonToolbarSetter()
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -28,11 +32,19 @@ const Specimens = () => {
   }, [setButtonToolBar])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <Container>
+        <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
+      </Container>
+    )
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>
+    return (
+      <Container>
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error.message || t('lims.specimens.loadError', 'Failed to load specimens'))} />
+      </Container>
+    )
   }
 
   return (
@@ -40,7 +52,7 @@ const Specimens = () => {
       <Row>
         <Column md={6}>
           <TextInput
-            placeholder={t('lims.specimens.searchPlaceholder', 'Search by accession number or patient name')}
+            placeholder={String(t('lims.specimens.searchPlaceholder', 'Search by accession number or patient name'))}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -51,12 +63,12 @@ const Specimens = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="">{t('lims.specimens.allStatus', 'All Status')}</option>
-            <option value="pending">{t('lims.specimens.status.pending', 'Pending')}</option>
-            <option value="collected">{t('lims.specimens.status.collected', 'Collected')}</option>
-            <option value="received">{t('lims.specimens.status.received', 'Received')}</option>
-            <option value="processing">{t('lims.specimens.status.processing', 'Processing')}</option>
-            <option value="completed">{t('lims.specimens.status.completed', 'Completed')}</option>
+            <option value="">{String(t('lims.specimens.allStatus', 'All Status'))}</option>
+            <option value="pending">{String(t('lims.specimens.status.pending', 'Pending'))}</option>
+            <option value="collected">{String(t('lims.specimens.status.collected', 'Collected'))}</option>
+            <option value="received">{String(t('lims.specimens.status.received', 'Received'))}</option>
+            <option value="processing">{String(t('lims.specimens.status.processing', 'Processing'))}</option>
+            <option value="completed">{String(t('lims.specimens.status.completed', 'Completed'))}</option>
           </select>
         </Column>
       </Row>
@@ -64,17 +76,17 @@ const Specimens = () => {
       <Row>
         <Column>
           {specimens.length === 0 ? (
-            <div>{t('lims.specimens.noSpecimens', 'No specimens found')}</div>
+            <div>{String(t('lims.specimens.noSpecimens', 'No specimens found'))}</div>
           ) : (
             <table className="table table-hover">
               <thead>
                 <tr>
-                  <th>{t('lims.specimens.accessionNumber', 'Accession Number')}</th>
-                  <th>{t('lims.specimens.specimenType', 'Specimen Type')}</th>
-                  <th>{t('lims.specimens.patientName', 'Patient Name')}</th>
-                  <th>{t('lims.specimens.status', 'Status')}</th>
-                  <th>{t('lims.specimens.collectionDate', 'Collection Date')}</th>
-                  <th>{t('actions.view', 'View')}</th>
+                  <th>{String(t('lims.specimens.accessionNumber', 'Accession Number'))}</th>
+                  <th>{String(t('lims.specimens.specimenType', 'Specimen Type'))}</th>
+                  <th>{String(t('lims.specimens.patientName', 'Patient Name'))}</th>
+                  <th>{String(t('lims.specimens.status', 'Status'))}</th>
+                  <th>{String(t('lims.specimens.collectionDate', 'Collection Date'))}</th>
+                  <th>{String(t('actions.view', 'View'))}</th>
                 </tr>
               </thead>
               <tbody>
@@ -95,7 +107,7 @@ const Specimens = () => {
                         color="primary"
                         onClick={() => navigate(`/lims/specimens/${specimen.id || specimen._id}`)}
                       >
-                        {t('actions.view', 'View')}
+                        {String(t('actions.view', 'View'))}
                       </Button>
                     </td>
                   </tr>

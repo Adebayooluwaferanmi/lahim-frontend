@@ -14,19 +14,20 @@ const ViewSpecimen = () => {
   const { data: specimen, isLoading, error } = useSpecimen(id)
   const setButtonToolBar = useButtonToolbarSetter()
 
-  useTitle(specimen ? `${t('lims.specimens.view', 'View Specimen')} - ${specimen.accessionNumber || id}` : t('lims.specimens.view', 'View Specimen'))
+  useTitle(specimen ? `${String(t('lims.specimens.view', 'View Specimen'))} - ${specimen.accessionNumber || id}` : t('lims.specimens.view', 'View Specimen'))
+
+  useAddBreadcrumbs(
+    id
+      ? [
+          { i18nKey: 'lims.specimens.label', location: '/lims/specimens' },
+          { i18nKey: 'lims.specimens.view', location: `/lims/specimens/${id}` },
+        ]
+      : [],
+    true
+  )
 
   useEffect(() => {
-    if (specimen) {
-      useAddBreadcrumbs([
-        { i18nKey: 'lims.specimens.label', location: '/lims/specimens' },
-        { i18nKey: 'lims.specimens.view', location: `/lims/specimens/${id}` },
-      ], true)
-    }
-  }, [specimen, id])
-
-  useEffect(() => {
-    setButtonToolBar([
+    const buttons = [
       <Button
         key="backButton"
         outlined
@@ -35,14 +36,46 @@ const ViewSpecimen = () => {
         iconLocation="left"
         onClick={() => navigate('/lims/specimens')}
       >
-        {t('actions.back', 'Back')}
+        {String(t('actions.back', 'Back'))}
       </Button>,
-    ])
+    ]
+
+    // Add reception button if specimen is not yet received
+    if (specimen && specimen.status !== 'received' && specimen.status !== 'processing' && specimen.status !== 'completed') {
+      buttons.push(
+        <Button
+          key="receptionButton"
+          color="primary"
+          icon="check"
+          iconLocation="left"
+          onClick={() => navigate(`/lims/specimens/${id}/reception`)}
+        >
+          {String(t('lims.specimens.receive', 'Receive Specimen'))}
+        </Button>
+      )
+    }
+
+    // Add processing button if specimen is received
+    if (specimen && (specimen.status === 'received' || specimen.status === 'processing')) {
+      buttons.push(
+        <Button
+          key="processingButton"
+          color="info"
+          icon="cog"
+          iconLocation="left"
+          onClick={() => navigate(`/lims/specimens/${id}/processing`)}
+        >
+          {String(t('lims.specimens.process', 'Process Specimen'))}
+        </Button>
+      )
+    }
+
+    setButtonToolBar(buttons)
 
     return () => {
       setButtonToolBar([])
     }
-  }, [setButtonToolBar, navigate, t])
+  }, [setButtonToolBar, navigate, t, specimen, id])
 
   if (isLoading) {
     return <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
@@ -51,39 +84,37 @@ const ViewSpecimen = () => {
   if (error || !specimen) {
     return (
       <Container>
-        <Alert color="danger" title={t('states.error', 'Error')} message={error?.message || t('lims.specimens.notFound', 'Specimen not found')} />
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error?.message || t('lims.specimens.notFound', 'Specimen not found'))} />
       </Container>
     )
   }
 
   return (
     <Container>
-      <Panel>
-        <Panel.Header title={`${t('lims.specimens.view', 'View Specimen')} - ${specimen.accessionNumber || id}`} />
-        <Panel.Body>
+      <Panel title={`${String(t('lims.specimens.view', 'View Specimen'))} - ${specimen.accessionNumber || id}`}>
           <Row>
             <Column md={6}>
-              <h4>{t('lims.specimens.specimenInformation', 'Specimen Information')}</h4>
+              <h4>{String(t('lims.specimens.specimenInformation', 'Specimen Information'))}</h4>
               <table className="table">
                 <tbody>
                   <tr>
-                    <td><strong>{t('lims.specimens.accessionNumber', 'Accession Number')}</strong></td>
+                    <td><strong>{String(t('lims.specimens.accessionNumber', 'Accession Number'))}</strong></td>
                     <td>{specimen.accessionNumber || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.specimens.specimenType', 'Specimen Type')}</strong></td>
+                    <td><strong>{String(t('lims.specimens.specimenType', 'Specimen Type'))}</strong></td>
                     <td>{specimen.specimenType || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.specimens.patientName', 'Patient Name')}</strong></td>
+                    <td><strong>{String(t('lims.specimens.patientName', 'Patient Name'))}</strong></td>
                     <td>{specimen.patientName || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.specimens.patientId', 'Patient ID')}</strong></td>
+                    <td><strong>{String(t('lims.specimens.patientId', 'Patient ID'))}</strong></td>
                     <td>{specimen.patientId || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.specimens.status', 'Status')}</strong></td>
+                    <td><strong>{String(t('lims.specimens.status', 'Status'))}</strong></td>
                     <td>
                       <span className={`badge badge-${specimen.status === 'completed' ? 'success' : 'warning'}`}>
                         {specimen.status || '-'}
@@ -91,15 +122,15 @@ const ViewSpecimen = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.specimens.collectionDate', 'Collection Date')}</strong></td>
+                    <td><strong>{String(t('lims.specimens.collectionDate', 'Collection Date'))}</strong></td>
                     <td>{specimen.collectionDate ? new Date(specimen.collectionDate).toLocaleString() : '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.specimens.receivedDate', 'Received Date')}</strong></td>
+                    <td><strong>{String(t('lims.specimens.receivedDate', 'Received Date'))}</strong></td>
                     <td>{specimen.receivedDate ? new Date(specimen.receivedDate).toLocaleString() : '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.specimens.storageLocation', 'Storage Location')}</strong></td>
+                    <td><strong>{String(t('lims.specimens.storageLocation', 'Storage Location'))}</strong></td>
                     <td>{specimen.storageLocation || '-'}</td>
                   </tr>
                 </tbody>
@@ -108,13 +139,13 @@ const ViewSpecimen = () => {
             <Column md={6}>
               {specimen.chainOfCustody && specimen.chainOfCustody.length > 0 && (
                 <div>
-                  <h4>{t('lims.specimens.chainOfCustody', 'Chain of Custody')}</h4>
+                  <h4>{String(t('lims.specimens.chainOfCustody', 'Chain of Custody'))}</h4>
                   <table className="table">
                     <thead>
                       <tr>
-                        <th>{t('lims.specimens.timestamp', 'Timestamp')}</th>
-                        <th>{t('lims.specimens.action', 'Action')}</th>
-                        <th>{t('lims.specimens.performedBy', 'Performed By')}</th>
+                        <th>{String(t('lims.specimens.timestamp', 'Timestamp'))}</th>
+                        <th>{String(t('lims.specimens.action', 'Action'))}</th>
+                        <th>{String(t('lims.specimens.performedBy', 'Performed By'))}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -131,8 +162,7 @@ const ViewSpecimen = () => {
               )}
             </Column>
           </Row>
-        </Panel.Body>
-      </Panel>
+        </Panel>
     </Container>
   )
 }

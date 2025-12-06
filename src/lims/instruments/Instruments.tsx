@@ -1,15 +1,19 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Container, Row, Column } from '@hospitalrun/components'
+import { Button, Container, Row, Column, Spinner, Alert } from '@hospitalrun/components'
 import { useInstruments } from '../../hooks/useInstruments'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import useTitle from '../../page-header/useTitle'
+import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
+
+const breadcrumbs = [{ i18nKey: 'lims.instruments.label', location: '/lims/instruments' }]
 
 const Instruments = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   useTitle(t('lims.instruments.label', 'Instruments'))
+  useAddBreadcrumbs(breadcrumbs, true)
   const setButtonToolBar = useButtonToolbarSetter()
 
   const { data: instruments = [], isLoading, error } = useInstruments()
@@ -22,11 +26,19 @@ const Instruments = () => {
   }, [setButtonToolBar])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <Container>
+        <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
+      </Container>
+    )
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>
+    return (
+      <Container>
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error.message || t('lims.instruments.loadError', 'Failed to load instruments'))} />
+      </Container>
+    )
   }
 
   return (
@@ -34,17 +46,17 @@ const Instruments = () => {
       <Row>
         <Column>
           {instruments.length === 0 ? (
-            <div>{t('lims.instruments.noInstruments', 'No instruments found')}</div>
+            <div>{String(t('lims.instruments.noInstruments', 'No instruments found'))}</div>
           ) : (
             <table className="table table-hover">
               <thead>
                 <tr>
-                  <th>{t('lims.instruments.name', 'Name')}</th>
-                  <th>{t('lims.instruments.manufacturer', 'Manufacturer')}</th>
-                  <th>{t('lims.instruments.model', 'Model')}</th>
-                  <th>{t('lims.instruments.section', 'Section')}</th>
-                  <th>{t('lims.instruments.status', 'Status')}</th>
-                  <th>{t('actions.view', 'View')}</th>
+                  <th>{String(t('lims.instruments.name', 'Name'))}</th>
+                  <th>{String(t('lims.instruments.manufacturer', 'Manufacturer'))}</th>
+                  <th>{String(t('lims.instruments.model', 'Model'))}</th>
+                  <th>{String(t('lims.instruments.section', 'Section'))}</th>
+                  <th>{String(t('lims.instruments.status', 'Status'))}</th>
+                  <th>{String(t('actions.view', 'View'))}</th>
                 </tr>
               </thead>
               <tbody>
@@ -65,7 +77,7 @@ const Instruments = () => {
                         color="primary"
                         onClick={() => navigate(`/lims/instruments/${instrument.id || instrument._id}`)}
                       >
-                        {t('actions.view', 'View')}
+                        {String(t('actions.view', 'View'))}
                       </Button>
                     </td>
                   </tr>

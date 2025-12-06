@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert } from '@hospitalrun/components'
 import { useTranslation } from 'react-i18next'
 import format from 'date-fns/format'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import Lab from '../../model/Lab'
 import LabRepository from '../../clients/db/LabRepository'
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const LabsTab = (props: Props) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { patientId } = props
   const { t } = useTranslation()
 
@@ -27,7 +27,7 @@ const LabsTab = (props: Props) => {
   }, [patientId])
 
   const onTableRowClick = (lab: Lab) => {
-    history.push(`/labs/${lab.id}`)
+    navigate(`/labs/${lab.id}`)
   }
 
   return (
@@ -35,17 +35,17 @@ const LabsTab = (props: Props) => {
       {(!labs || labs.length === 0) && (
         <Alert
           color="warning"
-          title={t('patient.labs.warning.noLabs')}
-          message={t('patient.labs.noLabsMessage')}
+          title={String(t('patient.labs.warning.noLabs'))}
+          message={String(t('patient.labs.noLabsMessage'))}
         />
       )}
       {labs && labs.length > 0 && (
         <table className="table table-hover">
           <thead className="thead-light">
             <tr>
-              <th>{t('labs.lab.type')}</th>
-              <th>{t('labs.lab.requestedOn')}</th>
-              <th>{t('labs.lab.status')}</th>
+              <th>{String(t('labs.lab.type'))}</th>
+              <th>{String(t('labs.lab.requestedOn'))}</th>
+              <th>{String(t('labs.lab.status'))}</th>
             </tr>
           </thead>
           <tbody>

@@ -5,18 +5,18 @@ import { Typeahead, Label, Button, Alert } from '@hospitalrun/components'
 import PatientRepository from 'clients/db/PatientRepository'
 import Patient from 'model/Patient'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import Lab from 'model/Lab'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { requestLab } from 'labs/lab-slice'
-import { RootState } from 'store'
+import { RootState, useAppDispatch } from 'store'
 
 const NewLabRequest = () => {
   const { t } = useTranslation()
-  const dispatch = useDispatch()
-  const history = useHistory()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   useTitle(t('labs.requests.new'))
   const { status, error } = useSelector((state: RootState) => state.lab)
 
@@ -61,27 +61,27 @@ const NewLabRequest = () => {
   const onSave = async () => {
     const newLab = newLabRequest as Lab
     const onSuccess = (createdLab: Lab) => {
-      history.push(`/labs/${createdLab.id}`)
+      navigate(`/labs/${createdLab.id}`)
     }
 
     dispatch(requestLab(newLab, onSuccess))
   }
 
   const onCancel = () => {
-    history.push('/labs')
+    navigate('/labs')
   }
 
   return (
     <>
       {status === 'error' && (
-        <Alert color="danger" title={t('states.error')} message={t(error.message || '')} />
+        <Alert color="danger" title={String(t('states.error'))} message={String(t(error.message || ''))} />
       )}
       <form>
         <div className="form-group patient-typeahead">
-          <Label htmlFor="patientTypeahead" isRequired text={t('labs.lab.patient')} />
+          <Label htmlFor="patientTypeahead" isRequired text={String(t('labs.lab.patient'))} />
           <Typeahead
             id="patientTypeahead"
-            placeholder={t('labs.lab.patient')}
+            placeholder={String(t('labs.lab.patient'))}
             onChange={(p: Patient[]) => onPatientChange(p[0])}
             onSearch={async (query: string) => PatientRepository.search(query)}
             searchAccessor="fullName"
@@ -91,7 +91,7 @@ const NewLabRequest = () => {
         </div>
         <TextInputWithLabelFormGroup
           name="labType"
-          label={t('labs.lab.type')}
+          label={String(t('labs.lab.type'))}
           isRequired
           isEditable
           isInvalid={!!error.type}
@@ -102,7 +102,7 @@ const NewLabRequest = () => {
         <div className="form-group">
           <TextFieldWithLabelFormGroup
             name="labNotes"
-            label={t('labs.lab.notes')}
+            label={String(t('labs.lab.notes'))}
             isEditable
             value={newLabRequest.notes}
             onChange={onNoteChange}
@@ -111,10 +111,10 @@ const NewLabRequest = () => {
         <div className="row float-right">
           <div className="btn-group btn-group-lg mt-3">
             <Button className="mr-2" color="success" onClick={onSave}>
-              {t('actions.save')}
+              {String(t('actions.save'))}
             </Button>
             <Button color="danger" onClick={onCancel}>
-              {t('actions.cancel')}
+              {String(t('actions.cancel'))}
             </Button>
           </div>
         </div>

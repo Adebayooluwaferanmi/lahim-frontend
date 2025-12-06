@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Container, Row, Column, TextInput } from '@hospitalrun/components'
+import { Button, Container, Row, Column, TextInput, Spinner, Alert } from '@hospitalrun/components'
 import { useInventoryItems } from '../../hooks/useInventory'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import useTitle from '../../page-header/useTitle'
+import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
+
+const breadcrumbs = [{ i18nKey: 'lims.inventory.items', location: '/lims/inventory/items' }]
 
 const InventoryItems = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   useTitle(t('lims.inventory.items', 'Inventory Items'))
+  useAddBreadcrumbs(breadcrumbs, true)
   const setButtonToolBar = useButtonToolbarSetter()
 
   const [itemCodeFilter, setItemCodeFilter] = useState('')
@@ -29,7 +33,7 @@ const InventoryItems = () => {
         iconLocation="left"
         onClick={() => navigate('/lims/inventory/items/new')}
       >
-        {t('lims.inventory.newItem', 'New Inventory Item')}
+        {String(t('lims.inventory.newItem', 'New Inventory Item'))}
       </Button>,
     ])
 
@@ -39,11 +43,19 @@ const InventoryItems = () => {
   }, [setButtonToolBar, navigate, t])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <Container>
+        <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
+      </Container>
+    )
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>
+    return (
+      <Container>
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error.message || t('lims.inventory.loadError', 'Failed to load inventory items'))} />
+      </Container>
+    )
   }
 
   return (
@@ -51,7 +63,7 @@ const InventoryItems = () => {
       <Row>
         <Column md={6}>
           <TextInput
-            placeholder={t('lims.inventory.searchItemCode', 'Search by Item Code')}
+            placeholder={String(t('lims.inventory.searchItemCode', 'Search by Item Code'))}
             value={itemCodeFilter}
             onChange={(e) => setItemCodeFilter(e.target.value)}
           />
@@ -62,12 +74,12 @@ const InventoryItems = () => {
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
-            <option value="">{t('lims.inventory.allCategories', 'All Categories')}</option>
-            <option value="reagent">{t('lims.inventory.category.reagent', 'Reagent')}</option>
-            <option value="consumable">{t('lims.inventory.category.consumable', 'Consumable')}</option>
-            <option value="supply">{t('lims.inventory.category.supply', 'Supply')}</option>
-            <option value="equipment">{t('lims.inventory.category.equipment', 'Equipment')}</option>
-            <option value="other">{t('lims.inventory.category.other', 'Other')}</option>
+            <option value="">{String(t('lims.inventory.allCategories', 'All Categories'))}</option>
+            <option value="reagent">{String(t('lims.inventory.category.reagent', 'Reagent'))}</option>
+            <option value="consumable">{String(t('lims.inventory.category.consumable', 'Consumable'))}</option>
+            <option value="supply">{String(t('lims.inventory.category.supply', 'Supply'))}</option>
+            <option value="equipment">{String(t('lims.inventory.category.equipment', 'Equipment'))}</option>
+            <option value="other">{String(t('lims.inventory.category.other', 'Other'))}</option>
           </select>
         </Column>
       </Row>
@@ -75,19 +87,19 @@ const InventoryItems = () => {
       <Row>
         <Column>
           {items.length === 0 ? (
-            <div>{t('lims.inventory.noItems', 'No inventory items found')}</div>
+            <div>{String(t('lims.inventory.noItems', 'No inventory items found'))}</div>
           ) : (
             <table className="table table-hover">
               <thead>
                 <tr>
-                  <th>{t('lims.inventory.itemCode', 'Item Code')}</th>
-                  <th>{t('lims.inventory.itemName', 'Item Name')}</th>
-                  <th>{t('lims.inventory.category', 'Category')}</th>
-                  <th>{t('lims.inventory.unit', 'Unit')}</th>
-                  <th>{t('lims.inventory.unitCost', 'Unit Cost')}</th>
-                  <th>{t('lims.inventory.reorderPoint', 'Reorder Point')}</th>
-                  <th>{t('lims.inventory.status', 'Status')}</th>
-                  <th>{t('actions.view', 'View')}</th>
+                  <th>{String(t('lims.inventory.itemCode', 'Item Code'))}</th>
+                  <th>{String(t('lims.inventory.itemName', 'Item Name'))}</th>
+                  <th>{String(t('lims.inventory.category', 'Category'))}</th>
+                  <th>{String(t('lims.inventory.unit', 'Unit'))}</th>
+                  <th>{String(t('lims.inventory.unitCost', 'Unit Cost'))}</th>
+                  <th>{String(t('lims.inventory.reorderPoint', 'Reorder Point'))}</th>
+                  <th>{String(t('lims.inventory.status', 'Status'))}</th>
+                  <th>{String(t('actions.view', 'View'))}</th>
                 </tr>
               </thead>
               <tbody>
@@ -101,7 +113,7 @@ const InventoryItems = () => {
                     <td>{item.reorderPoint || '-'}</td>
                     <td>
                       <span className={`badge badge-${item.active ? 'success' : 'secondary'}`}>
-                        {item.active ? t('lims.inventory.active', 'Active') : t('lims.inventory.inactive', 'Inactive')}
+                        {item.active ? String(t('lims.inventory.active', 'Active')) : String(t('lims.inventory.inactive', 'Inactive'))}
                       </span>
                     </td>
                     <td>
@@ -110,7 +122,7 @@ const InventoryItems = () => {
                         color="primary"
                         onClick={() => navigate(`/lims/inventory/items/${item.id || item._id}`)}
                       >
-                        {t('actions.view', 'View')}
+                        {String(t('actions.view', 'View'))}
                       </Button>
                     </td>
                   </tr>

@@ -35,7 +35,7 @@ describe('New Patient', () => {
     history = createMemoryHistory()
     store = mockStore({ patient: { patient: {} as Patient, createError: error } })
 
-    history.push('/patients/new')
+    navigate('/patients/new')
     const wrapper = mount(
       <Provider store={store}>
         <Router history={history}>

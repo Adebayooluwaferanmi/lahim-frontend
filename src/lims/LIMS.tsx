@@ -10,6 +10,8 @@ import ViewLabOrder from './lab-orders/ViewLabOrder'
 // Specimens
 import Specimens from './specimens/Specimens'
 import ViewSpecimen from './specimens/ViewSpecimen'
+import SpecimenReception from './specimens/SpecimenReception'
+import SpecimenProcessing from './specimens/SpecimenProcessing'
 
 // Worklists
 import Worklists from './worklists/Worklists'
@@ -37,6 +39,15 @@ import StockLevels from './inventory/StockLevels'
 import ReceiveInventory from './inventory/ReceiveInventory'
 import IssueInventory from './inventory/IssueInventory'
 
+// Results
+import TemplateBasedResultEntry from './results/TemplateBasedResultEntry'
+
+// Test Catalog
+import TestCatalog from './test-catalog/TestCatalog'
+
+// Critical Values
+import CriticalValues from './critical-values/CriticalValues'
+
 const LIMS = () => {
   return (
     <Routes>
@@ -48,6 +59,8 @@ const LIMS = () => {
       {/* Specimens Routes */}
       <Route path="specimens" element={<PrivateRoute isAuthenticated={true}><Specimens /></PrivateRoute>} />
       <Route path="specimens/:id" element={<PrivateRoute isAuthenticated={true}><ViewSpecimen /></PrivateRoute>} />
+      <Route path="specimens/:id/reception" element={<PrivateRoute isAuthenticated={true}><SpecimenReception /></PrivateRoute>} />
+      <Route path="specimens/:id/processing" element={<PrivateRoute isAuthenticated={true}><SpecimenProcessing /></PrivateRoute>} />
 
       {/* Worklists Routes */}
       <Route path="worklists" element={<PrivateRoute isAuthenticated={true}><Worklists /></PrivateRoute>} />
@@ -74,6 +87,15 @@ const LIMS = () => {
       <Route path="inventory/stock-levels" element={<PrivateRoute isAuthenticated={true}><StockLevels /></PrivateRoute>} />
       <Route path="inventory/receive" element={<PrivateRoute isAuthenticated={true}><ReceiveInventory /></PrivateRoute>} />
       <Route path="inventory/issue" element={<PrivateRoute isAuthenticated={true}><IssueInventory /></PrivateRoute>} />
+
+      {/* Results Routes */}
+      <Route path="results/enter" element={<PrivateRoute isAuthenticated={true}><TemplateBasedResultEntry /></PrivateRoute>} />
+
+      {/* Test Catalog Routes */}
+      <Route path="test-catalog" element={<PrivateRoute isAuthenticated={true}><TestCatalog /></PrivateRoute>} />
+
+      {/* Critical Values Routes */}
+      <Route path="critical-values" element={<PrivateRoute isAuthenticated={true}><CriticalValues /></PrivateRoute>} />
 
       {/* Default route - redirect to lab-orders */}
       <Route path="" element={<PrivateRoute isAuthenticated={true}><LabOrders /></PrivateRoute>} />

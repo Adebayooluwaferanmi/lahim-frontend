@@ -1,6 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-
-const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
+import { useApiQueryWithParams, useApiQuery } from '../lib/queries'
+import { useCreateMutation } from '../lib/mutations'
 
 export interface QCMaterial {
   id?: string
@@ -36,94 +35,82 @@ export interface QCResult {
   notes?: string
 }
 
-export interface UseQCResultsParams {
+export interface UseQCResultsParams extends Record<string, unknown> {
   testCode?: string
   status?: string
   materialId?: string
   instrumentId?: string
 }
 
+/**
+ * Fetch QC results with optional filters
+ * Uses optimized API client with caching and retry logic
+ */
 export const useQCResults = (params: UseQCResultsParams = {}) => {
-  const queryParams = new URLSearchParams()
-  if (params.testCode) queryParams.append('testCode', params.testCode)
-  if (params.status) queryParams.append('status', params.status)
-  if (params.materialId) queryParams.append('materialId', params.materialId)
-  if (params.instrumentId) queryParams.append('instrumentId', params.instrumentId)
+  const { data, ...rest } = useApiQueryWithParams<QCResult[] | { results: QCResult[] }, UseQCResultsParams>(
+    ['qc-results'],
+    '/qc-results',
+    params
+  )
 
-  const queryString = queryParams.toString()
-  const url = `${apiUrl}/qc-results${queryString ? `?${queryString}` : ''}`
+  // Normalize response format
+  const normalizedData = data
+    ? Array.isArray(data)
+      ? data
+      : (data as { results: QCResult[] }).results || []
+    : undefined
 
-  return useQuery<QCResult[]>({
-    queryKey: ['qc-results', params],
-    queryFn: async () => {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch QC results: ${response.statusText}`)
-      }
-      const data = await response.json()
-      return Array.isArray(data) ? data : data.results || []
-    },
-  })
+  return {
+    ...rest,
+    data: normalizedData,
+  }
 }
 
+/**
+ * Fetch a single QC result by ID
+ * Uses optimized API client with caching
+ */
 export const useQCResult = (id: string | undefined) => {
-  return useQuery<QCResult>({
-    queryKey: ['qc-result', id],
-    queryFn: async () => {
-      if (!id) throw new Error('QC result ID is required')
-      const response = await fetch(`${apiUrl}/qc-results/${id}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch QC result: ${response.statusText}`)
-      }
-      return response.json()
-    },
-    enabled: !!id,
-  })
+  return useApiQuery<QCResult>(
+    ['qc-results', id],
+    `/qc-results/${id}`,
+    {
+      enabled: !!id,
+    }
+  )
 }
 
+/**
+ * Fetch QC materials with optional filters
+ * Uses optimized API client with caching and retry logic
+ */
 export const useQCMaterials = (params: { active?: boolean } = {}) => {
-  const queryParams = new URLSearchParams()
-  if (params.active !== undefined) queryParams.append('active', String(params.active))
+  const { data, ...rest } = useApiQueryWithParams<QCMaterial[] | { materials: QCMaterial[] }, { active?: boolean }>(
+    ['qc-materials'],
+    '/qc-materials',
+    params
+  )
 
-  const queryString = queryParams.toString()
-  const url = `${apiUrl}/qc-materials${queryString ? `?${queryString}` : ''}`
+  // Normalize response format
+  const normalizedData = data
+    ? Array.isArray(data)
+      ? data
+      : (data as { materials: QCMaterial[] }).materials || []
+    : undefined
 
-  return useQuery<QCMaterial[]>({
-    queryKey: ['qc-materials', params],
-    queryFn: async () => {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch QC materials: ${response.statusText}`)
-      }
-      const data = await response.json()
-      return Array.isArray(data) ? data : data.materials || []
-    },
-  })
+  return {
+    ...rest,
+    data: normalizedData,
+  }
 }
 
+/**
+ * Create a new QC result with optimistic updates
+ */
 export const useCreateQCResult = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation<QCResult, Error, Partial<QCResult>>({
-    mutationFn: async (data) => {
-      const response = await fetch(`${apiUrl}/qc-results`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: response.statusText }))
-        throw new Error(error.message || `Failed to create QC result: ${response.statusText}`)
-      }
-
-      return response.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['qc-results'] })
-    },
+  return useCreateMutation<QCResult, Partial<QCResult>>('/qc-results', {
+    queryKey: ['qc-results'],
+    invalidateQueries: [['qc-results']],
   })
 }
 

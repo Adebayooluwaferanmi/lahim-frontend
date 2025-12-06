@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams, withRouter, Route, useHistory, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { useAppDispatch } from '../../store'
+import { useParams, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Panel, Spinner, TabsHeader, Tab, Button } from '@hospitalrun/components'
 import { useTranslation } from 'react-i18next'
 
@@ -30,8 +31,8 @@ const getPatientCode = (p: Patient): string => {
 
 const ViewPatient = () => {
   const { t } = useTranslation()
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const location = useLocation()
 
   const { patient, status } = useSelector((state: RootState) => state.patient)
@@ -62,10 +63,10 @@ const ViewPatient = () => {
           icon="edit"
           outlined
           onClick={() => {
-            history.push(`/patients/edit/${patient.id}`)
+            navigate(`/patients/edit/${patient.id}`)
           }}
         >
-          {t('actions.edit')}
+          {String(t('actions.edit'))}
         </Button>,
       )
     }
@@ -75,7 +76,7 @@ const ViewPatient = () => {
     return () => {
       setButtonToolBar([])
     }
-  }, [dispatch, id, setButtonToolBar, history, patient.id, permissions, t])
+  }, [dispatch, id, setButtonToolBar, navigate, patient.id, permissions, t])
 
   if (status === 'loading' || !patient) {
     return <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
@@ -86,60 +87,60 @@ const ViewPatient = () => {
       <TabsHeader>
         <Tab
           active={location.pathname === `/patients/${patient.id}`}
-          label={t('patient.generalInformation')}
-          onClick={() => history.push(`/patients/${patient.id}`)}
+          label={String(t('patient.generalInformation'))}
+          onClick={() => navigate(`/patients/${patient.id}`)}
         />
         <Tab
           active={location.pathname === `/patients/${patient.id}/relatedpersons`}
-          label={t('patient.relatedPersons.label')}
-          onClick={() => history.push(`/patients/${patient.id}/relatedpersons`)}
+          label={String(t('patient.relatedPersons.label'))}
+          onClick={() => navigate(`/patients/${patient.id}/relatedpersons`)}
         />
         <Tab
           active={location.pathname === `/patients/${patient.id}/appointments`}
-          label={t('scheduling.appointments.label')}
-          onClick={() => history.push(`/patients/${patient.id}/appointments`)}
+          label={String(t('scheduling.appointments.label'))}
+          onClick={() => navigate(`/patients/${patient.id}/appointments`)}
         />
         <Tab
           active={location.pathname === `/patients/${patient.id}/allergies`}
-          label={t('patient.allergies.label')}
-          onClick={() => history.push(`/patients/${patient.id}/allergies`)}
+          label={String(t('patient.allergies.label'))}
+          onClick={() => navigate(`/patients/${patient.id}/allergies`)}
         />
         <Tab
           active={location.pathname === `/patients/${patient.id}/diagnoses`}
-          label={t('patient.diagnoses.label')}
-          onClick={() => history.push(`/patients/${patient.id}/diagnoses`)}
+          label={String(t('patient.diagnoses.label'))}
+          onClick={() => navigate(`/patients/${patient.id}/diagnoses`)}
         />
         <Tab
           active={location.pathname === `/patients/${patient.id}/notes`}
-          label={t('patient.notes.label')}
-          onClick={() => history.push(`/patients/${patient.id}/notes`)}
+          label={String(t('patient.notes.label'))}
+          onClick={() => navigate(`/patients/${patient.id}/notes`)}
         />
         <Tab
           active={location.pathname === `/patients/${patient.id}/labs`}
-          label={t('patient.labs.label')}
-          onClick={() => history.push(`/patients/${patient.id}/labs`)}
+          label={String(t('patient.labs.label'))}
+          onClick={() => navigate(`/patients/${patient.id}/labs`)}
         />
       </TabsHeader>
       <Panel>
-        <Route exact path="/patients/:id">
+        <Route path="/patients/:id">
           <GeneralInformation patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/relatedpersons">
+        <Route path="/patients/:id/relatedpersons">
           <RelatedPerson patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/appointments">
+        <Route path="/patients/:id/appointments">
           <AppointmentsList patientId={patient.id} />
         </Route>
-        <Route exact path="/patients/:id/allergies">
+        <Route path="/patients/:id/allergies">
           <Allergies patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/diagnoses">
+        <Route path="/patients/:id/diagnoses">
           <Diagnoses patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/notes">
+        <Route path="/patients/:id/notes">
           <Note patient={patient} />
         </Route>
-        <Route exact path="/patients/:id/labs">
+        <Route path="/patients/:id/labs">
           <Labs patientId={patient.id} />
         </Route>
       </Panel>
@@ -147,4 +148,4 @@ const ViewPatient = () => {
   )
 }
 
-export default withRouter(ViewPatient)
+export default ViewPatient

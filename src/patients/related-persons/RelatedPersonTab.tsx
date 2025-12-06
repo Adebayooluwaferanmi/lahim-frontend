@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Button, Alert, Spinner } from '@hospitalrun/components'
 import AddRelatedPersonModal from 'patients/related-persons/AddRelatedPersonModal'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import Patient from 'model/Patient'
 import { removeRelatedPerson } from 'patients/patient-slice'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from 'store'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from 'store'
 import Permissions from 'model/Permissions'
 import PatientRepository from 'clients/db/PatientRepository'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
@@ -16,11 +16,11 @@ interface Props {
 }
 
 const RelatedPersonTab = (props: Props) => {
-  const dispatch = useDispatch()
-  const history = useHistory()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const navigateTo = (location: string) => {
-    history.push(location)
+    navigate(location)
   }
   const { patient } = props
   const { t } = useTranslation()
@@ -85,7 +85,7 @@ const RelatedPersonTab = (props: Props) => {
               iconLocation="left"
               onClick={onNewRelatedPersonClick}
             >
-              {t('patient.relatedPersons.add')}
+              {String(t('patient.relatedPersons.add'))}
             </Button>
           )}
         </div>
@@ -98,10 +98,10 @@ const RelatedPersonTab = (props: Props) => {
               <table className="table table-hover">
                 <thead className="thead-light">
                   <tr>
-                    <th>{t('patient.givenName')}</th>
-                    <th>{t('patient.familyName')}</th>
-                    <th>{t('patient.relatedPersons.relationshipType')}</th>
-                    <th>{t('actions.label')}</th>
+                    <th>{String(t('patient.givenName'))}</th>
+                    <th>{String(t('patient.familyName'))}</th>
+                    <th>{String(t('patient.relatedPersons.relationshipType'))}</th>
+                    <th>{String(t('actions.label'))}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -116,7 +116,7 @@ const RelatedPersonTab = (props: Props) => {
                           color="danger"
                           onClick={(e) => onRelatedPersonDelete(e, r)}
                         >
-                          {t('actions.delete')}
+                          {String(t('actions.delete'))}
                         </Button>
                       </td>
                     </tr>
@@ -126,8 +126,8 @@ const RelatedPersonTab = (props: Props) => {
             ) : (
               <Alert
                 color="warning"
-                title={t('patient.relatedPersons.warning.noRelatedPersons')}
-                message={t('patient.relatedPersons.addRelatedPersonAbove')}
+                title={String(t('patient.relatedPersons.warning.noRelatedPersons'))}
+                message={String(t('patient.relatedPersons.addRelatedPersonAbove'))}
               />
             )
           ) : (

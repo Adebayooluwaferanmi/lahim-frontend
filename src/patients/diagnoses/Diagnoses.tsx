@@ -43,7 +43,7 @@ const Diagnoses = (props: Props) => {
               iconLocation="left"
               onClick={() => setShowDiagnosisModal(true)}
             >
-              {t('patient.diagnoses.new')}
+              {String(t('patient.diagnoses.new'))}
             </Button>
           )}
         </div>
@@ -52,8 +52,8 @@ const Diagnoses = (props: Props) => {
       {(!patient.diagnoses || patient.diagnoses.length === 0) && (
         <Alert
           color="warning"
-          title={t('patient.diagnoses.warning.noDiagnoses')}
-          message={t('patient.diagnoses.addDiagnosisAbove')}
+          title={String(t('patient.diagnoses.warning.noDiagnoses'))}
+          message={String(t('patient.diagnoses.addDiagnosisAbove'))}
         />
       )}
       <List>

@@ -10,6 +10,7 @@ export default {
     new: 'New',
     list: 'List',
     search: 'Search',
+    view: 'View',
     confirmDelete: 'Delete Confirmation',
   },
 }

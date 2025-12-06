@@ -48,12 +48,12 @@ const GeneralInformation = (props: Props) => {
 
   return (
     <div>
-      <Panel title={t('patient.basicInformation')} color="primary" collapsible>
-        {error?.message && <Alert className="alert" color="danger" message={t(error?.message)} />}
+      <Panel title={String(t('patient.basicInformation'))} color="primary" collapsible>
+        {error?.message && <Alert className="alert" color="danger" message={String(t(error?.message))} />}
         <div className="row">
           <div className="col-md-2">
             <TextInputWithLabelFormGroup
-              label={t('patient.prefix')}
+              label={String(t('patient.prefix'))}
               name="prefix"
               value={patient.prefix}
               isEditable={isEditable}
@@ -61,12 +61,12 @@ const GeneralInformation = (props: Props) => {
                 onInputElementChange(event, 'prefix')
               }}
               isInvalid={error?.prefix}
-              feedback={t(error?.prefix)}
+              feedback={String(t(error?.prefix))}
             />
           </div>
           <div className="col-md-4">
             <TextInputWithLabelFormGroup
-              label={t('patient.givenName')}
+              label={String(t('patient.givenName'))}
               name="givenName"
               value={patient.givenName}
               isEditable={isEditable}
@@ -75,12 +75,12 @@ const GeneralInformation = (props: Props) => {
               }}
               isRequired
               isInvalid={error?.givenName}
-              feedback={t(error?.givenName)}
+              feedback={String(t(error?.givenName))}
             />
           </div>
           <div className="col-md-4">
             <TextInputWithLabelFormGroup
-              label={t('patient.familyName')}
+              label={String(t('patient.familyName'))}
               name="familyName"
               value={patient.familyName}
               isEditable={isEditable}
@@ -88,12 +88,12 @@ const GeneralInformation = (props: Props) => {
                 onInputElementChange(event, 'familyName')
               }}
               isInvalid={error?.familyName}
-              feedback={t(error?.familyName)}
+              feedback={String(t(error?.familyName))}
             />
           </div>
           <div className="col-md-2">
             <TextInputWithLabelFormGroup
-              label={t('patient.suffix')}
+              label={String(t('patient.suffix'))}
               name="suffix"
               value={patient.suffix}
               isEditable={isEditable}
@@ -101,7 +101,7 @@ const GeneralInformation = (props: Props) => {
                 onInputElementChange(event, 'suffix')
               }}
               isInvalid={error?.suffix}
-              feedback={t(error?.suffix)}
+              feedback={String(t(error?.suffix))}
             />
           </div>
         </div>
@@ -109,7 +109,7 @@ const GeneralInformation = (props: Props) => {
           <div className="col">
             <SelectWithLabelFormGroup
               name="sex"
-              label={t('patient.sex')}
+              label={String(t('patient.sex'))}
               value={patient.sex}
               isEditable={isEditable}
               options={[
@@ -126,7 +126,7 @@ const GeneralInformation = (props: Props) => {
           <div className="col">
             <SelectWithLabelFormGroup
               name="type"
-              label={t('patient.type')}
+              label={String(t('patient.type'))}
               value={patient.type}
               isEditable={isEditable}
               options={[
@@ -143,7 +143,7 @@ const GeneralInformation = (props: Props) => {
           <div className="col-md-4">
             {patient.isApproximateDateOfBirth ? (
               <TextInputWithLabelFormGroup
-                label={t('patient.approximateAge')}
+                label={String(t('patient.approximateAge'))}
                 name="approximateAge"
                 type="number"
                 value={`${differenceInYears(new Date(Date.now()), new Date(patient.dateOfBirth))}`}
@@ -153,7 +153,7 @@ const GeneralInformation = (props: Props) => {
             ) : (
               <DatePickerWithLabelFormGroup
                 name="dateOfBirth"
-                label={t('patient.dateOfBirth')}
+                label={String(t('patient.dateOfBirth'))}
                 isEditable={isEditable && !patient.isApproximateDateOfBirth}
                 value={
                   patient.dateOfBirth && patient.dateOfBirth.length > 0
@@ -162,7 +162,7 @@ const GeneralInformation = (props: Props) => {
                 }
                 isInvalid={error?.dateOfBirth}
                 maxDate={new Date(Date.now().valueOf())}
-                feedback={t(error?.dateOfBirth)}
+                feedback={String(t(error?.dateOfBirth))}
                 onChange={(date: Date) => {
                   onDateOfBirthChange(date)
                 }}
@@ -172,7 +172,7 @@ const GeneralInformation = (props: Props) => {
           <div className="col-md-2">
             <div className="form-group">
               <Checkbox
-                label={t('patient.unknownDateOfBirth')}
+                label={String(t('patient.unknownDateOfBirth'))}
                 name="unknown"
                 disabled={!isEditable}
                 onChange={(event) => onCheckboxChange(event, 'isApproximateDateOfBirth')}
@@ -183,7 +183,7 @@ const GeneralInformation = (props: Props) => {
         <div className="row">
           <div className="col-md-6">
             <TextInputWithLabelFormGroup
-              label={t('patient.occupation')}
+              label={String(t('patient.occupation'))}
               name="occupation"
               value={patient.occupation}
               isEditable={isEditable}
@@ -194,7 +194,7 @@ const GeneralInformation = (props: Props) => {
           </div>
           <div className="col-md-6">
             <TextInputWithLabelFormGroup
-              label={t('patient.preferredLanguage')}
+              label={String(t('patient.preferredLanguage'))}
               name="preferredLanguage"
               value={patient.preferredLanguage}
               isEditable={isEditable}
@@ -202,31 +202,31 @@ const GeneralInformation = (props: Props) => {
                 onInputElementChange(event, 'preferredLanguage')
               }}
               isInvalid={error?.preferredLanguage}
-              feedback={t(error?.preferredLanguage)}
+              feedback={String(t(error?.preferredLanguage))}
             />
           </div>
         </div>
       </Panel>
       <br />
-      <Panel title={t('patient.contactInformation')} color="primary" collapsible>
+      <Panel title={String(t('patient.contactInformation'))} color="primary" collapsible>
         <div className="row">
           <div className="col">
             <TextInputWithLabelFormGroup
-              label={t('patient.phoneNumber')}
+              label={String(t('patient.phoneNumber'))}
               name="phoneNumber"
               value={patient.phoneNumber}
               isEditable={isEditable}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 onInputElementChange(event, 'phoneNumber')
               }}
-              feedback={t(error?.phoneNumber)}
+              feedback={String(t(error?.phoneNumber))}
               isInvalid={!!error?.phoneNumber}
               type="tel"
             />
           </div>
           <div className="col">
             <TextInputWithLabelFormGroup
-              label={t('patient.email')}
+              label={String(t('patient.email'))}
               placeholder="email@email.com"
               name="email"
               value={patient.email}
@@ -235,7 +235,7 @@ const GeneralInformation = (props: Props) => {
                 onInputElementChange(event, 'email')
               }}
               type="email"
-              feedback={t(error?.email)}
+              feedback={String(t(error?.email))}
               isInvalid={!!error?.email}
             />
           </div>
@@ -243,7 +243,7 @@ const GeneralInformation = (props: Props) => {
         <div className="row">
           <div className="col">
             <TextFieldWithLabelFormGroup
-              label={t('patient.address')}
+              label={String(t('patient.address'))}
               name="address"
               value={patient.address}
               isEditable={isEditable}

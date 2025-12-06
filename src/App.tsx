@@ -1,34 +1,30 @@
 import React, { Suspense } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Spinner } from '@hospitalrun/components'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { queryClient } from './lib/query-client'
+import LoadingFallback from './components/LoadingFallback'
+import ErrorBoundary from './components/ErrorBoundary'
 import HospitalRun from './HospitalRun'
 
 import store from './store'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-    },
-  },
-})
-
 const App: React.FC = () => (
-  <div>
+  <ErrorBoundary>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback={<Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />}>
-          <BrowserRouter>
-            <HospitalRun />
-          </BrowserRouter>
-        </Suspense>
+        <Suspense fallback={<LoadingFallback />}>
+        <BrowserRouter>
+          <HospitalRun />
+        </BrowserRouter>
+      </Suspense>
+        {import.meta.env.DEV && (
+          <ReactQueryDevtools initialIsOpen={false} />
+        )}
       </QueryClientProvider>
     </Provider>
-  </div>
+  </ErrorBoundary>
 )
 
 export default App

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, useHistory } from 'react-router'
+import { useParams, useNavigate } from 'react-router-dom'
 import format from 'date-fns/format'
 import Lab from 'model/Lab'
 import Patient from 'model/Patient'
@@ -8,9 +8,9 @@ import { useTranslation } from 'react-i18next'
 import { Row, Column, Badge, Button, Alert } from '@hospitalrun/components'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import Permissions from 'model/Permissions'
-import { RootState } from '../store'
+import { RootState, useAppDispatch } from '../store'
 import { cancelLab, completeLab, updateLab, fetchLab } from './lab-slice'
 
 const getTitle = (patient: Patient | undefined, lab: Lab | undefined) =>
@@ -19,8 +19,8 @@ const getTitle = (patient: Patient | undefined, lab: Lab | undefined) =>
 const ViewLab = () => {
   const { id } = useParams()
   const { t } = useTranslation()
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const { permissions } = useSelector((state: RootState) => state.user)
   const { lab, patient, status, error } = useSelector((state: RootState) => state.lab)
 
@@ -64,7 +64,7 @@ const ViewLab = () => {
 
   const onUpdate = async () => {
     const onSuccess = () => {
-      history.push('/labs')
+      navigate('/labs')
     }
     if (labToView) {
       dispatch(updateLab(labToView, onSuccess))
@@ -73,7 +73,7 @@ const ViewLab = () => {
 
   const onComplete = async () => {
     const onSuccess = () => {
-      history.push('/labs')
+      navigate('/labs')
     }
 
     if (labToView) {
@@ -83,7 +83,7 @@ const ViewLab = () => {
 
   const onCancel = async () => {
     const onSuccess = () => {
-      history.push('/labs')
+      navigate('/labs')
     }
 
     if (labToView) {
@@ -99,14 +99,14 @@ const ViewLab = () => {
 
     buttons.push(
       <Button className="mr-2" color="success" onClick={onUpdate} key="actions.update">
-        {t('actions.update')}
+        {String(t('actions.update'))}
       </Button>,
     )
 
     if (permissions.includes(Permissions.CompleteLab)) {
       buttons.push(
         <Button className="mr-2" onClick={onComplete} color="primary" key="labs.requests.complete">
-          {t('labs.requests.complete')}
+          {String(t('labs.requests.complete'))}
         </Button>,
       )
     }
@@ -114,7 +114,7 @@ const ViewLab = () => {
     if (permissions.includes(Permissions.CancelLab)) {
       buttons.push(
         <Button onClick={onCancel} color="danger" key="labs.requests.cancel">
-          {t('labs.requests.cancel')}
+          {String(t('labs.requests.cancel'))}
         </Button>,
       )
     }
@@ -138,7 +138,7 @@ const ViewLab = () => {
         return (
           <Column>
             <div className="form-group completed-on">
-              <h4>{t('labs.lab.completedOn')}</h4>
+              <h4>{String(t('labs.lab.completedOn'))}</h4>
               <h5>{format(new Date(labToView.completedOn), 'yyyy-MM-dd hh:mm a')}</h5>
             </div>
           </Column>
@@ -148,7 +148,7 @@ const ViewLab = () => {
         return (
           <Column>
             <div className="form-group canceled-on">
-              <h4>{t('labs.lab.canceledOn')}</h4>
+              <h4>{String(t('labs.lab.canceledOn'))}</h4>
               <h5>{format(new Date(labToView.canceledOn), 'yyyy-MM-dd hh:mm a')}</h5>
             </div>
           </Column>
@@ -160,12 +160,12 @@ const ViewLab = () => {
     return (
       <>
         {status === 'error' && (
-          <Alert color="danger" title={t('states.error')} message={t(error.message || '')} />
+          <Alert color="danger" title={String(t('states.error'))} message={String(t(error.message || ''))} />
         )}
         <Row>
           <Column>
             <div className="form-group lab-status">
-              <h4>{t('labs.lab.status')}</h4>
+              <h4>{String(t('labs.lab.status'))}</h4>
               <Badge color={getBadgeColor()}>
                 <h5>{labToView.status}</h5>
               </Badge>
@@ -173,19 +173,19 @@ const ViewLab = () => {
           </Column>
           <Column>
             <div className="form-group for-patient">
-              <h4>{t('labs.lab.for')}</h4>
+              <h4>{String(t('labs.lab.for'))}</h4>
               <h5>{patient.fullName}</h5>
             </div>
           </Column>
           <Column>
             <div className="form-group lab-type">
-              <h4>{t('labs.lab.type')}</h4>
+              <h4>{String(t('labs.lab.type'))}</h4>
               <h5>{labToView.type}</h5>
             </div>
           </Column>
           <Column>
             <div className="form-group requested-on">
-              <h4>{t('labs.lab.requestedOn')}</h4>
+              <h4>{String(t('labs.lab.requestedOn'))}</h4>
               <h5>{format(new Date(labToView.requestedOn), 'yyyy-MM-dd hh:mm a')}</h5>
             </div>
           </Column>
@@ -195,7 +195,7 @@ const ViewLab = () => {
         <form>
           <TextFieldWithLabelFormGroup
             name="result"
-            label={t('labs.lab.result')}
+            label={String(t('labs.lab.result'))}
             value={labToView.result}
             isEditable={isEditable}
             isInvalid={!!error.result}
@@ -204,7 +204,7 @@ const ViewLab = () => {
           />
           <TextFieldWithLabelFormGroup
             name="notes"
-            label={t('labs.lab.notes')}
+            label={String(t('labs.lab.notes'))}
             value={labToView.notes}
             isEditable={isEditable}
             onChange={onNotesChange}

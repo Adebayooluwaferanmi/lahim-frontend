@@ -4,7 +4,7 @@ import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import { mount } from 'enzyme'
 import { createMemoryHistory } from 'history'
-import { Router } from 'react-router'
+import { Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import * as components from '@hospitalrun/components'
 import format from 'date-fns/format'
@@ -30,7 +30,7 @@ const labs = [
 ]
 
 const mockStore = configureMockStore([thunk])
-const history = createMemoryHistory()
+const navigate = createMemoryHistory()
 
 let user: any
 let store: any

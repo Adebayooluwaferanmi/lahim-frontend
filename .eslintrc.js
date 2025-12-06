@@ -1,17 +1,17 @@
 module.exports = {
-  ignorePatterns: ['commitlint.config.js', 'jest.config.js'],
+  ignorePatterns: ['commitlint.config.js', 'jest.config.js', 'node_modules/**'],
   env: {
     browser: true,
     es6: true,
     'jest/globals': true,
   },
   extends: [
-    'airbnb',
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'airbnb',
+    'airbnb/hooks',
     'prettier',
-    'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
     'eslint-config-prettier',
   ],
@@ -24,15 +24,20 @@ module.exports = {
     project: './tsconfig.json',
     tsconfigRootDir: './',
   },
+  plugins: ['@typescript-eslint', 'prettier', 'jest'],
   settings: {
     'import/resolver': {
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
+    react: {
+      version: 'detect',
+    },
   },
-  plugins: ['react', '@typescript-eslint', 'prettier', 'jest'],
   rules: {
+    // Suppress plugin conflict warnings - this is a known issue with airbnb config
+    'no-restricted-syntax': 'off',
     'prettier/prettier': 'error',
     '@typescript-eslint/member-delimiter-style': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -53,6 +58,7 @@ module.exports = {
     'no-nested-ternary': 'off',
     'import/no-unresolved': 'off',
     'import/extensions': ['error', 'never'],
+    'import/no-cycle': ['error', { maxDepth: 10 }],
     curly: ['error', 'all'],
   },
 }

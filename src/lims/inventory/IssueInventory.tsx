@@ -68,7 +68,7 @@ const IssueInventory = () => {
         color="secondary"
         onClick={() => navigate('/lims/inventory/stock-levels')}
       >
-        {t('actions.cancel', 'Cancel')}
+        {String(t('actions.cancel', 'Cancel'))}
       </Button>,
     ])
 
@@ -83,91 +83,87 @@ const IssueInventory = () => {
 
   return (
     <Container>
-      <Panel>
-        <Panel.Header title={t('lims.inventory.issue', 'Issue Inventory')} />
-        <Panel.Body>
-          {(submitError || error) && (
-            <Alert color="danger" title={t('states.error', 'Error')} message={submitError || (error as any)?.message || ''} />
-          )}
+      <Panel title={String(t('lims.inventory.issue', 'Issue Inventory'))}>
+        {(submitError || error) && (
+          <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(submitError || (error as any)?.message || '')} />
+        )}
 
-          <form onSubmit={handleSubmit}>
-            <Row>
-              <Column md={6}>
-                <SelectWithLabelFormGroup
-                  label={t('lims.inventory.item', 'Item')}
-                  name="itemId"
-                  value={formData.itemId}
-                  onChange={(e) => setFormData({ ...formData, itemId: e.target.value })}
-                  options={[
-                    { value: '', label: t('lims.inventory.selectItem', 'Select Item') },
-                    ...items.map((item) => ({
-                      value: item.id || item._id || '',
-                      label: `${item.itemCode} - ${item.itemName}`,
-                    })),
-                  ]}
-                />
-              </Column>
-              <Column md={6}>
-                <TextInputWithLabelFormGroup
-                  label={t('lims.inventory.quantity', 'Quantity')}
-                  name="quantity"
-                  type="number"
-                  value={formData.quantity}
-                  onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                  isRequired
-                />
-              </Column>
-            </Row>
+        <form onSubmit={handleSubmit}>
+          <Row>
+            <Column md={6}>
+              <SelectWithLabelFormGroup
+                label={String(t('lims.inventory.item', 'Item'))}
+                name="itemId"
+                value={formData.itemId}
+                onChange={(e) => setFormData({ ...formData, itemId: e.target.value })}
+                options={[
+                  { value: '', label: String(t('lims.inventory.selectItem', 'Select Item')) },
+                ].concat(items.map((item) => ({
+                  value: item.id || item._id || '',
+                  label: `${item.itemCode} - ${item.itemName}`,
+                })))}
+              />
+            </Column>
+            <Column md={6}>
+              <TextInputWithLabelFormGroup
+                label={String(t('lims.inventory.quantity', 'Quantity'))}
+                name="quantity"
+                type="number"
+                value={formData.quantity}
+                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                isRequired
+              />
+            </Column>
+          </Row>
 
-            <Row>
-              <Column md={6}>
-                <SelectWithLabelFormGroup
-                  label={t('lims.inventory.location', 'Location')}
-                  name="location"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  options={[
-                    { value: '', label: t('lims.inventory.selectLocation', 'Select Location') },
-                    { value: 'main', label: t('lims.inventory.location.main', 'Main') },
-                    { value: 'chemistry', label: t('lims.inventory.location.chemistry', 'Chemistry') },
-                    { value: 'hematology', label: t('lims.inventory.location.hematology', 'Hematology') },
-                    { value: 'microbiology', label: t('lims.inventory.location.microbiology', 'Microbiology') },
-                    { value: 'storage', label: t('lims.inventory.location.storage', 'Storage') },
-                  ]}
-                />
-              </Column>
-              <Column md={6}>
-                <TextInputWithLabelFormGroup
-                  label={t('lims.inventory.reference', 'Reference')}
-                  name="reference"
-                  type="text"
-                  value={formData.reference}
-                  onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
-                  placeholder={t('lims.inventory.referencePlaceholder', 'e.g., Worklist ID, Order ID')}
-                />
-              </Column>
-            </Row>
+          <Row>
+            <Column md={6}>
+              <SelectWithLabelFormGroup
+                label={String(t('lims.inventory.location', 'Location'))}
+                name="location"
+                value={formData.location}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                options={[
+                  { value: '', label: String(t('lims.inventory.selectLocation', 'Select Location')) },
+                  { value: 'main', label: String(t('lims.inventory.locationValues.main', 'Main')) },
+                  { value: 'chemistry', label: String(t('lims.inventory.locationValues.chemistry', 'Chemistry')) },
+                  { value: 'hematology', label: String(t('lims.inventory.locationValues.hematology', 'Hematology')) },
+                  { value: 'microbiology', label: String(t('lims.inventory.locationValues.microbiology', 'Microbiology')) },
+                  { value: 'storage', label: String(t('lims.inventory.locationValues.storage', 'Storage')) },
+                ]}
+              />
+            </Column>
+            <Column md={6}>
+              <TextInputWithLabelFormGroup
+                label={String(t('lims.inventory.reference', 'Reference'))}
+                name="reference"
+                type="text"
+                value={formData.reference}
+                onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
+                placeholder={String(t('lims.inventory.referencePlaceholder', 'e.g., Worklist ID, Order ID'))}
+              />
+            </Column>
+          </Row>
 
-            <Row>
-              <Column md={12}>
-                <TextFieldWithLabelFormGroup
-                  label={t('lims.inventory.notes', 'Notes')}
-                  name="notes"
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                />
-              </Column>
-            </Row>
+          <Row>
+            <Column md={12}>
+              <TextFieldWithLabelFormGroup
+                label={String(t('lims.inventory.notes', 'Notes'))}
+                name="notes"
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              />
+            </Column>
+          </Row>
 
-            <Row>
-              <Column md={12}>
-                <Button color="success" type="submit" icon="save" iconLocation="left" disabled={isLoading}>
-                  {isLoading ? t('lims.inventory.issuing', 'Issuing...') : t('lims.inventory.issue', 'Issue Inventory')}
-                </Button>
-              </Column>
-            </Row>
-          </form>
-        </Panel.Body>
+          <Row>
+            <Column md={12}>
+              <Button color="success" icon="save" iconLocation="left" disabled={isLoading}>
+                {isLoading ? String(t('lims.inventory.issuing', 'Issuing...')) : String(t('lims.inventory.issue', 'Issue Inventory'))}
+              </Button>
+            </Column>
+          </Row>
+        </form>
       </Panel>
     </Container>
   )

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { useAppDispatch } from '../../store'
 import { Button, Toast } from '@hospitalrun/components'
 import GeneralInformation from '../GeneralInformation'
 import useTitle from '../../page-header/useTitle'
@@ -18,8 +19,8 @@ const breadcrumbs = [
 
 const NewPatient = () => {
   const { t } = useTranslation()
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const { createError } = useSelector((state: RootState) => state.patient)
 
   const [patient, setPatient] = useState({} as Patient)
@@ -28,15 +29,15 @@ const NewPatient = () => {
   useAddBreadcrumbs(breadcrumbs, true)
 
   const onCancel = () => {
-    history.push('/patients')
+    navigate('/patients')
   }
 
   const onSuccessfulSave = (newPatient: Patient) => {
-    history.push(`/patients/${newPatient.id}`)
+    navigate(`/patients/${newPatient.id}`)
     Toast(
       'success',
       t('states.success'),
-      `${t('patients.successfullyCreated')} ${newPatient.fullName}`,
+      `${String(t('patients.successfullyCreated'))} ${newPatient.fullName}`,
     )
   }
 
@@ -70,10 +71,10 @@ const NewPatient = () => {
       <div className="row float-right">
         <div className="btn-group btn-group-lg mt-3">
           <Button className="mr-2" color="success" onClick={onSave}>
-            {t('actions.save')}
+            {String(t('actions.save'))}
           </Button>
           <Button color="danger" onClick={onCancel}>
-            {t('actions.cancel')}
+            {String(t('actions.cancel'))}
           </Button>
         </div>
       </div>

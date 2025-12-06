@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { useAppDispatch } from '../../../store'
 import { Spinner, Button } from '@hospitalrun/components'
 import { isBefore } from 'date-fns'
 
@@ -16,8 +17,8 @@ import useAddBreadcrumbs from '../../../breadcrumbs/useAddBreadcrumbs'
 const EditAppointment = () => {
   const { t } = useTranslation()
   useTitle(t('scheduling.appointments.editAppointment'))
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const [appointment, setAppointment] = useState({} as Appointment)
   const [errorMessage, setErrorMessage] = useState('')
@@ -49,17 +50,17 @@ const EditAppointment = () => {
   }, [id, dispatch])
 
   const onCancel = () => {
-    history.push(`/appointments/${appointment.id}`)
+    navigate(`/appointments/${appointment.id}`)
   }
 
   const onSaveSuccess = () => {
-    history.push(`/appointments/${appointment.id}`)
+    navigate(`/appointments/${appointment.id}`)
   }
 
   const onSave = () => {
     let newErrorMessage = ''
     if (isBefore(new Date(appointment.endDateTime), new Date(appointment.startDateTime))) {
-      newErrorMessage += ` ${t('scheduling.appointment.errors.startDateMustBeBeforeEndDate')}`
+      newErrorMessage += ` ${String(t('scheduling.appointment.errors.startDateMustBeBeforeEndDate'))}`
     }
 
     if (newErrorMessage) {
@@ -93,10 +94,10 @@ const EditAppointment = () => {
       <div className="row float-right">
         <div className="btn-group btn-group-lg">
           <Button className="mr-2" color="success" onClick={onSave}>
-            {t('actions.save')}
+            {String(t('actions.save'))}
           </Button>
           <Button color="danger" onClick={onCancel}>
-            {t('actions.cancel')}
+            {String(t('actions.cancel'))}
           </Button>
         </div>
       </div>

@@ -60,7 +60,7 @@ const NewLabOrder = () => {
         color="secondary"
         onClick={() => navigate('/lims/lab-orders')}
       >
-        {t('actions.cancel', 'Cancel')}
+        {String(t('actions.cancel', 'Cancel'))}
       </Button>,
     ])
 
@@ -75,62 +75,59 @@ const NewLabOrder = () => {
 
   return (
     <Container>
-      <Panel>
-        <Panel.Header title={t('lims.labOrders.new', 'New Lab Order')} />
-        <Panel.Body>
-          {(submitError || error) && (
-            <Alert color="danger" title={t('states.error', 'Error')} message={submitError || (error as any)?.message || ''} />
-          )}
+      <Panel title={String(t('lims.labOrders.new', 'New Lab Order'))}>
+        {(submitError || error) && (
+          <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(submitError || (error as any)?.message || '')} />
+        )}
 
-          <form onSubmit={handleSubmit}>
-            <Row>
-              <Column md={6}>
-                <TextInputWithLabelFormGroup
-                  label={t('lims.labOrders.patientId', 'Patient ID')}
-                  name="patientId"
-                  type="text"
-                  value={formData.patientId}
-                  onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
-                  isRequired
-                />
-              </Column>
-              <Column md={6}>
-                <TextInputWithLabelFormGroup
-                  label={t('lims.labOrders.patientName', 'Patient Name')}
-                  name="patientName"
-                  type="text"
-                  value={formData.patientName}
-                  onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
-                />
-              </Column>
-            </Row>
+        <form onSubmit={handleSubmit}>
+          <Row>
+            <Column md={6}>
+              <TextInputWithLabelFormGroup
+                label={String(t('lims.labOrders.patientId', 'Patient ID'))}
+                name="patientId"
+                type="text"
+                value={formData.patientId}
+                onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
+                isRequired
+              />
+            </Column>
+            <Column md={6}>
+              <TextInputWithLabelFormGroup
+                label={String(t('lims.labOrders.patientName', 'Patient Name'))}
+                name="patientName"
+                type="text"
+                value={formData.patientName}
+                onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
+              />
+            </Column>
+          </Row>
 
-            <Row>
-              <Column md={6}>
-                <div className="form-group">
-                  <label>{t('lims.labOrders.priority', 'Priority')}</label>
-                  <select
-                    className="form-control"
-                    value={formData.priority}
-                    onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
-                  >
-                    <option value="routine">{t('lims.labOrders.priority.routine', 'Routine')}</option>
-                    <option value="urgent">{t('lims.labOrders.priority.urgent', 'Urgent')}</option>
-                    <option value="stat">{t('lims.labOrders.priority.stat', 'Stat')}</option>
-                  </select>
-                </div>
-              </Column>
-            </Row>
+          <Row>
+            <Column md={6}>
+              <div className="form-group">
+                <label>{String(t('lims.labOrders.priority', 'Priority'))}</label>
+                <select
+                  className="form-control"
+                  value={formData.priority}
+                  onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
+                >
+                  <option value="routine">{String(t('lims.labOrders.priorityValues.routine', 'Routine'))}</option>
+                  <option value="urgent">{String(t('lims.labOrders.priorityValues.urgent', 'Urgent'))}</option>
+                  <option value="stat">{String(t('lims.labOrders.priorityValues.stat', 'Stat'))}</option>
+                </select>
+              </div>
+            </Column>
+          </Row>
 
-            <Row>
-              <Column md={12}>
-                <Button color="success" type="submit" icon="save" iconLocation="left" disabled={isLoading}>
-                  {isLoading ? t('lims.labOrders.creating', 'Creating...') : t('lims.labOrders.create', 'Create Lab Order')}
-                </Button>
-              </Column>
-            </Row>
-          </form>
-        </Panel.Body>
+          <Row>
+            <Column md={12}>
+              <Button color="success" icon="save" iconLocation="left" disabled={isLoading}>
+                {isLoading ? String(t('lims.labOrders.creating', 'Creating...')) : String(t('lims.labOrders.create', 'Create Lab Order'))}
+              </Button>
+            </Column>
+          </Row>
+        </form>
       </Panel>
     </Container>
   )

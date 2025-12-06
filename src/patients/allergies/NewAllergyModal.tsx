@@ -3,8 +3,8 @@ import { Modal, Alert } from '@hospitalrun/components'
 import { useTranslation } from 'react-i18next'
 import Allergy from 'model/Allergy'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../store'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from '../../store'
 import { addAllergy } from '../patient-slice'
 
 interface NewAllergyModalProps {
@@ -14,7 +14,7 @@ interface NewAllergyModalProps {
 
 const NewAllergyModal = (props: NewAllergyModalProps) => {
   const { show, onCloseButtonClick } = props
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { allergyError, patient } = useSelector((state: RootState) => state.patient)
 
@@ -40,18 +40,18 @@ const NewAllergyModal = (props: NewAllergyModalProps) => {
   const body = (
     <>
       {allergyError && (
-        <Alert color="danger" title={t('states.error')} message={t(allergyError?.message || '')} />
+        <Alert color="danger" title={String(t('states.error'))} message={String(t(allergyError?.message || ''))} />
       )}
       <form>
         <TextInputWithLabelFormGroup
           name="name"
           isRequired
-          label={t('patient.allergies.allergyName')}
+          label={String(t('patient.allergies.allergyName'))}
           isEditable
-          placeholder={t('patient.allergies.allergyName')}
+          placeholder={String(t('patient.allergies.allergyName'))}
           value={allergy.name}
           onChange={onNameChange}
-          feedback={t(allergyError?.name || '')}
+          feedback={String(t(allergyError?.name || ''))}
           isInvalid={!!allergyError?.name}
         />
       </form>
@@ -62,15 +62,15 @@ const NewAllergyModal = (props: NewAllergyModalProps) => {
     <Modal
       show={show}
       toggle={onClose}
-      title={t('patient.allergies.new')}
+      title={String(t('patient.allergies.new'))}
       body={body}
       closeButton={{
-        children: t('actions.cancel'),
+        children: String(t('actions.cancel')),
         color: 'danger',
         onClick: onClose,
       }}
       successButton={{
-        children: t('patient.allergies.new'),
+        children: String(t('patient.allergies.new')),
         color: 'success',
         icon: 'add',
         iconLocation: 'left',

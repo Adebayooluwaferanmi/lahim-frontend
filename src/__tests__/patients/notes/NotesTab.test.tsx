@@ -7,7 +7,7 @@ import configureMockStore from 'redux-mock-store'
 import Patient from 'model/Patient'
 import thunk from 'redux-thunk'
 import { mount } from 'enzyme'
-import { Router } from 'react-router'
+import { Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import NoteTab from 'patients/notes/NoteTab'
 import * as components from '@hospitalrun/components'
@@ -20,7 +20,7 @@ const expectedPatient = {
 } as Patient
 
 const mockStore = configureMockStore([thunk])
-const history = createMemoryHistory()
+const navigate = createMemoryHistory()
 
 let user: any
 let store: any

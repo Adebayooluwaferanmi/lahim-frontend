@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { useHistory } from 'react-router'
+import { useSelector } from 'react-redux'
+import { useAppDispatch } from '../../store'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Spinner, Button, Container, Row, TextInput, Column } from '@hospitalrun/components'
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
@@ -15,10 +16,10 @@ const breadcrumbs = [{ i18nKey: 'patients.label', location: '/patients' }]
 
 const ViewPatients = () => {
   const { t } = useTranslation()
-  const history = useHistory()
+  const navigate = useNavigate()
   useTitle(t('patients.label'))
   useAddBreadcrumbs(breadcrumbs, true)
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { patients, isLoading } = useSelector((state: RootState) => state.patients)
 
   const setButtonToolBar = useButtonToolbarSetter()
@@ -40,9 +41,9 @@ const ViewPatients = () => {
         outlined
         color="success"
         icon="patient-add"
-        onClick={() => history.push('/patients/new')}
+        onClick={() => navigate('/patients/new')}
       >
-        {t('patients.newPatient')}
+        {String(t('patients.newPatient'))}
       </Button>,
     ])
 
@@ -56,16 +57,16 @@ const ViewPatients = () => {
     <table className="table table-hover">
       <thead className="thead-light ">
         <tr>
-          <th>{t('patient.code')}</th>
-          <th>{t('patient.givenName')}</th>
-          <th>{t('patient.familyName')}</th>
-          <th>{t('patient.sex')}</th>
-          <th>{t('patient.dateOfBirth')}</th>
+          <th>{String(t('patient.code'))}</th>
+          <th>{String(t('patient.givenName'))}</th>
+          <th>{String(t('patient.familyName'))}</th>
+          <th>{String(t('patient.sex'))}</th>
+          <th>{String(t('patient.dateOfBirth'))}</th>
         </tr>
       </thead>
       <tbody>
         {patients.map((p) => (
-          <tr key={p.id} onClick={() => history.push(`/patients/${p.id}`)}>
+          <tr key={p.id} onClick={() => navigate(`/patients/${p.id}`)}>
             <td>{p.code}</td>
             <td>{p.givenName}</td>
             <td>{p.familyName}</td>
@@ -90,7 +91,7 @@ const ViewPatients = () => {
             type="text"
             onChange={onSearchBoxChange}
             value={searchText}
-            placeholder={t('actions.search')}
+            placeholder={String(t('actions.search'))}
           />
         </Column>
       </Row>

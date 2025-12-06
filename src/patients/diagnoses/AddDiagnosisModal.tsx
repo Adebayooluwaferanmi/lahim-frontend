@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next'
 import Diagnosis from 'model/Diagnosis'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
 import DatePickerWithLabelFormGroup from 'components/input/DatePickerWithLabelFormGroup'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../store'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from '../../store'
 import { addDiagnosis } from '../patient-slice'
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 
 const AddDiagnosisModal = (props: Props) => {
   const { show, onCloseButtonClick } = props
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { diagnosisError, patient } = useSelector((state: RootState) => state.patient)
   const { t } = useTranslation()
 
@@ -49,8 +49,8 @@ const AddDiagnosisModal = (props: Props) => {
         {diagnosisError && (
           <Alert
             color="danger"
-            title={t('states.error')}
-            message={t(diagnosisError?.message || '')}
+            title={String(t('states.error'))}
+            message={String(t(diagnosisError?.message || ''))}
           />
         )}
         <div className="row">
@@ -58,13 +58,13 @@ const AddDiagnosisModal = (props: Props) => {
             <div className="form-group">
               <TextInputWithLabelFormGroup
                 name="name"
-                label={t('patient.diagnoses.diagnosisName')}
+                label={String(t('patient.diagnoses.diagnosisName'))}
                 isEditable
-                placeholder={t('patient.diagnoses.diagnosisName')}
+                placeholder={String(t('patient.diagnoses.diagnosisName'))}
                 value={diagnosis.name}
                 onChange={onNameChange}
                 isRequired
-                feedback={t(diagnosisError?.name || '')}
+                feedback={String(t(diagnosisError?.name || ''))}
                 isInvalid={!!diagnosisError?.name}
               />
             </div>
@@ -74,12 +74,12 @@ const AddDiagnosisModal = (props: Props) => {
           <div className="col-md-12">
             <DatePickerWithLabelFormGroup
               name="diagnosisDate"
-              label={t('patient.diagnoses.diagnosisDate')}
+              label={String(t('patient.diagnoses.diagnosisDate'))}
               value={new Date(diagnosis.diagnosisDate)}
               isEditable
               onChange={onDiagnosisDateChange}
               isRequired
-              feedback={t(diagnosisError?.date || '')}
+              feedback={String(t(diagnosisError?.date || ''))}
               isInvalid={!!diagnosisError?.date}
             />
           </div>
@@ -91,15 +91,15 @@ const AddDiagnosisModal = (props: Props) => {
     <Modal
       show={show}
       toggle={onCloseButtonClick}
-      title={t('patient.diagnoses.new')}
+      title={String(t('patient.diagnoses.new'))}
       body={body}
       closeButton={{
-        children: t('actions.cancel'),
+        children: String(t('actions.cancel')),
         color: 'danger',
         onClick: onCloseButtonClick,
       }}
       successButton={{
-        children: t('patient.diagnoses.new'),
+        children: String(t('patient.diagnoses.new')),
         color: 'success',
         icon: 'add',
         iconLocation: 'left',

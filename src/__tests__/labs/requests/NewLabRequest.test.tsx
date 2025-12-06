@@ -22,12 +22,12 @@ const mockStore = configureMockStore([thunk])
 describe('New Lab Request', () => {
   describe('title and breadcrumbs', () => {
     let titleSpy: any
-    const history = createMemoryHistory()
+    const navigate = createMemoryHistory()
 
     beforeEach(() => {
       const store = mockStore({ title: '', lab: { status: 'loading', error: {} } })
       titleSpy = jest.spyOn(titleUtil, 'default')
-      history.push('/labs/new')
+      navigate('/labs/new')
 
       mount(
         <Provider store={store}>
@@ -45,11 +45,11 @@ describe('New Lab Request', () => {
 
   describe('form layout', () => {
     let wrapper: ReactWrapper
-    const history = createMemoryHistory()
+    const navigate = createMemoryHistory()
 
     beforeEach(() => {
       const store = mockStore({ title: '', lab: { status: 'loading', error: {} } })
-      history.push('/labs/new')
+      navigate('/labs/new')
 
       wrapper = mount(
         <Provider store={store}>
@@ -108,7 +108,7 @@ describe('New Lab Request', () => {
 
   describe('errors', () => {
     let wrapper: ReactWrapper
-    const history = createMemoryHistory()
+    const navigate = createMemoryHistory()
     const error = {
       message: 'some message',
       patient: 'some patient message',
@@ -116,7 +116,7 @@ describe('New Lab Request', () => {
     }
 
     beforeEach(() => {
-      history.push('/labs/new')
+      navigate('/labs/new')
       const store = mockStore({ title: '', lab: { status: 'error', error } })
       wrapper = mount(
         <Provider store={store}>
@@ -145,10 +145,10 @@ describe('New Lab Request', () => {
 
   describe('on cancel', () => {
     let wrapper: ReactWrapper
-    const history = createMemoryHistory()
+    const navigate = createMemoryHistory()
 
     beforeEach(() => {
-      history.push('/labs/new')
+      navigate('/labs/new')
       const store = mockStore({ title: '', lab: { status: 'loading', error: {} } })
       wrapper = mount(
         <Provider store={store}>
@@ -173,7 +173,7 @@ describe('New Lab Request', () => {
 
   describe('on save', () => {
     let wrapper: ReactWrapper
-    const history = createMemoryHistory()
+    const navigate = createMemoryHistory()
     let labRepositorySaveSpy: any
     const expectedDate = new Date()
     const expectedLab = {
@@ -194,7 +194,7 @@ describe('New Lab Request', () => {
         .spyOn(PatientRepository, 'search')
         .mockResolvedValue([{ id: expectedLab.patientId, fullName: 'some full name' }] as Patient[])
 
-      history.push('/labs/new')
+      navigate('/labs/new')
       const store = mockStore({ title: '', lab: { status: 'loading', error: {} } })
       wrapper = mount(
         <Provider store={store}>

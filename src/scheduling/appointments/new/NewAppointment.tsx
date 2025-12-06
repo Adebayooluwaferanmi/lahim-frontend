@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import useTitle from 'page-header/useTitle'
 import { useTranslation } from 'react-i18next'
 import roundToNearestMinutes from 'date-fns/roundToNearestMinutes'
-import { useHistory } from 'react-router'
-import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { useAppDispatch } from '../../../store'
 import Appointment from 'model/Appointment'
 import addMinutes from 'date-fns/addMinutes'
 import { isBefore } from 'date-fns'
@@ -19,8 +19,8 @@ const breadcrumbs = [
 
 const NewAppointment = () => {
   const { t } = useTranslation()
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   useTitle(t('scheduling.appointments.new'))
   useAddBreadcrumbs(breadcrumbs, true)
   const startDateTime = roundToNearestMinutes(new Date(), { nearestTo: 15 })
@@ -37,12 +37,12 @@ const NewAppointment = () => {
   const [errorMessage, setErrorMessage] = useState('')
 
   const onCancelClick = () => {
-    history.push('/appointments')
+    navigate('/appointments')
   }
 
   const onNewAppointmentSaveSuccess = (newAppointment: Appointment) => {
-    history.push(`/appointments/${newAppointment.id}`)
-    Toast('success', t('states.success'), `${t('scheduling.appointment.successfullyCreated')}`)
+    navigate(`/appointments/${newAppointment.id}`)
+    Toast('success', t('states.success'), `${String(t('scheduling.appointment.successfullyCreated'))}`)
   }
 
   const onSave = () => {
@@ -51,7 +51,7 @@ const NewAppointment = () => {
       newErrorMessage += t('scheduling.appointment.errors.patientRequired')
     }
     if (isBefore(new Date(appointment.endDateTime), new Date(appointment.startDateTime))) {
-      newErrorMessage += ` ${t('scheduling.appointment.errors.startDateMustBeBeforeEndDate')}`
+      newErrorMessage += ` ${String(t('scheduling.appointment.errors.startDateMustBeBeforeEndDate'))}`
     }
 
     if (newErrorMessage) {
@@ -80,10 +80,10 @@ const NewAppointment = () => {
         <div className="row float-right">
           <div className="btn-group btn-group-lg">
             <Button className="mr-2" color="success" onClick={onSave}>
-              {t('actions.save')}
+              {String(t('actions.save'))}
             </Button>
             <Button color="danger" onClick={onCancelClick}>
-              {t('actions.cancel')}
+              {String(t('actions.cancel'))}
             </Button>
           </div>
         </div>

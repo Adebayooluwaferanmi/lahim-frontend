@@ -16,16 +16,17 @@ const ViewInventoryItem = () => {
   const { data: transactions = [] } = useInventoryTransactions({ itemId: id })
   const setButtonToolBar = useButtonToolbarSetter()
 
-  useTitle(item ? `${t('lims.inventory.viewItem', 'View Inventory Item')} - ${item.itemName || id}` : t('lims.inventory.viewItem', 'View Inventory Item'))
+  useTitle(item ? `${String(t('lims.inventory.viewItem', 'View Inventory Item'))} - ${item.itemName || id}` : t('lims.inventory.viewItem', 'View Inventory Item'))
 
-  useEffect(() => {
-    if (item) {
-      useAddBreadcrumbs([
-        { i18nKey: 'lims.inventory.items', location: '/lims/inventory/items' },
-        { i18nKey: 'lims.inventory.viewItem', location: `/lims/inventory/items/${id}` },
-      ], true)
-    }
-  }, [item, id])
+  useAddBreadcrumbs(
+    id
+      ? [
+          { i18nKey: 'lims.inventory.items', location: '/lims/inventory/items' },
+          { i18nKey: 'lims.inventory.viewItem', location: `/lims/inventory/items/${id}` },
+        ]
+      : [],
+    true
+  )
 
   useEffect(() => {
     setButtonToolBar([
@@ -37,7 +38,7 @@ const ViewInventoryItem = () => {
         iconLocation="left"
         onClick={() => navigate('/lims/inventory/items')}
       >
-        {t('actions.back', 'Back')}
+        {String(t('actions.back', 'Back'))}
       </Button>,
     ])
 
@@ -53,7 +54,7 @@ const ViewInventoryItem = () => {
   if (error || !item) {
     return (
       <Container>
-        <Alert color="danger" title={t('states.error', 'Error')} message={error?.message || t('lims.inventory.notFound', 'Inventory item not found')} />
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error?.message || t('lims.inventory.notFound', 'Inventory item not found'))} />
       </Container>
     )
   }
@@ -62,49 +63,47 @@ const ViewInventoryItem = () => {
 
   return (
     <Container>
-      <Panel>
-        <Panel.Header title={`${t('lims.inventory.viewItem', 'View Inventory Item')} - ${item.itemName || id}`} />
-        <Panel.Body>
+      <Panel title={`${String(t('lims.inventory.viewItem', 'View Inventory Item'))} - ${item.itemName || id}`}>
           <Row>
             <Column md={6}>
-              <h4>{t('lims.inventory.itemInformation', 'Item Information')}</h4>
+              <h4>{String(t('lims.inventory.itemInformation', 'Item Information'))}</h4>
               <table className="table">
                 <tbody>
                   <tr>
-                    <td><strong>{t('lims.inventory.itemCode', 'Item Code')}</strong></td>
+                    <td><strong>{String(t('lims.inventory.itemCode', 'Item Code'))}</strong></td>
                     <td>{item.itemCode || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.inventory.itemName', 'Item Name')}</strong></td>
+                    <td><strong>{String(t('lims.inventory.itemName', 'Item Name'))}</strong></td>
                     <td>{item.itemName || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.inventory.category', 'Category')}</strong></td>
+                    <td><strong>{String(t('lims.inventory.category', 'Category'))}</strong></td>
                     <td>{item.category || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.inventory.unit', 'Unit')}</strong></td>
+                    <td><strong>{String(t('lims.inventory.unit', 'Unit'))}</strong></td>
                     <td>{item.unit || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.inventory.unitCost', 'Unit Cost')}</strong></td>
+                    <td><strong>{String(t('lims.inventory.unitCost', 'Unit Cost'))}</strong></td>
                     <td>{item.unitCost ? `$${item.unitCost.toFixed(2)}` : '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.inventory.reorderPoint', 'Reorder Point')}</strong></td>
+                    <td><strong>{String(t('lims.inventory.reorderPoint', 'Reorder Point'))}</strong></td>
                     <td>{item.reorderPoint || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.inventory.status', 'Status')}</strong></td>
+                    <td><strong>{String(t('lims.inventory.status', 'Status'))}</strong></td>
                     <td>
                       <Badge color={item.active ? 'success' : 'secondary'}>
-                        {item.active ? t('lims.inventory.active', 'Active') : t('lims.inventory.inactive', 'Inactive')}
+                        {item.active ? String(t('lims.inventory.active', 'Active')) : String(t('lims.inventory.inactive', 'Inactive'))}
                       </Badge>
                     </td>
                   </tr>
                   {item.description && (
                     <tr>
-                      <td><strong>{t('lims.inventory.description', 'Description')}</strong></td>
+                      <td><strong>{String(t('lims.inventory.description', 'Description'))}</strong></td>
                       <td>{item.description}</td>
                     </tr>
                   )}
@@ -112,14 +111,14 @@ const ViewInventoryItem = () => {
               </table>
             </Column>
             <Column md={6}>
-              <h4>{t('lims.inventory.stockLevels', 'Stock Levels')}</h4>
+              <h4>{String(t('lims.inventory.stockLevels', 'Stock Levels'))}</h4>
               {itemStockLevels.length > 0 ? (
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>{t('lims.inventory.location', 'Location')}</th>
-                      <th>{t('lims.inventory.quantity', 'Quantity')}</th>
-                      <th>{t('lims.inventory.status', 'Status')}</th>
+                      <th>{String(t('lims.inventory.location', 'Location'))}</th>
+                      <th>{String(t('lims.inventory.quantity', 'Quantity'))}</th>
+                      <th>{String(t('lims.inventory.status', 'Status'))}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -137,7 +136,7 @@ const ViewInventoryItem = () => {
                   </tbody>
                 </table>
               ) : (
-                <p>{t('lims.inventory.noStockLevels', 'No stock levels found')}</p>
+                <p>{String(t('lims.inventory.noStockLevels', 'No stock levels found'))}</p>
               )}
             </Column>
           </Row>
@@ -145,14 +144,14 @@ const ViewInventoryItem = () => {
           {transactions.length > 0 && (
             <Row>
               <Column md={12}>
-                <h4>{t('lims.inventory.recentTransactions', 'Recent Transactions')}</h4>
+                <h4>{String(t('lims.inventory.recentTransactions', 'Recent Transactions'))}</h4>
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>{t('lims.inventory.transactionType', 'Type')}</th>
-                      <th>{t('lims.inventory.quantity', 'Quantity')}</th>
-                      <th>{t('lims.inventory.location', 'Location')}</th>
-                      <th>{t('lims.inventory.timestamp', 'Timestamp')}</th>
+                      <th>{String(t('lims.inventory.transactionType', 'Type'))}</th>
+                      <th>{String(t('lims.inventory.quantity', 'Quantity'))}</th>
+                      <th>{String(t('lims.inventory.location', 'Location'))}</th>
+                      <th>{String(t('lims.inventory.timestamp', 'Timestamp'))}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -169,7 +168,6 @@ const ViewInventoryItem = () => {
               </Column>
             </Row>
           )}
-        </Panel.Body>
       </Panel>
     </Container>
   )

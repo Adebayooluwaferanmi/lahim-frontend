@@ -18,11 +18,11 @@ import { RootState } from './store'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 import Patients from './patients/Patients'
+import { useUIStore } from './store/ui-store'
 
 const HospitalRun = () => {
-  const { title } = useSelector((state: RootState) => state.title)
+  const { title, sidebarCollapsed } = useUIStore()
   const { permissions } = useSelector((state: RootState) => state.user)
-  const { sidebarCollapsed } = useSelector((state: RootState) => state.components)
 
   return (
     <div>

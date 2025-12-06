@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Container, Row, Column } from '@hospitalrun/components'
+import { Button, Container, Row, Column, Spinner, Alert } from '@hospitalrun/components'
 import { useWorklists } from '../../hooks/useWorklists'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import useTitle from '../../page-header/useTitle'
+import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
+
+const breadcrumbs = [{ i18nKey: 'lims.worklists.label', location: '/lims/worklists' }]
 
 const Worklists = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   useTitle(t('lims.worklists.label', 'Worklists'))
+  useAddBreadcrumbs(breadcrumbs, true)
   const setButtonToolBar = useButtonToolbarSetter()
 
   const [sectionFilter, setSectionFilter] = useState('')
@@ -27,7 +31,7 @@ const Worklists = () => {
         iconLocation="left"
         onClick={() => navigate('/lims/worklists/generate')}
       >
-        {t('lims.worklists.generate', 'Generate Worklist')}
+        {String(t('lims.worklists.generate', 'Generate Worklist'))}
       </Button>,
     ])
 
@@ -37,11 +41,19 @@ const Worklists = () => {
   }, [setButtonToolBar, navigate, t])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <Container>
+        <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
+      </Container>
+    )
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>
+    return (
+      <Container>
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error.message || t('lims.worklists.loadError', 'Failed to load worklists'))} />
+      </Container>
+    )
   }
 
   return (
@@ -53,11 +65,11 @@ const Worklists = () => {
             value={sectionFilter}
             onChange={(e) => setSectionFilter(e.target.value)}
           >
-            <option value="">{t('lims.worklists.allSections', 'All Sections')}</option>
-            <option value="chemistry">{t('lims.worklists.section.chemistry', 'Chemistry')}</option>
-            <option value="hematology">{t('lims.worklists.section.hematology', 'Hematology')}</option>
-            <option value="microbiology">{t('lims.worklists.section.microbiology', 'Microbiology')}</option>
-            <option value="immunology">{t('lims.worklists.section.immunology', 'Immunology')}</option>
+            <option value="">{String(t('lims.worklists.allSections', 'All Sections'))}</option>
+            <option value="chemistry">{String(t('lims.worklists.section.chemistry', 'Chemistry'))}</option>
+            <option value="hematology">{String(t('lims.worklists.section.hematology', 'Hematology'))}</option>
+            <option value="microbiology">{String(t('lims.worklists.section.microbiology', 'Microbiology'))}</option>
+            <option value="immunology">{String(t('lims.worklists.section.immunology', 'Immunology'))}</option>
           </select>
         </Column>
       </Row>
@@ -65,17 +77,17 @@ const Worklists = () => {
       <Row>
         <Column>
           {worklists.length === 0 ? (
-            <div>{t('lims.worklists.noWorklists', 'No worklists found')}</div>
+            <div>{String(t('lims.worklists.noWorklists', 'No worklists found'))}</div>
           ) : (
             <table className="table table-hover">
               <thead>
                 <tr>
-                  <th>{t('lims.worklists.worklistNumber', 'Worklist Number')}</th>
-                  <th>{t('lims.worklists.section', 'Section')}</th>
-                  <th>{t('lims.worklists.status', 'Status')}</th>
-                  <th>{t('lims.worklists.generatedDate', 'Generated Date')}</th>
-                  <th>{t('lims.worklists.itemCount', 'Item Count')}</th>
-                  <th>{t('actions.view', 'View')}</th>
+                  <th>{String(t('lims.worklists.worklistNumber', 'Worklist Number'))}</th>
+                  <th>{String(t('lims.worklists.section', 'Section'))}</th>
+                  <th>{String(t('lims.worklists.status', 'Status'))}</th>
+                  <th>{String(t('lims.worklists.generatedDate', 'Generated Date'))}</th>
+                  <th>{String(t('lims.worklists.itemCount', 'Item Count'))}</th>
+                  <th>{String(t('actions.view', 'View'))}</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,7 +108,7 @@ const Worklists = () => {
                         color="primary"
                         onClick={() => navigate(`/lims/worklists/${worklist.id || worklist._id}`)}
                       >
-                        {t('actions.view', 'View')}
+                        {String(t('actions.view', 'View'))}
                       </Button>
                     </td>
                   </tr>

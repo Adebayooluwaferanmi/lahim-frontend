@@ -59,7 +59,7 @@ const GenerateReport = () => {
         color="secondary"
         onClick={() => navigate('/lims/reports')}
       >
-        {t('actions.cancel', 'Cancel')}
+        {String(t('actions.cancel', 'Cancel'))}
       </Button>,
     ])
 
@@ -74,49 +74,46 @@ const GenerateReport = () => {
 
   return (
     <Container>
-      <Panel>
-        <Panel.Header title={t('lims.reports.generate', 'Generate Report')} />
-        <Panel.Body>
-          {(submitError || error) && (
-            <Alert color="danger" title={t('states.error', 'Error')} message={submitError || (error as any)?.message || ''} />
-          )}
+      <Panel title={String(t('lims.reports.generate', 'Generate Report'))}>
+        {(submitError || error) && (
+          <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(submitError || (error as any)?.message || '')} />
+        )}
 
-          <form onSubmit={handleSubmit}>
-            <Row>
-              <Column md={6}>
-                <TextInputWithLabelFormGroup
-                  label={t('lims.reports.patientId', 'Patient ID')}
-                  name="patientId"
-                  type="text"
-                  value={formData.patientId}
-                  onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
-                  isRequired
-                />
-              </Column>
-              <Column md={6}>
-                <SelectWithLabelFormGroup
-                  label={t('lims.reports.format', 'Format')}
-                  name="format"
-                  value={formData.format}
-                  onChange={(e) => setFormData({ ...formData, format: e.target.value })}
-                  options={[
-                    { value: 'pdf', label: 'PDF' },
-                    { value: 'json', label: 'JSON' },
-                    { value: 'hl7', label: 'HL7' },
-                  ]}
-                />
-              </Column>
-            </Row>
+        <form onSubmit={handleSubmit}>
+          <Row>
+            <Column md={6}>
+              <TextInputWithLabelFormGroup
+                label={String(t('lims.reports.patientId', 'Patient ID'))}
+                name="patientId"
+                type="text"
+                value={formData.patientId}
+                onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
+                isRequired
+              />
+            </Column>
+            <Column md={6}>
+              <SelectWithLabelFormGroup
+                label={String(t('lims.reports.format', 'Format'))}
+                name="format"
+                value={formData.format}
+                onChange={(e) => setFormData({ ...formData, format: e.target.value })}
+                options={[
+                  { value: 'pdf', label: 'PDF' },
+                  { value: 'json', label: 'JSON' },
+                  { value: 'hl7', label: 'HL7' },
+                ]}
+              />
+            </Column>
+          </Row>
 
-            <Row>
-              <Column md={12}>
-                <Button color="success" type="submit" icon="save" iconLocation="left" disabled={generating}>
-                  {generating ? t('lims.reports.generating', 'Generating...') : t('lims.reports.generate', 'Generate Report')}
-                </Button>
-              </Column>
-            </Row>
-          </form>
-        </Panel.Body>
+          <Row>
+            <Column md={12}>
+              <Button color="success" icon="save" iconLocation="left" disabled={generating}>
+                {generating ? String(t('lims.reports.generating', 'Generating...')) : String(t('lims.reports.generate', 'Generate Report'))}
+              </Button>
+            </Column>
+          </Row>
+        </form>
       </Panel>
     </Container>
   )

@@ -1,7 +1,7 @@
 import '../../__mocks__/matchMediaMock'
 import React from 'react'
 import { Provider } from 'react-redux'
-import { Router, Route } from 'react-router'
+import { Router, Route } from 'react-router-dom'
 import { mount } from 'enzyme'
 import thunk from 'redux-thunk'
 import { createMemoryHistory } from 'history'
@@ -49,7 +49,7 @@ describe('View Labs', () => {
     jest.spyOn(PatientRepository, 'find').mockResolvedValue(mockPatient as Patient)
 
     history = createMemoryHistory()
-    history.push(`labs/${lab.id}`)
+    navigate(`labs/${lab.id}`)
     const store = mockStore({
       title: '',
       user: {

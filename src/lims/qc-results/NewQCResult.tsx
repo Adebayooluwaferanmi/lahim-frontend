@@ -94,7 +94,7 @@ const NewQCResult = () => {
         color="secondary"
         onClick={() => navigate('/lims/qc-results')}
       >
-        {t('actions.cancel', 'Cancel')}
+        {String(t('actions.cancel', 'Cancel'))}
       </Button>,
     ])
 
@@ -109,44 +109,40 @@ const NewQCResult = () => {
 
   return (
     <Container>
-      <Panel>
-        <Panel.Header title={t('lims.qcResults.new', 'New QC Result')} />
-        <Panel.Body>
-          {(submitError || createError) && (
-            <Alert color="danger" title={t('states.error', 'Error')} message={submitError || createError || ''} />
-          )}
+      <Panel title={String(t('lims.qcResults.new', 'New QC Result'))}>
+        {(submitError || createError) && (
+          <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(submitError || createError || '')} />
+        )}
 
           <form onSubmit={handleSubmit}>
             <Row>
               <Column md={6}>
                 <SelectWithLabelFormGroup
-                  label={t('lims.qcResults.qcMaterial', 'QC Material')}
+                  label={String(t('lims.qcResults.qcMaterial', 'QC Material'))}
                   name="materialId"
                   value={formData.materialId}
                   onChange={(e) => setFormData({ ...formData, materialId: e.target.value })}
                   options={[
-                    { value: '', label: t('lims.qcResults.selectMaterial', 'Select Material') },
-                    ...materials.map((material) => ({
-                      value: material.id || material._id || '',
-                      label: `${material.materialName} - Lot: ${material.lotNumber} (Target: ${material.targetValue} ± ${material.sd} SD)`,
-                    })),
-                  ]}
+                    { value: '', label: String(t('lims.qcResults.selectMaterial', 'Select Material')) },
+                  ].concat(materials.map((material) => ({
+                    value: material.id || material._id || '',
+                    label: `${material.materialName} - Lot: ${material.lotNumber} (Target: ${material.targetValue} ± ${material.sd} SD)`,
+                  })))}
                 />
               </Column>
 
               <Column md={6}>
                 <SelectWithLabelFormGroup
-                  label={`${t('lims.qcResults.instrument', 'Instrument')} (${t('lims.qcResults.optional', 'Optional')})`}
+                  label={`${String(t('lims.qcResults.instrument', 'Instrument'))} (${String(t('lims.qcResults.optional', 'Optional'))})`}
                   name="instrumentId"
                   value={formData.instrumentId}
                   onChange={(e) => setFormData({ ...formData, instrumentId: e.target.value })}
                   options={[
-                    { value: '', label: t('lims.qcResults.none', 'None') },
-                    ...instruments.map((instrument) => ({
-                      value: instrument.id || instrument._id || '',
-                      label: instrument.name || '',
-                    })),
-                  ]}
+                    { value: '', label: String(t('lims.qcResults.none', 'None')) },
+                  ].concat(instruments.map((instrument) => ({
+                    value: instrument.id || instrument._id || '',
+                    label: instrument.name || '',
+                  })))}
                 />
               </Column>
             </Row>
@@ -156,8 +152,8 @@ const NewQCResult = () => {
                 <Column md={12}>
                   <Alert
                     color="info"
-                    title={t('lims.qcResults.materialInfo', 'Material Information')}
-                    message={`${t('lims.qcResults.targetValue', 'Target Value')}: ${selectedMaterial.targetValue} ${selectedMaterial.unit || ''}. ${t('lims.qcResults.standardDeviation', 'Standard Deviation')}: ${selectedMaterial.sd} ${selectedMaterial.unit || ''}. ${t('lims.qcResults.acceptableRange', 'Acceptable Range')}: ${selectedMaterial.acceptableRange ? `${selectedMaterial.acceptableRange.min} - ${selectedMaterial.acceptableRange.max}` : `${selectedMaterial.targetValue! - 2 * selectedMaterial.sd!} - ${selectedMaterial.targetValue! + 2 * selectedMaterial.sd!}`}`}
+                    title={String(t('lims.qcResults.materialInfo', 'Material Information'))}
+                    message={`${String(t('lims.qcResults.targetValue', 'Target Value'))}: ${selectedMaterial.targetValue} ${selectedMaterial.unit || ''}. ${String(t('lims.qcResults.standardDeviation', 'Standard Deviation'))}: ${selectedMaterial.sd} ${selectedMaterial.unit || ''}. ${String(t('lims.qcResults.acceptableRange', 'Acceptable Range'))}: ${selectedMaterial.acceptableRange ? `${selectedMaterial.acceptableRange.min} - ${selectedMaterial.acceptableRange.max}` : `${selectedMaterial.targetValue! - 2 * selectedMaterial.sd!} - ${selectedMaterial.targetValue! + 2 * selectedMaterial.sd!}`}`}
                   />
                 </Column>
               </Row>
@@ -166,7 +162,7 @@ const NewQCResult = () => {
             <Row>
               <Column md={4}>
                 <TextInputWithLabelFormGroup
-                  label={t('lims.qcResults.measuredValue', 'Measured Value')}
+                  label={String(t('lims.qcResults.measuredValue', 'Measured Value'))}
                   name="measuredValue"
                   type="number"
                   value={formData.measuredValue}
@@ -177,7 +173,7 @@ const NewQCResult = () => {
 
               <Column md={4}>
                 <DatePickerWithLabelFormGroup
-                  label={t('lims.qcResults.runDate', 'Run Date')}
+                  label={String(t('lims.qcResults.runDate', 'Run Date'))}
                   name="runDate"
                   value={formData.runDate}
                   onChange={(date) => setFormData({ ...formData, runDate: date })}
@@ -187,7 +183,7 @@ const NewQCResult = () => {
 
               <Column md={4}>
                 <TextInputWithLabelFormGroup
-                  label={`${t('lims.qcResults.runNumber', 'Run Number')} (${t('lims.qcResults.optional', 'Optional')})`}
+                  label={`${String(t('lims.qcResults.runNumber', 'Run Number'))} (${String(t('lims.qcResults.optional', 'Optional'))})`}
                   name="runNumber"
                   type="text"
                   value={formData.runNumber}
@@ -199,7 +195,7 @@ const NewQCResult = () => {
             <Row>
               <Column md={12}>
                 <TextFieldWithLabelFormGroup
-                  label={`${t('lims.qcResults.notes', 'Notes')} (${t('lims.qcResults.optional', 'Optional')})`}
+                  label={`${String(t('lims.qcResults.notes', 'Notes'))} (${String(t('lims.qcResults.optional', 'Optional'))})`}
                   name="notes"
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -210,18 +206,16 @@ const NewQCResult = () => {
             <Row>
               <Column md={12}>
                 <Button
-                  type="submit"
                   color="success"
                   icon="save"
                   iconLocation="left"
                   disabled={creating}
                 >
-                  {creating ? t('lims.qcResults.creating', 'Creating...') : t('lims.qcResults.create', 'Create QC Result')}
+                  {creating ? String(t('lims.qcResults.creating', 'Creating...')) : String(t('lims.qcResults.create', 'Create QC Result'))}
                 </Button>
               </Column>
             </Row>
           </form>
-        </Panel.Body>
       </Panel>
     </Container>
   )

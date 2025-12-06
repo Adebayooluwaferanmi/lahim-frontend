@@ -3,7 +3,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { createMemoryHistory } from 'history'
 import Sidebar from 'components/Sidebar'
-import { Router } from 'react-router'
+import { Router } from 'react-router-dom'
 import { ListItem } from '@hospitalrun/components'
 import { act } from '@testing-library/react'
 import configureMockStore from 'redux-mock-store'
@@ -19,7 +19,7 @@ describe('Sidebar', () => {
   })
   const setup = (location: string) => {
     history = createMemoryHistory()
-    history.push(location)
+    navigate(location)
     return mount(
       <Router history={history}>
         <Provider store={store}>

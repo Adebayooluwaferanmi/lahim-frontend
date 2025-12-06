@@ -39,7 +39,7 @@ const NoteTab = (props: Props) => {
               iconLocation="left"
               onClick={onNewNoteClick}
             >
-              {t('patient.notes.new')}
+              {String(t('patient.notes.new'))}
             </Button>
           )}
         </div>
@@ -48,8 +48,8 @@ const NoteTab = (props: Props) => {
       {(!patient.notes || patient.notes.length === 0) && (
         <Alert
           color="warning"
-          title={t('patient.notes.warning.noNotes')}
-          message={t('patient.notes.addNoteAbove')}
+          title={String(t('patient.notes.warning.noNotes'))}
+          message={String(t('patient.notes.addNoteAbove'))}
         />
       )}
       <List>

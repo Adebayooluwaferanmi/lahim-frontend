@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-
-const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useApiQueryWithParams, useApiQuery } from '../lib/queries'
+import { useCreateMutation } from '../lib/mutations'
 
 export interface Report {
   id?: string
@@ -18,96 +18,74 @@ export interface Report {
   results?: any[]
 }
 
-interface UseReportsParams {
+interface UseReportsParams extends Record<string, unknown> {
   status?: string
   patientId?: string
   dateFrom?: string
   dateTo?: string
 }
 
+/**
+ * Fetch reports with optional filters
+ * Uses optimized API client with caching and retry logic
+ */
 export const useReports = (params: UseReportsParams = {}) => {
-  const queryParams = new URLSearchParams()
-  if (params.status) queryParams.append('status', params.status)
-  if (params.patientId) queryParams.append('patientId', params.patientId)
-  if (params.dateFrom) queryParams.append('dateFrom', params.dateFrom)
-  if (params.dateTo) queryParams.append('dateTo', params.dateTo)
+  const { data, ...rest } = useApiQueryWithParams<Report[] | { reports: Report[] }, UseReportsParams>(
+    ['reports'],
+    '/reports',
+    params
+  )
 
-  const queryString = queryParams.toString()
-  const url = `${apiUrl}/reports${queryString ? `?${queryString}` : ''}`
+  // Normalize response format
+  const normalizedData = data
+    ? Array.isArray(data)
+      ? data
+      : (data as { reports: Report[] }).reports || []
+    : undefined
 
-  return useQuery<Report[]>({
-    queryKey: ['reports', params],
-    queryFn: async () => {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch reports: ${response.statusText}`)
-      }
-      const data = await response.json()
-      return Array.isArray(data) ? data : data.reports || []
-    },
-  })
+  return {
+    ...rest,
+    data: normalizedData,
+  }
 }
 
+/**
+ * Fetch a single report by ID
+ * Uses optimized API client with caching
+ */
 export const useReport = (id: string | undefined) => {
-  return useQuery<Report>({
-    queryKey: ['report', id],
-    queryFn: async () => {
-      if (!id) throw new Error('Report ID is required')
-      const response = await fetch(`${apiUrl}/reports/${id}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch report: ${response.statusText}`)
-      }
-      return response.json()
-    },
+  return useApiQuery<Report>(
+    ['reports', id],
+    `/reports/${id}`,
+    {
     enabled: !!id,
-  })
+    }
+  )
 }
 
+/**
+ * Generate a new report with optimistic updates
+ */
 export const useGenerateReport = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation<Report, Error, { patientId: string; resultIds?: string[]; format?: string }>({
-    mutationFn: async (data) => {
-      const response = await fetch(`${apiUrl}/reports/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: response.statusText }))
-        throw new Error(error.message || `Failed to generate report: ${response.statusText}`)
-      }
-
-      return response.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports'] })
-    },
-  })
+  return useCreateMutation<Report, { patientId: string; resultIds?: string[]; format?: string }>(
+    '/reports/generate',
+    {
+      queryKey: ['reports'],
+      invalidateQueries: [['reports']],
+    }
+  )
 }
 
+/**
+ * Sign a report with optimistic updates
+ * Note: This uses a custom mutation since it's a POST to a sub-endpoint
+ */
 export const useSignReport = () => {
   const queryClient = useQueryClient()
-
   return useMutation<Report, Error, { id: string; signedBy: string }>({
     mutationFn: async ({ id, signedBy }) => {
-      const response = await fetch(`${apiUrl}/reports/${id}/sign`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ signedBy }),
-      })
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: response.statusText }))
-        throw new Error(error.message || `Failed to sign report: ${response.statusText}`)
-      }
-
-      return response.json()
+      const { apiClient } = await import('../lib/api-client')
+      return apiClient.post<Report>(`/reports/${id}/sign`, { signedBy })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reports'] })
@@ -115,25 +93,24 @@ export const useSignReport = () => {
   })
 }
 
+/**
+ * Deliver a report with optimistic updates
+ * Note: This uses a custom mutation since it's a POST to a sub-endpoint
+ */
 export const useDeliverReport = () => {
   const queryClient = useQueryClient()
-
-  return useMutation<Report, Error, { id: string; method: string; recipient?: string }>({
-    mutationFn: async ({ id, method, recipient }) => {
-      const response = await fetch(`${apiUrl}/reports/${id}/deliver`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ method, recipient }),
+  return useMutation<
+    { report: Report; deliveries: any[] },
+    Error,
+    { id: string; methods: ('email' | 'portal' | 'print' | 'api' | 'hl7')[]; emailAddress?: string; recipientName?: string }
+  >({
+    mutationFn: async ({ id, methods, emailAddress, recipientName }) => {
+      const { apiClient } = await import('../lib/api-client')
+      return apiClient.post<{ report: Report; deliveries: any[] }>(`/reports/${id}/deliver`, {
+        methods,
+        emailAddress,
+        recipientName,
       })
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: response.statusText }))
-        throw new Error(error.message || `Failed to deliver report: ${response.statusText}`)
-      }
-
-      return response.json()
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reports'] })

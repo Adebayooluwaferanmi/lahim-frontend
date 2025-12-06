@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-
-const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
+import { useApiQuery } from '../lib/queries'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { apiClient } from '../lib/api-client'
 
 export interface Instrument {
   id?: string
@@ -16,32 +16,65 @@ export interface Instrument {
   location?: string
 }
 
+/**
+ * Fetch all instruments
+ * Uses optimized API client with caching and retry logic
+ */
 export const useInstruments = () => {
-  return useQuery<Instrument[]>({
-    queryKey: ['instruments'],
-    queryFn: async () => {
-      const response = await fetch(`${apiUrl}/instruments`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch instruments: ${response.statusText}`)
-      }
-      const data = await response.json()
-      return Array.isArray(data) ? data : data.instruments || []
-    },
-  })
+  const { data, ...rest } = useApiQuery<Instrument[] | { instruments: Instrument[] }>(
+    ['instruments'],
+    '/instruments'
+  )
+
+  // Normalize response format
+  const normalizedData = data
+    ? Array.isArray(data)
+      ? data
+      : (data as { instruments: Instrument[] }).instruments || []
+    : undefined
+
+  return {
+    ...rest,
+    data: normalizedData,
+  }
 }
 
+/**
+ * Fetch a single instrument by ID
+ * Uses optimized API client with caching
+ */
 export const useInstrument = (id: string | undefined) => {
-  return useQuery<Instrument>({
-    queryKey: ['instrument', id],
-    queryFn: async () => {
-      if (!id) throw new Error('Instrument ID is required')
-      const response = await fetch(`${apiUrl}/instruments/${id}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch instrument: ${response.statusText}`)
-      }
-      return response.json()
-    },
+  return useApiQuery<Instrument>(
+    ['instruments', id],
+    `/instruments/${id}`,
+    {
     enabled: !!id,
+    }
+  )
+}
+
+/**
+ * Import instrument results mutation hook
+ */
+export const useImportInstrumentResults = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    { imported: number; errors: any[] },
+    Error,
+    { id: string; results: any[]; format?: 'json' | 'hl7' | 'astm' }
+  >({
+    mutationFn: async ({ id, results, format = 'json' }) => {
+      return apiClient.post<{ imported: number; errors: any[] }>(`/instruments/${id}/import-results`, {
+        results,
+        format,
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['instruments'] })
+      queryClient.invalidateQueries({ queryKey: ['lab-results'] })
+      queryClient.invalidateQueries({ queryKey: ['worklists'] })
+    },
   })
 }
 

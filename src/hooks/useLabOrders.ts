@@ -1,6 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
-
-const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
+import { useApiQueryWithParams, useApiQuery } from '../lib/queries'
 
 export interface LabOrder {
   id?: string
@@ -21,48 +19,48 @@ export interface LabOrder {
   notes?: string
 }
 
-interface UseLabOrdersParams {
+interface UseLabOrdersParams extends Record<string, unknown> {
   status?: string
   priority?: string
   patientId?: string
   search?: string
 }
 
+/**
+ * Fetch lab orders with optional filters
+ * Uses optimized API client with caching and retry logic
+ */
 export const useLabOrders = (params: UseLabOrdersParams = {}) => {
-  const queryParams = new URLSearchParams()
-  if (params.status) queryParams.append('status', params.status)
-  if (params.priority) queryParams.append('priority', params.priority)
-  if (params.patientId) queryParams.append('patientId', params.patientId)
-  if (params.search) queryParams.append('search', params.search)
+  const { data, ...rest } = useApiQueryWithParams<LabOrder[] | { orders: LabOrder[] }, UseLabOrdersParams>(
+    ['lab-orders'],
+    '/lab-orders',
+    params
+  )
 
-  const queryString = queryParams.toString()
-  const url = `${apiUrl}/lab-orders${queryString ? `?${queryString}` : ''}`
+  // Normalize response format
+  const normalizedData = data
+    ? Array.isArray(data)
+      ? data
+      : (data as { orders: LabOrder[] }).orders || []
+    : undefined
 
-  return useQuery<LabOrder[]>({
-    queryKey: ['lab-orders', params],
-    queryFn: async () => {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch lab orders: ${response.statusText}`)
-      }
-      const data = await response.json()
-      return Array.isArray(data) ? data : data.orders || []
-    },
-  })
+  return {
+    ...rest,
+    data: normalizedData,
+  }
 }
 
+/**
+ * Fetch a single lab order by ID
+ * Uses optimized API client with caching
+ */
 export const useLabOrder = (id: string | undefined) => {
-  return useQuery<LabOrder>({
-    queryKey: ['lab-order', id],
-    queryFn: async () => {
-      if (!id) throw new Error('Lab order ID is required')
-      const response = await fetch(`${apiUrl}/lab-orders/${id}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch lab order: ${response.statusText}`)
-      }
-      return response.json()
-    },
+  return useApiQuery<LabOrder>(
+    ['lab-orders', id],
+    `/lab-orders/${id}`,
+    {
     enabled: !!id,
-  })
+    }
+  )
 }
 

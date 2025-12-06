@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { useHistory } from 'react-router'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { TextInput, Button, List, ListItem, Container, Row, Column } from '@hospitalrun/components'
-import { RootState } from '../../store'
+import { RootState, useAppDispatch } from '../../store'
 import { fetchPatientAppointments } from '../../scheduling/appointments/appointments-slice'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
 
@@ -12,8 +12,8 @@ interface Props {
 }
 
 const AppointmentsList = (props: Props) => {
-  const dispatch = useDispatch()
-  const history = useHistory()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const { t } = useTranslation()
 
   const { patientId } = props
@@ -36,7 +36,7 @@ const AppointmentsList = (props: Props) => {
     // inline style added to pick up on newlines for string literal
     <ul style={{ whiteSpace: 'pre-line' }}>
       {appointments.map((a) => (
-        <ListItem action key={a.id} onClick={() => history.push(`/appointments/${a.id}`)}>
+        <ListItem action key={a.id} onClick={() => navigate(`/appointments/${a.id}`)}>
           {new Date(a.startDateTime).toLocaleString()}
         </ListItem>
       ))}
@@ -61,9 +61,9 @@ const AppointmentsList = (props: Props) => {
             outlined
             color="success"
             icon="appointment-add"
-            onClick={() => history.push('/appointments/new')}
+            onClick={() => navigate('/appointments/new')}
           >
-            {t('scheduling.appointments.new')}
+            {String(t('scheduling.appointments.new'))}
           </Button>
         </div>
       </div>
@@ -77,12 +77,12 @@ const AppointmentsList = (props: Props) => {
                 type="text"
                 onChange={onSearchBoxChange}
                 value={searchText}
-                placeholder={t('actions.search')}
+                placeholder={String(t('actions.search'))}
               />
             </Column>
             <Column md={2}>
               <Button size="large" onClick={onSearchFormSubmit}>
-                {t('actions.search')}
+                {String(t('actions.search'))}
               </Button>
             </Column>
           </Row>

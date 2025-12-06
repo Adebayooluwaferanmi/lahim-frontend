@@ -17,7 +17,7 @@ const mockStore = configureMockStore()
 
 describe('Breadcrumbs', () => {
   const setup = (breadcrumbs: Breadcrumb[]) => {
-    const history = createMemoryHistory()
+    const navigate = createMemoryHistory()
     const store = mockStore({
       breadcrumbs: { breadcrumbs },
     })

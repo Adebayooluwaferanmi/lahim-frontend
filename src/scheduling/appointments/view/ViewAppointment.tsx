@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import useTitle from 'page-header/useTitle'
-import { useSelector, useDispatch } from 'react-redux'
-import { RootState } from 'store'
-import { useParams, useHistory } from 'react-router'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from 'store'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Spinner, Button, Modal, Toast } from '@hospitalrun/components'
 import { useTranslation } from 'react-i18next'
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
@@ -15,9 +15,9 @@ import useAddBreadcrumbs from '../../../breadcrumbs/useAddBreadcrumbs'
 const ViewAppointment = () => {
   const { t } = useTranslation()
   useTitle(t('scheduling.appointments.viewAppointment'))
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { id } = useParams()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { appointment, patient, isLoading } = useSelector((state: RootState) => state.appointment)
   const { permissions } = useSelector((state: RootState) => state.user)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false)
@@ -35,7 +35,7 @@ const ViewAppointment = () => {
   }
 
   const onDeleteSuccess = () => {
-    history.push('/appointments')
+    navigate('/appointments')
     Toast('success', t('states.success'), t('scheduling.appointment.successfullyDeleted'))
   }
 
@@ -54,10 +54,10 @@ const ViewAppointment = () => {
           icon="edit"
           outlined
           onClick={() => {
-            history.push(`/appointments/edit/${appointment.id}`)
+            navigate(`/appointments/edit/${appointment.id}`)
           }}
         >
-          {t('actions.edit')}
+          {String(t('actions.edit'))}
         </Button>,
       )
     }
@@ -70,7 +70,7 @@ const ViewAppointment = () => {
           icon="appointment-remove"
           onClick={onAppointmentDeleteButtonClick}
         >
-          {t('scheduling.appointments.deleteAppointment')}
+          {String(t('scheduling.appointments.deleteAppointment'))}
         </Button>,
       )
     }
@@ -96,15 +96,15 @@ const ViewAppointment = () => {
     <div>
       <AppointmentDetailForm appointment={appointment} isEditable={false} patient={patient} />
       <Modal
-        body={t('scheduling.appointment.deleteConfirmationMessage')}
+        body={String(t('scheduling.appointment.deleteConfirmationMessage'))}
         buttonsAlignment="right"
         show={showDeleteConfirmation}
         closeButton={{
-          children: t('actions.delete'),
+          children: String(t('actions.delete')),
           color: 'danger',
           onClick: onDeleteConfirmationButtonClick,
         }}
-        title={t('actions.confirmDelete')}
+        title={String(t('actions.confirmDelete'))}
         toggle={() => setShowDeleteConfirmation(false)}
       />
     </div>

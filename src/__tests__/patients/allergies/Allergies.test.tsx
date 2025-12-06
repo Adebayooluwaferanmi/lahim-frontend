@@ -6,7 +6,7 @@ import Permissions from 'model/Permissions'
 import configureMockStore from 'redux-mock-store'
 import { createMemoryHistory } from 'history'
 import thunk from 'redux-thunk'
-import { Router } from 'react-router'
+import { Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import Patient from 'model/Patient'
 import * as components from '@hospitalrun/components'
@@ -15,7 +15,7 @@ import PatientRepository from 'clients/db/PatientRepository'
 import Allergy from 'model/Allergy'
 
 const mockStore = configureMockStore([thunk])
-const history = createMemoryHistory()
+const navigate = createMemoryHistory()
 const expectedPatient = {
   id: '123',
   rev: '123',

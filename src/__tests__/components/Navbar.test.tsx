@@ -8,7 +8,7 @@ import { createMemoryHistory } from 'history'
 import Navbar from '../../components/Navbar'
 
 describe('Navbar', () => {
-  const history = createMemoryHistory()
+  const navigate = createMemoryHistory()
   const setup = () =>
     mount(
       <Router history={history}>

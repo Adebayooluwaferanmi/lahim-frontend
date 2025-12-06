@@ -5,7 +5,7 @@ import { createMemoryHistory } from 'history'
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import Patient from 'model/Patient'
-import { Router } from 'react-router'
+import { Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import AppointmentsList from 'patients/appointments/AppointmentsList'
 import * as components from '@hospitalrun/components'
@@ -28,7 +28,7 @@ const expectedAppointments = [
 ]
 
 const mockStore = configureMockStore([thunk])
-const history = createMemoryHistory()
+const navigate = createMemoryHistory()
 
 let store: any
 

@@ -262,7 +262,7 @@ export const addRelatedPerson = (
   if (_.isEmpty(newRelatedPersonError)) {
     const patient = await PatientRepository.find(patientId)
     const relatedPersons = patient.relatedPersons || []
-    relatedPersons.push({ id: uuid(), ...relatedPerson })
+    relatedPersons.push({ ...relatedPerson, id: uuid() })
     patient.relatedPersons = relatedPersons
 
     await dispatch(updatePatient(patient, onSuccess))
@@ -307,7 +307,7 @@ export const addDiagnosis = (
   if (_.isEmpty(newDiagnosisError)) {
     const patient = await PatientRepository.find(patientId)
     const diagnoses = patient.diagnoses || []
-    diagnoses.push({ id: uuid(), ...diagnosis })
+    diagnoses.push({ ...diagnosis, id: uuid() })
     patient.diagnoses = diagnoses
 
     await dispatch(updatePatient(patient, onSuccess))
@@ -337,7 +337,7 @@ export const addAllergy = (
   if (_.isEmpty(newAllergyError)) {
     const patient = await PatientRepository.find(patientId)
     const allergies = patient.allergies || []
-    allergies.push({ id: uuid(), ...allergy })
+    allergies.push({ ...allergy, id: uuid() })
     patient.allergies = allergies
 
     await dispatch(updatePatient(patient, onSuccess))
@@ -366,7 +366,7 @@ export const addNote = (
   if (_.isEmpty(newNoteError)) {
     const patient = await PatientRepository.find(patientId)
     const notes = patient.notes || []
-    notes.push({ id: uuid(), date: new Date().toISOString(), ...note })
+    notes.push({ ...note, id: uuid(), date: new Date().toISOString() })
     patient.notes = notes
 
     await dispatch(updatePatient(patient, onSuccess))

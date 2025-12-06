@@ -1,6 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
-
-const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
+import { useApiQueryWithParams, useApiQuery } from '../lib/queries'
 
 export interface Worklist {
   id?: string
@@ -22,44 +20,46 @@ export interface Worklist {
   }>
 }
 
-interface UseWorklistsParams {
+interface UseWorklistsParams extends Record<string, unknown> {
   section?: string
   status?: string
 }
 
+/**
+ * Fetch worklists with optional filters
+ * Uses optimized API client with caching and retry logic
+ */
 export const useWorklists = (params: UseWorklistsParams = {}) => {
-  const queryParams = new URLSearchParams()
-  if (params.section) queryParams.append('section', params.section)
-  if (params.status) queryParams.append('status', params.status)
+  const { data, ...rest } = useApiQueryWithParams<Worklist[] | { worklists: Worklist[] }, UseWorklistsParams>(
+    ['worklists'],
+    '/worklists',
+    params
+  )
 
-  const queryString = queryParams.toString()
-  const url = `${apiUrl}/worklists${queryString ? `?${queryString}` : ''}`
+  // Normalize response format
+  const normalizedData = data
+    ? Array.isArray(data)
+      ? data
+      : (data as { worklists: Worklist[] }).worklists || []
+    : undefined
 
-  return useQuery<Worklist[]>({
-    queryKey: ['worklists', params],
-    queryFn: async () => {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch worklists: ${response.statusText}`)
-      }
-      const data = await response.json()
-      return Array.isArray(data) ? data : data.worklists || []
-    },
-  })
+  return {
+    ...rest,
+    data: normalizedData,
+  }
 }
 
+/**
+ * Fetch a single worklist by ID
+ * Uses optimized API client with caching
+ */
 export const useWorklist = (id: string | undefined) => {
-  return useQuery<Worklist>({
-    queryKey: ['worklist', id],
-    queryFn: async () => {
-      if (!id) throw new Error('Worklist ID is required')
-      const response = await fetch(`${apiUrl}/worklists/${id}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch worklist: ${response.statusText}`)
-      }
-      return response.json()
-    },
+  return useApiQuery<Worklist>(
+    ['worklists', id],
+    `/worklists/${id}`,
+    {
     enabled: !!id,
-  })
+    }
+  )
 }
 

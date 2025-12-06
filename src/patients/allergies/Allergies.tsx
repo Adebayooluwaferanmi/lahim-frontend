@@ -39,7 +39,7 @@ const Allergies = (props: AllergiesProps) => {
               iconLocation="left"
               onClick={() => setShowNewAllergyModal(true)}
             >
-              {t('patient.allergies.new')}
+              {String(t('patient.allergies.new'))}
             </Button>
           )}
         </div>
@@ -48,8 +48,8 @@ const Allergies = (props: AllergiesProps) => {
       {(!patient.allergies || patient.allergies.length === 0) && (
         <Alert
           color="warning"
-          title={t('patient.allergies.warning.noAllergies')}
-          message={t('patient.allergies.addAllergyAbove')}
+          title={String(t('patient.allergies.warning.noAllergies'))}
+          message={String(t('patient.allergies.addAllergyAbove'))}
         />
       )}
       <List>

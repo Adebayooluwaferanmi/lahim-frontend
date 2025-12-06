@@ -6,7 +6,7 @@ import configureMockStore, { MockStore } from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import Appointment from 'model/Appointment'
 import ViewAppointment from 'scheduling/appointments/view/ViewAppointment'
-import { Router, Route } from 'react-router'
+import { Router, Route } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import AppointmentRepository from 'clients/db/AppointmentRepository'
 import { mocked } from 'ts-jest/utils'
@@ -51,7 +51,7 @@ describe('View Appointment', () => {
     mockedPatientRepository.find.mockResolvedValue(patient)
 
     history = createMemoryHistory()
-    history.push('/appointments/123')
+    navigate('/appointments/123')
 
     store = mockStore({
       user: {

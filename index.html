@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1abc9c" />
+    <meta
+      name="description"
+      content="HospitalRun"
+    />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>HospitalRun</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script>
+      // Polyfill process.version for PouchDB and other Node.js dependencies
+      if (typeof process === 'undefined') {
+        window.process = { 
+          env: {}, 
+          version: 'v20.0.0', 
+          browser: true, 
+          platform: 'browser',
+          nextTick: (fn) => setTimeout(fn, 0)
+        };
+      } else {
+        if (!process.version) process.version = 'v20.0.0';
+        if (!process.browser) process.browser = true;
+        if (!process.platform) process.platform = 'browser';
+        if (!process.nextTick) process.nextTick = (fn) => setTimeout(fn, 0);
+      }
+      
+      // Declare global variables for legacy md5.min.js (used by pouchdb-quick-search)
+      // These need to be in global scope before md5.min.js is loaded
+      if (typeof window !== 'undefined') {
+        window.txt = window.txt || undefined;
+        window.md5 = window.md5 || undefined;
+      }
+    </script>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>

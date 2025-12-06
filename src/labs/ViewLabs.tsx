@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import format from 'date-fns/format'
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
 import { Button } from '@hospitalrun/components'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import LabRepository from 'clients/db/LabRepository'
 import SortRequest from 'clients/db/SortRequest'
 import Lab from 'model/Lab'
@@ -14,7 +14,7 @@ import { RootState } from '../store'
 
 const ViewLabs = () => {
   const { t } = useTranslation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const setButtons = useButtonToolbarSetter()
   useTitle(t('labs.label'))
 
@@ -28,12 +28,12 @@ const ViewLabs = () => {
       buttons.push(
         <Button
           icon="add"
-          onClick={() => history.push('/labs/new')}
+          onClick={() => navigate('/labs/new')}
           outlined
           color="success"
           key="lab.requests.new"
         >
-          {t('labs.requests.new')}
+          {String(t('labs.requests.new'))}
         </Button>,
       )
     }
@@ -64,7 +64,7 @@ const ViewLabs = () => {
   }, [getButtons, setButtons])
 
   const onTableRowClick = (lab: Lab) => {
-    history.push(`/labs/${lab.id}`)
+    navigate(`/labs/${lab.id}`)
   }
 
   return (
@@ -72,10 +72,10 @@ const ViewLabs = () => {
       <table className="table table-hover">
         <thead className="thead-light">
           <tr>
-            <th>{t('labs.lab.code')}</th>
-            <th>{t('labs.lab.type')}</th>
-            <th>{t('labs.lab.requestedOn')}</th>
-            <th>{t('labs.lab.status')}</th>
+            <th>{String(t('labs.lab.code'))}</th>
+            <th>{String(t('labs.lab.type'))}</th>
+            <th>{String(t('labs.lab.requestedOn'))}</th>
+            <th>{String(t('labs.lab.status'))}</th>
           </tr>
         </thead>
         <tbody>

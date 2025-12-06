@@ -58,7 +58,7 @@ describe('ViewPatient', () => {
       user: { permissions },
     })
 
-    history.push('/patients/123')
+    navigate('/patients/123')
     const wrapper = mount(
       <Provider store={store}>
         <Router history={history}>

@@ -21,7 +21,7 @@ const DateTimePickerWithLabelFormGroup = (props: Props) => {
         dropdownMode="scroll"
         disabled={!isEditable}
         selected={value}
-        onChange={(inputDate) => {
+        onChange={(inputDate: Date, event: React.ChangeEvent<HTMLInputElement>) => {
           if (onChange) {
             onChange(inputDate)
           }

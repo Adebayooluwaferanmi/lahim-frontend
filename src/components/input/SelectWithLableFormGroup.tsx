@@ -1,5 +1,5 @@
 import React from 'react'
-import { Label, Select } from '@hospitalrun/components'
+import { Label } from '@hospitalrun/components'
 
 interface Option {
   label: string
@@ -21,7 +21,13 @@ const SelectWithLabelFormGroup = (props: Props) => {
   return (
     <div className="form-group">
       <Label text={label} htmlFor={id} />
-      <Select disabled={!isEditable} onChange={onChange} value={value}>
+      <select
+        id={id}
+        className="form-control"
+        disabled={!isEditable}
+        onChange={onChange}
+        value={value}
+      >
         <option disabled value="">
           -- Choose --
         </option>
@@ -30,7 +36,7 @@ const SelectWithLabelFormGroup = (props: Props) => {
             {option.label}
           </option>
         ))}
-      </Select>
+      </select>
     </div>
   )
 }

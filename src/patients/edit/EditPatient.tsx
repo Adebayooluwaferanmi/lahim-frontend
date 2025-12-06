@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { useAppDispatch } from '../../store'
 import { Spinner, Button, Toast } from '@hospitalrun/components'
 import GeneralInformation from '../GeneralInformation'
 import useTitle from '../../page-header/useTitle'
@@ -21,8 +22,8 @@ const getPatientCode = (p: Patient): string => {
 
 const EditPatient = () => {
   const { t } = useTranslation()
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const [patient, setPatient] = useState({} as Patient)
 
@@ -31,7 +32,7 @@ const EditPatient = () => {
   )
 
   useTitle(
-    `${t('patients.editPatient')}: ${getPatientFullName(reduxPatient)} (${getPatientCode(
+    `${String(t('patients.editPatient'))}: ${getPatientFullName(reduxPatient)} (${getPatientCode(
       reduxPatient,
     )})`,
   )
@@ -55,15 +56,15 @@ const EditPatient = () => {
   }, [id, dispatch])
 
   const onCancel = () => {
-    history.push(`/patients/${patient.id}`)
+    navigate(`/patients/${patient.id}`)
   }
 
   const onSuccessfulSave = (updatedPatient: Patient) => {
-    history.push(`/patients/${updatedPatient.id}`)
+    navigate(`/patients/${updatedPatient.id}`)
     Toast(
       'success',
       t('states.success'),
-      `${t('patients.successfullyUpdated')} ${patient.fullName}`,
+      `${String(t('patients.successfullyUpdated'))} ${patient.fullName}`,
     )
   }
 
@@ -101,10 +102,10 @@ const EditPatient = () => {
       <div className="row float-right">
         <div className="btn-group btn-group-lg">
           <Button className="mr-2" color="success" onClick={onSave}>
-            {t('actions.save')}
+            {String(t('actions.save'))}
           </Button>
           <Button color="danger" onClick={onCancel}>
-            {t('actions.cancel')}
+            {String(t('actions.cancel'))}
           </Button>
         </div>
       </div>

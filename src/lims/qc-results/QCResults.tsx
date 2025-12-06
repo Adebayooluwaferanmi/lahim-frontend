@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Container, Row, Column, TextInput } from '@hospitalrun/components'
+import { Button, Container, Row, Column, TextInput, Spinner, Alert } from '@hospitalrun/components'
 import { useQCResults } from '../../hooks/useQCResults'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import useTitle from '../../page-header/useTitle'
+import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
+
+const breadcrumbs = [{ i18nKey: 'lims.qcResults.label', location: '/lims/qc-results' }]
 
 const QCResults = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   useTitle(t('lims.qcResults.label', 'QC Results'))
+  useAddBreadcrumbs(breadcrumbs, true)
   const setButtonToolBar = useButtonToolbarSetter()
 
   const [testCodeFilter, setTestCodeFilter] = useState('')
@@ -29,7 +33,7 @@ const QCResults = () => {
         iconLocation="left"
         onClick={() => navigate('/lims/qc-results/new')}
       >
-        {t('lims.qcResults.new', 'New QC Result')}
+        {String(t('lims.qcResults.new', 'New QC Result'))}
       </Button>,
     ])
 
@@ -39,11 +43,19 @@ const QCResults = () => {
   }, [setButtonToolBar, navigate, t])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <Container>
+        <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
+      </Container>
+    )
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>
+    return (
+      <Container>
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error.message || t('lims.qcResults.loadError', 'Failed to load QC results'))} />
+      </Container>
+    )
   }
 
   return (
@@ -51,7 +63,7 @@ const QCResults = () => {
       <Row>
         <Column md={6}>
           <TextInput
-            placeholder={t('lims.qcResults.testCodePlaceholder', 'Test Code')}
+            placeholder={String(t('lims.qcResults.testCodePlaceholder', 'Test Code'))}
             value={testCodeFilter}
             onChange={(e) => setTestCodeFilter(e.target.value)}
           />
@@ -62,10 +74,10 @@ const QCResults = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="">{t('lims.qcResults.allStatus', 'All Status')}</option>
-            <option value="pass">{t('lims.qcResults.status.pass', 'Pass')}</option>
-            <option value="fail">{t('lims.qcResults.status.fail', 'Fail')}</option>
-            <option value="warning">{t('lims.qcResults.status.warning', 'Warning')}</option>
+            <option value="">{String(t('lims.qcResults.allStatus', 'All Status'))}</option>
+            <option value="pass">{String(t('lims.qcResults.status.pass', 'Pass'))}</option>
+            <option value="fail">{String(t('lims.qcResults.status.fail', 'Fail'))}</option>
+            <option value="warning">{String(t('lims.qcResults.status.warning', 'Warning'))}</option>
           </select>
         </Column>
       </Row>
@@ -73,19 +85,19 @@ const QCResults = () => {
       <Row>
         <Column>
           {qcResults.length === 0 ? (
-            <div>{t('lims.qcResults.noResults', 'No QC results found')}</div>
+            <div>{String(t('lims.qcResults.noResults', 'No QC results found'))}</div>
           ) : (
             <table className="table table-hover">
               <thead>
                 <tr>
-                  <th>{t('lims.qcResults.testName', 'Test Name')}</th>
-                  <th>{t('lims.qcResults.material', 'Material')}</th>
-                  <th>{t('lims.qcResults.lotNumber', 'Lot Number')}</th>
-                  <th>{t('lims.qcResults.measuredValue', 'Measured Value')}</th>
-                  <th>{t('lims.qcResults.targetValue', 'Target Value')}</th>
-                  <th>{t('lims.qcResults.status', 'Status')}</th>
-                  <th>{t('lims.qcResults.runDate', 'Run Date')}</th>
-                  <th>{t('actions.view', 'View')}</th>
+                  <th>{String(t('lims.qcResults.testName', 'Test Name'))}</th>
+                  <th>{String(t('lims.qcResults.material', 'Material'))}</th>
+                  <th>{String(t('lims.qcResults.lotNumber', 'Lot Number'))}</th>
+                  <th>{String(t('lims.qcResults.measuredValue', 'Measured Value'))}</th>
+                  <th>{String(t('lims.qcResults.targetValue', 'Target Value'))}</th>
+                  <th>{String(t('lims.qcResults.status', 'Status'))}</th>
+                  <th>{String(t('lims.qcResults.runDate', 'Run Date'))}</th>
+                  <th>{String(t('actions.view', 'View'))}</th>
                 </tr>
               </thead>
               <tbody>
@@ -108,7 +120,7 @@ const QCResults = () => {
                         color="primary"
                         onClick={() => navigate(`/lims/qc-results/${result.id || result._id}`)}
                       >
-                        {t('actions.view', 'View')}
+                        {String(t('actions.view', 'View'))}
                       </Button>
                     </td>
                   </tr>

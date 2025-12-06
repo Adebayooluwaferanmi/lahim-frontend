@@ -39,13 +39,13 @@ const AppointmentDetailForm = (props: Props) => {
             <Label
               htmlFor="patientTypeahead"
               isRequired
-              text={t('scheduling.appointment.patient')}
+              text={String(t('scheduling.appointment.patient'))}
             />
             <Typeahead
               id="patientTypeahead"
               disabled={!isEditable || patient !== undefined}
               value={patient?.fullName}
-              placeholder={t('scheduling.appointment.patient')}
+              placeholder={String(t('scheduling.appointment.patient'))}
               onChange={(p: Patient[]) => onFieldChange && onFieldChange('patientId', p[0].id)}
               onSearch={async (query: string) => PatientRepository.search(query)}
               searchAccessor="fullName"
@@ -58,7 +58,7 @@ const AppointmentDetailForm = (props: Props) => {
         <div className="col">
           <DateTimePickerWithLabelFormGroup
             name="startDate"
-            label={t('scheduling.appointment.startDate')}
+            label={String(t('scheduling.appointment.startDate'))}
             value={new Date(appointment.startDateTime)}
             isEditable={isEditable}
             onChange={(date: Date) => {
@@ -69,7 +69,7 @@ const AppointmentDetailForm = (props: Props) => {
         <div className="col">
           <DateTimePickerWithLabelFormGroup
             name="endDate"
-            label={t('scheduling.appointment.endDate')}
+            label={String(t('scheduling.appointment.endDate'))}
             value={new Date(appointment.endDateTime)}
             isEditable={isEditable}
             onChange={(date: Date) => {
@@ -82,7 +82,7 @@ const AppointmentDetailForm = (props: Props) => {
         <div className="col">
           <TextInputWithLabelFormGroup
             name="location"
-            label={t('scheduling.appointment.location')}
+            label={String(t('scheduling.appointment.location'))}
             value={appointment.location}
             isEditable={isEditable}
             onChange={(event) => {
@@ -95,7 +95,7 @@ const AppointmentDetailForm = (props: Props) => {
         <div className="col">
           <SelectWithLabelFormGroup
             name="type"
-            label={t('scheduling.appointment.type')}
+            label={String(t('scheduling.appointment.type'))}
             value={appointment.type}
             isEditable={isEditable}
             options={[
@@ -116,7 +116,7 @@ const AppointmentDetailForm = (props: Props) => {
           <div className="form-group">
             <TextFieldWithLabelFormGroup
               name="reason"
-              label={t('scheduling.appointment.reason')}
+              label={String(t('scheduling.appointment.reason'))}
               value={appointment.reason}
               isEditable={isEditable}
               onChange={

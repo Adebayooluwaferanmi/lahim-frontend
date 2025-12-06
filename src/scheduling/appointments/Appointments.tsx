@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Calendar, Button } from '@hospitalrun/components'
 import useTitle from 'page-header/useTitle'
 import { useTranslation } from 'react-i18next'
-import { useSelector, useDispatch } from 'react-redux'
-import { RootState } from 'store'
-import { useHistory } from 'react-router'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from 'store'
+import { useNavigate } from 'react-router-dom'
 import PatientRepository from 'clients/db/PatientRepository'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
@@ -22,9 +22,9 @@ const breadcrumbs = [{ i18nKey: 'scheduling.appointments.label', location: '/app
 
 const Appointments = () => {
   const { t } = useTranslation()
-  const history = useHistory()
+  const navigate = useNavigate()
   useTitle(t('scheduling.appointments.label'))
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { appointments } = useSelector((state: RootState) => state.appointments)
   const [events, setEvents] = useState<Event[]>([])
   const setButtonToolBar = useButtonToolbarSetter()
@@ -38,9 +38,9 @@ const Appointments = () => {
         outlined
         color="success"
         icon="appointment-add"
-        onClick={() => history.push('/appointments/new')}
+        onClick={() => navigate('/appointments/new')}
       >
-        {t('scheduling.appointments.new')}
+        {String(t('scheduling.appointments.new'))}
       </Button>,
     ])
 
@@ -77,7 +77,7 @@ const Appointments = () => {
       <Calendar
         events={events}
         onEventClick={(event) => {
-          history.push(`/appointments/${event.id}`)
+          navigate(`/appointments/${event.id}`)
         }}
       />
     </div>

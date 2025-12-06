@@ -1,14 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Breadcrumb, BreadcrumbItem } from '@hospitalrun/components'
-import { RootState } from '../store'
+import { useUIStore } from '../store/ui-store'
 
 const Breadcrumbs = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const { breadcrumbs } = useSelector((state: RootState) => state.breadcrumbs)
+  const breadcrumbs = useUIStore((state) => state.breadcrumbs)
 
   if (breadcrumbs.length === 0) {
     return null
@@ -22,7 +21,7 @@ const Breadcrumbs = () => {
 
         return (
           <BreadcrumbItem key={location} active={isLast} onClick={onClick}>
-            {i18nKey ? t(i18nKey) : text}
+            {i18nKey ? String(t(i18nKey)) : text}
           </BreadcrumbItem>
         )
       })}

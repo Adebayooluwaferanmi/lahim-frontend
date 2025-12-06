@@ -1,6 +1,6 @@
 import '../../__mocks__/matchMediaMock'
 import React from 'react'
-import { Router } from 'react-router'
+import { Router } from 'react-router-dom'
 import { mount, ReactWrapper } from 'enzyme'
 import GeneralInformation from 'patients/GeneralInformation'
 import { createMemoryHistory } from 'history'
@@ -18,7 +18,7 @@ describe('Error handling', () => {
       phoneNumber: 'phone number message',
       email: 'email message',
     }
-    const history = createMemoryHistory()
+    const navigate = createMemoryHistory()
     const wrapper = mount(
       <Router history={history}>
         <GeneralInformation patient={{} as Patient} isEditable error={error} />

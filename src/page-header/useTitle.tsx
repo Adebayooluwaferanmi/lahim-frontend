@@ -1,11 +1,14 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { updateTitle } from './title-slice'
+import { useUIStore } from '../store/ui-store'
 
+/**
+ * Hook to set the page title
+ * Uses Zustand for fast UI state updates
+ */
 export default function useTitle(title: string): void {
-  const dispatch = useDispatch()
+  const setTitle = useUIStore((state) => state.setTitle)
 
   useEffect(() => {
-    dispatch(updateTitle(title))
-  })
+    setTitle(title)
+  }, [title, setTitle])
 }

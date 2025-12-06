@@ -1,55 +1,75 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import useTitle from '../../page-header/useTitle'
 import { useTranslation } from 'react-i18next'
 import format from 'date-fns/format'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
-import { Button } from '@hospitalrun/components'
 import { useNavigate } from 'react-router-dom'
+import { Container, Spinner, Alert } from '@hospitalrun/components'
+import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
+import { useApiQuery } from '../../lib/queries'
+
+const breadcrumbs = [{ i18nKey: 'lims.criticalValues.label', location: '/lims/critical-values' }]
 
 const CriticalValues = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const setButtons = useButtonToolbarSetter()
   useTitle(t('lims.criticalValues.label'))
+  useAddBreadcrumbs(breadcrumbs, true)
 
-  const [criticalValues, setCriticalValues] = useState<any[]>([])
+  const { data, isLoading, error } = useApiQuery<{ criticalValues?: any[] }>(
+    ['critical-values'],
+    '/critical-values'
+  )
+
+  // Normalize response format
+  const criticalValues = data?.criticalValues || []
 
   const getButtons = useCallback(() => {
     return []
   }, [])
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await fetch('/critical-values')
-        const data = await response.json()
-        setCriticalValues(data.criticalValues || [])
-      } catch (error) {
-        console.error('Failed to fetch critical values:', error)
-      }
-    }
-
+  React.useEffect(() => {
     setButtons(getButtons())
-    fetch()
 
     return () => {
       setButtons([])
     }
-  }, [getButtons, setButtons])
+  }, [setButtons, getButtons])
 
   const onTableRowClick = (criticalValue: any) => {
-    history.push(`/lims/critical-values/${criticalValue._id}`)
+    navigate(`/lims/critical-values/${criticalValue._id}`)
+  }
+
+  if (isLoading) {
+    return (
+      <Container>
+        <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
+      </Container>
+    )
+  }
+
+  if (error) {
+    const errorMessage = error instanceof Error ? error.message : (error as any)?.message || String(error) || t('lims.criticalValues.loadError', 'Failed to load critical values')
+    return (
+      <Container>
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={errorMessage} />
+      </Container>
+    )
   }
 
   return (
-    <>
-      <table className="table table-hover">
+    <Container>
+      {criticalValues.length === 0 ? (
+        <Alert color="info" title={String(t('lims.criticalValues.noValues', 'No Critical Values'))} message={String(t('lims.criticalValues.noValuesMessage', 'No critical values found'))} />
+      ) : (
+        <table className="table table-hover">
         <thead className="thead-light">
           <tr>
-            <th>{t('lims.criticalValues.testName')}</th>
-            <th>{t('lims.criticalValues.value')}</th>
-            <th>{t('lims.criticalValues.detectedOn')}</th>
-            <th>{t('lims.criticalValues.status')}</th>
+            <th>{String(t('lims.criticalValues.testName'))}</th>
+            <th>{String(t('lims.criticalValues.value'))}</th>
+            <th>{String(t('lims.criticalValues.detectedOn'))}</th>
+            <th>{String(t('lims.criticalValues.status'))}</th>
           </tr>
         </thead>
         <tbody>
@@ -63,7 +83,8 @@ const CriticalValues = () => {
           ))}
         </tbody>
       </table>
-    </>
+      )}
+    </Container>
   )
 }
 

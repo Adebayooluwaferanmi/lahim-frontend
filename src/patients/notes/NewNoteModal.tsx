@@ -3,9 +3,9 @@ import { Modal, Alert } from '@hospitalrun/components'
 import { useTranslation } from 'react-i18next'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
 import { addNote } from 'patients/patient-slice'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import Note from '../../model/Note'
-import { RootState } from '../../store'
+import { RootState, useAppDispatch } from '../../store'
 
 interface Props {
   show: boolean
@@ -15,7 +15,7 @@ interface Props {
 
 const NewNoteModal = (props: Props) => {
   const { show, toggle, onCloseButtonClick } = props
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const { patient, noteError } = useSelector((state: RootState) => state.patient)
   const { t } = useTranslation()
   const [note, setNote] = useState({
@@ -41,7 +41,7 @@ const NewNoteModal = (props: Props) => {
   const body = (
     <form>
       {noteError?.message && (
-        <Alert color="danger" title={t('states.error')} message={t(noteError?.message || '')} />
+        <Alert color="danger" title={String(t('states.error'))} message={String(t(noteError?.message || ''))} />
       )}
       <div className="row">
         <div className="col-md-12">
@@ -50,10 +50,10 @@ const NewNoteModal = (props: Props) => {
               isEditable
               isRequired
               name="noteTextField"
-              label={t('patient.note')}
+              label={String(t('patient.note'))}
               value={note.text}
               isInvalid={!!noteError?.note}
-              feedback={t(noteError?.note || '')}
+              feedback={String(t(noteError?.note || ''))}
               onChange={onNoteTextChange}
             />
           </div>
@@ -66,15 +66,15 @@ const NewNoteModal = (props: Props) => {
     <Modal
       show={show}
       toggle={toggle}
-      title={t('patient.notes.new')}
+      title={String(t('patient.notes.new'))}
       body={body}
       closeButton={{
-        children: t('actions.cancel'),
+        children: String(t('actions.cancel')),
         color: 'danger',
         onClick: onCloseButtonClick,
       }}
       successButton={{
-        children: t('patient.notes.new'),
+        children: String(t('patient.notes.new')),
         color: 'success',
         icon: 'add',
         iconLocation: 'left',

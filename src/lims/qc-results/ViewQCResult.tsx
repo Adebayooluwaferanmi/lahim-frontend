@@ -14,16 +14,17 @@ const ViewQCResult = () => {
   const { data: qcResult, isLoading, error } = useQCResult(id)
   const setButtonToolBar = useButtonToolbarSetter()
 
-  useTitle(qcResult ? `${t('lims.qcResults.view', 'View QC Result')} - ${qcResult.testName || id}` : t('lims.qcResults.view', 'View QC Result'))
+  useTitle(qcResult ? `${String(t('lims.qcResults.view', 'View QC Result'))} - ${qcResult.testName || id}` : t('lims.qcResults.view', 'View QC Result'))
 
-  useEffect(() => {
-    if (qcResult) {
-      useAddBreadcrumbs([
-        { i18nKey: 'lims.qcResults.label', location: '/lims/qc-results' },
-        { i18nKey: 'lims.qcResults.view', location: `/lims/qc-results/${id}` },
-      ], true)
-    }
-  }, [qcResult, id])
+  useAddBreadcrumbs(
+    id
+      ? [
+          { i18nKey: 'lims.qcResults.label', location: '/lims/qc-results' },
+          { i18nKey: 'lims.qcResults.view', location: `/lims/qc-results/${id}` },
+        ]
+      : [],
+    true
+  )
 
   useEffect(() => {
     setButtonToolBar([
@@ -35,7 +36,7 @@ const ViewQCResult = () => {
         iconLocation="left"
         onClick={() => navigate('/lims/qc-results')}
       >
-        {t('actions.back', 'Back')}
+        {String(t('actions.back', 'Back'))}
       </Button>,
     ])
 
@@ -51,47 +52,45 @@ const ViewQCResult = () => {
   if (error || !qcResult) {
     return (
       <Container>
-        <Alert color="danger" title={t('states.error', 'Error')} message={error?.message || t('lims.qcResults.notFound', 'QC result not found')} />
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={String(error?.message || t('lims.qcResults.notFound', 'QC result not found'))} />
       </Container>
     )
   }
 
   return (
     <Container>
-      <Panel>
-        <Panel.Header title={`${t('lims.qcResults.view', 'View QC Result')} - ${qcResult.testName || id}`} />
-        <Panel.Body>
+      <Panel title={`${String(t('lims.qcResults.view', 'View QC Result'))} - ${qcResult.testName || id}`}>
           <Row>
             <Column md={6}>
-              <h4>{t('lims.qcResults.qcResultInformation', 'QC Result Information')}</h4>
+              <h4>{String(t('lims.qcResults.qcResultInformation', 'QC Result Information'))}</h4>
               <table className="table">
                 <tbody>
                   <tr>
-                    <td><strong>{t('lims.qcResults.testName', 'Test Name')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.testName', 'Test Name'))}</strong></td>
                     <td>{qcResult.testName || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.qcResults.material', 'Material')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.material', 'Material'))}</strong></td>
                     <td>{qcResult.materialName || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.qcResults.lotNumber', 'Lot Number')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.lotNumber', 'Lot Number'))}</strong></td>
                     <td>{qcResult.materialLot || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.qcResults.instrument', 'Instrument')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.instrument', 'Instrument'))}</strong></td>
                     <td>{qcResult.instrumentName || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.qcResults.measuredValue', 'Measured Value')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.measuredValue', 'Measured Value'))}</strong></td>
                     <td>{qcResult.measuredValue || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.qcResults.targetValue', 'Target Value')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.targetValue', 'Target Value'))}</strong></td>
                     <td>{qcResult.targetValue || '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.qcResults.status', 'Status')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.status', 'Status'))}</strong></td>
                     <td>
                       <span className={`badge badge-${qcResult.status === 'pass' ? 'success' : qcResult.status === 'fail' ? 'danger' : 'warning'}`}>
                         {qcResult.status || '-'}
@@ -99,16 +98,16 @@ const ViewQCResult = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.qcResults.runDate', 'Run Date')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.runDate', 'Run Date'))}</strong></td>
                     <td>{qcResult.runDate ? new Date(qcResult.runDate).toLocaleString() : '-'}</td>
                   </tr>
                   <tr>
-                    <td><strong>{t('lims.qcResults.runNumber', 'Run Number')}</strong></td>
+                    <td><strong>{String(t('lims.qcResults.runNumber', 'Run Number'))}</strong></td>
                     <td>{qcResult.runNumber || '-'}</td>
                   </tr>
                   {qcResult.notes && (
                     <tr>
-                      <td><strong>{t('lims.qcResults.notes', 'Notes')}</strong></td>
+                      <td><strong>{String(t('lims.qcResults.notes', 'Notes'))}</strong></td>
                       <td>{qcResult.notes}</td>
                     </tr>
                   )}
@@ -116,7 +115,6 @@ const ViewQCResult = () => {
               </table>
             </Column>
           </Row>
-        </Panel.Body>
       </Panel>
     </Container>
   )
