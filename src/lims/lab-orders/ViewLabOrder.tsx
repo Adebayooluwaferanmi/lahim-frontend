@@ -29,6 +29,15 @@ const ViewLabOrder = () => {
   useEffect(() => {
     setButtonToolBar([
       <Button
+        key="workflowButton"
+        color="info"
+        icon="route"
+        iconLocation="left"
+        onClick={() => navigate(`/lims/workflow/${id}`)}
+      >
+        {String(t('lims.workflow.viewTimeline', 'View Workflow Timeline'))}
+      </Button>,
+      <Button
         key="editButton"
         color="primary"
         icon="edit"

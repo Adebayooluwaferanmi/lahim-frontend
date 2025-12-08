@@ -97,6 +97,9 @@ function hospitalrunComponentsAlias(): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Support GitHub Pages base path (repository name)
+  // Set via VITE_BASE_PATH environment variable, defaults to '/' for local development
+  base: process.env.VITE_BASE_PATH ? `/${process.env.VITE_BASE_PATH}/` : '/',
   plugins: [
     scssTildeImporter(),
     hospitalrunComponentsAlias(),
@@ -188,6 +191,27 @@ export default defineConfig({
     port: 3001,
     host: true,
     open: true,
+    watch: {
+      // Exclude directories that don't need to be watched to reduce file watcher usage
+      ignored: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/build/**',
+        '**/.git/**',
+        '**/coverage/**',
+        '**/backups/**',
+        '**/.github/**',
+        '**/docs/**',
+        '**/spec/**',
+        '**/grafana/**',
+        '**/prometheus/**',
+        '**/packages/components/**', // Exclude old components package
+        '**/packages/components-lahim/dist/**', // Exclude built components
+        '**/*.md', // Exclude markdown files
+        '**/yarn-error.log',
+        '**/yarn.lock',
+      ],
+    },
   },
   optimizeDeps: {
     // Pre-bundle dependencies and handle legacy code

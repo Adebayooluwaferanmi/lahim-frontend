@@ -20,6 +20,8 @@ import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
 import AppointmentsList from '../appointments/AppointmentsList'
 import Note from '../notes/NoteTab'
 import Labs from '../labs/LabsTab'
+import VisitsList from '../visits/VisitsList'
+import PatientInsurance from '../insurance/PatientInsurance'
 
 const getPatientCode = (p: Patient): string => {
   if (p) {
@@ -120,6 +122,16 @@ const ViewPatient = () => {
           label={String(t('patient.labs.label'))}
           onClick={() => navigate(`/patients/${patient.id}/labs`)}
         />
+        <Tab
+          active={location.pathname === `/patients/${patient.id}/visits`}
+          label={String(t('visits.label', 'Visits'))}
+          onClick={() => navigate(`/patients/${patient.id}/visits`)}
+        />
+        <Tab
+          active={location.pathname === `/patients/${patient.id}/insurance`}
+          label={String(t('patient.insurance.label', 'Insurance'))}
+          onClick={() => navigate(`/patients/${patient.id}/insurance`)}
+        />
       </TabsHeader>
       <Panel>
         <Route path="/patients/:id">
@@ -142,6 +154,12 @@ const ViewPatient = () => {
         </Route>
         <Route path="/patients/:id/labs">
           <Labs patientId={patient.id} />
+        </Route>
+        <Route path="/patients/:id/visits">
+          <VisitsList patientId={patient.id} />
+        </Route>
+        <Route path="/patients/:id/insurance">
+          <PatientInsurance patient={patient} />
         </Route>
       </Panel>
     </div>

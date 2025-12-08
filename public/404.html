@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1abc9c" />
+    <meta
+      name="description"
+      content="LaHIM - Laboratory & Health Information Management System"
+    />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>LaHIM</title>
+    <script>
+      // GitHub Pages SPA routing fallback
+      // This handles client-side routing for React Router
+      // When GitHub Pages returns 404, this file is served and redirects to index.html
+      var path = window.location.pathname;
+      var search = window.location.search;
+      var hash = window.location.hash;
+      
+      // Remove /404.html from path if present
+      path = path.replace(/\/404\.html$/, '');
+      
+      // Get base path (repository name) from the URL
+      // For example: /LaHIM/patients -> base is /LaHIM
+      var pathParts = path.split('/').filter(function(p) { return p; });
+      var basePath = pathParts.length > 0 ? '/' + pathParts[0] : '';
+      
+      // Redirect to index.html with the full path
+      var redirect = basePath + '/index.html' + path.replace(basePath, '') + search + hash;
+      window.location.replace(redirect);
+    </script>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+      <p>Redirecting...</p>
+    </div>
+  </body>
+</html>
+

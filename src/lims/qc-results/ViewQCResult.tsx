@@ -114,6 +114,59 @@ const ViewQCResult = () => {
                 </tbody>
               </table>
             </Column>
+            <Column md={6}>
+              <h4>{String(t('lims.qcResults.westgardRules', 'Westgard Rules'))}</h4>
+              {(qcResult as any).qcRuleViolations && Array.isArray((qcResult as any).qcRuleViolations) && (qcResult as any).qcRuleViolations.length > 0 ? (
+                <div>
+                  <Alert
+                    color="danger"
+                    title={String(t('lims.qcResults.ruleViolations', 'Rule Violations Detected'))}
+                    message={String(t('lims.qcResults.ruleViolationsMessage', `${(qcResult as any).qcRuleViolations.length} Westgard rule violation(s) detected.`))}
+                  />
+                  <ul className="list-group" style={{ marginTop: '10px' }}>
+                    {(qcResult as any).qcRuleViolations.map((violation: string, index: number) => (
+                      <li key={index} className="list-group-item list-group-item-danger">
+                        <strong>{violation}</strong> - {String(t(`lims.qcResults.rule.${violation}`, violation))}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <Alert
+                  color="success"
+                  title={String(t('lims.qcResults.noViolations', 'No Rule Violations'))}
+                  message={String(t('lims.qcResults.noViolationsMessage', 'All Westgard rules passed.'))}
+                />
+              )}
+              {(qcResult as any).mean && (qcResult as any).standardDeviation && (
+                <div style={{ marginTop: '20px' }}>
+                  <h5>{String(t('lims.qcResults.statistics', 'QC Statistics'))}</h5>
+                  <table className="table">
+                    <tbody>
+                      <tr>
+                        <td><strong>{String(t('lims.qcResults.mean', 'Mean'))}</strong></td>
+                        <td>{(qcResult as any).mean}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>{String(t('lims.qcResults.standardDeviation', 'Standard Deviation'))}</strong></td>
+                        <td>{(qcResult as any).standardDeviation}</td>
+                      </tr>
+                      {(qcResult as any).measuredValue && (qcResult as any).mean && (qcResult as any).standardDeviation && (
+                        <tr>
+                          <td><strong>{String(t('lims.qcResults.zScore', 'Z-Score'))}</strong></td>
+                          <td>
+                            {((qcResult as any).standardDeviation !== 0
+                              ? ((qcResult as any).measuredValue - (qcResult as any).mean) / (qcResult as any).standardDeviation
+                              : 0
+                            ).toFixed(2)}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </Column>
           </Row>
       </Panel>
     </Container>

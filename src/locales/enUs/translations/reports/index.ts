@@ -1,0 +1,38 @@
+export default {
+  reports: {
+    label: 'Reports',
+    list: 'Reports List',
+    analytics: 'Analytics',
+    administrative: 'Administrative Reports',
+    financial: 'Financial Reports',
+    custom: 'Custom Reports',
+    customBuilder: 'Custom Report Builder',
+    reportTitle: 'Report Title',
+    format: 'Format',
+    selectFields: 'Select Fields',
+    selectFieldsMessage: 'Please select at least one field',
+    generate: 'Generate Report',
+    generateError: 'Failed to generate report',
+    results: 'Report Results',
+    categories: {
+      patient: 'Patient',
+      visit: 'Visit',
+      billing: 'Billing',
+      medication: 'Medication',
+    },
+    types: {
+      revenue: 'Revenue Report',
+      payments: 'Payments Report',
+      outstandingBalances: 'Outstanding Balances',
+      profitability: 'Profitability Analysis',
+      patientDemographics: 'Patient Demographics',
+      appointmentStatistics: 'Appointment Statistics',
+      resourceUtilization: 'Resource Utilization',
+    },
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    reportType: 'Report Type',
+    loadError: 'Failed to load reports',
+  },
+}
+

@@ -89,6 +89,7 @@ const GenerateReport = () => {
                 value={formData.patientId}
                 onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
                 isRequired
+                isEditable
               />
             </Column>
             <Column md={6}>
@@ -102,6 +103,7 @@ const GenerateReport = () => {
                   { value: 'json', label: 'JSON' },
                   { value: 'hl7', label: 'HL7' },
                 ]}
+                isEditable
               />
             </Column>
           </Row>

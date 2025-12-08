@@ -90,6 +90,28 @@ const ViewReport = () => {
       </Button>,
     ]
 
+    // Add PDF download button (always available)
+    buttons.push(
+      <Button
+        key="downloadPdfButton"
+        color="info"
+        icon="download"
+        iconLocation="left"
+        onClick={() => {
+          // Download PDF report
+          const pdfUrl = `/reports/${id}/pdf`
+          const link = document.createElement('a')
+          link.href = pdfUrl
+          link.download = `report-${report?.reportNumber || id}.pdf`
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        }}
+      >
+        {String(t('lims.reports.downloadPdf', 'Download PDF'))}
+      </Button>
+    )
+
     if (report && report.status !== 'delivered' && report.status !== 'cancelled') {
       buttons.push(
         <Button

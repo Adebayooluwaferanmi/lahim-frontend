@@ -34,10 +34,28 @@ const Sidebar = () => {
       ? 'patient'
       : splittedPath[1].includes('appointments')
       ? 'appointment'
+      : splittedPath[1].includes('visits')
+      ? 'visits'
+      : splittedPath[1].includes('medications') || splittedPath[1].includes('prescriptions')
+      ? 'medications'
+      : splittedPath[1].includes('imaging')
+      ? 'imaging'
+      : splittedPath[1].includes('incidents')
+      ? 'incidents'
+      : splittedPath[1].includes('reports')
+      ? 'reports'
+      : splittedPath[1].includes('documents')
+      ? 'documents'
+      : splittedPath[1].includes('billing')
+      ? 'billing'
       : splittedPath[1].includes('labs')
       ? 'labs'
       : splittedPath[1].includes('lims')
       ? 'lims'
+      : splittedPath[1].includes('pharmacy')
+      ? 'pharmacy'
+      : splittedPath[1].includes('insurance')
+      ? 'insurance'
       : 'none',
   )
 
@@ -229,6 +247,355 @@ const Sidebar = () => {
     </>
   )
 
+  const getVisitLinks = () => (
+    <>
+      <ListItem
+        active={splittedPath[1].includes('visits')}
+        onClick={() => {
+          navigateTo('/visits')
+          setExpansion('visits')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <Icon
+          icon={
+            splittedPath[1].includes('visits') && expandedItem === 'visits'
+              ? 'down-arrow'
+              : 'right-arrow'
+          }
+          style={expandibleArrow}
+        />
+        <Icon icon="appointment" /> {!sidebarCollapsed && String(t('visits.label', 'Visits'))}
+      </ListItem>
+      {splittedPath[1].includes('visits') && expandedItem === 'visits' && (
+        <List layout="flush" className="nav flex-column">
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyleNew}
+            onClick={() => navigateTo('/visits/new')}
+            active={splittedPath[1].includes('visits') && splittedPath.length > 2 && splittedPath[2] === 'new'}
+          >
+            <Icon icon="appointment-add" style={iconMargin} />
+            {!sidebarCollapsed && String(t('visits.new', 'New Visit'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/visits')}
+            active={splittedPath[1].includes('visits') && splittedPath.length < 3}
+          >
+            <Icon icon="appointment" style={iconMargin} />
+            {!sidebarCollapsed && String(t('visits.list', 'Visit List'))}
+          </ListItem>
+        </List>
+      )}
+    </>
+  )
+
+  const getIncidentLinks = () => (
+    <>
+      <ListItem
+        active={splittedPath[1].includes('incidents')}
+        onClick={() => {
+          navigateTo('/incidents')
+          setExpansion('incidents')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <Icon
+          icon={
+            splittedPath[1].includes('incidents') && expandedItem === 'incidents'
+              ? 'down-arrow'
+              : 'right-arrow'
+          }
+          style={expandibleArrow}
+        />
+        <Icon icon="incident" /> {!sidebarCollapsed && String(t('incidents.label', 'Incidents'))}
+      </ListItem>
+      {splittedPath[1].includes('incidents') && expandedItem === 'incidents' && (
+        <List layout="flush" className="nav flex-column">
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyleNew}
+            onClick={() => navigateTo('/incidents/new')}
+            active={splittedPath[1].includes('incidents') && splittedPath.length > 2 && splittedPath[2] === 'new'}
+          >
+            <Icon icon="add" style={iconMargin} />
+            {!sidebarCollapsed && String(t('incidents.new', 'New Incident'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/incidents')}
+            active={splittedPath[1].includes('incidents') && splittedPath.length < 3}
+          >
+            <Icon icon="incident" style={iconMargin} />
+            {!sidebarCollapsed && String(t('incidents.list', 'Incidents List'))}
+          </ListItem>
+        </List>
+      )}
+    </>
+  )
+
+  const getImagingLinks = () => (
+    <>
+      <ListItem
+        active={splittedPath[1].includes('imaging')}
+        onClick={() => {
+          navigateTo('/imaging')
+          setExpansion('imaging')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <Icon
+          icon={
+            splittedPath[1].includes('imaging') && expandedItem === 'imaging'
+              ? 'down-arrow'
+              : 'right-arrow'
+          }
+          style={expandibleArrow}
+        />
+        <Icon icon="image" /> {!sidebarCollapsed && String(t('imaging.label', 'Imaging'))}
+      </ListItem>
+      {splittedPath[1].includes('imaging') && expandedItem === 'imaging' && (
+        <List layout="flush" className="nav flex-column">
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyleNew}
+            onClick={() => navigateTo('/imaging/new')}
+            active={splittedPath[1].includes('imaging') && splittedPath.length > 2 && splittedPath[2] === 'new'}
+          >
+            <Icon icon="add" style={iconMargin} />
+            {!sidebarCollapsed && String(t('imaging.new', 'New Imaging Order'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/imaging')}
+            active={splittedPath[1].includes('imaging') && splittedPath.length < 3}
+          >
+            <Icon icon="image" style={iconMargin} />
+            {!sidebarCollapsed && String(t('imaging.list', 'Imaging Orders'))}
+          </ListItem>
+        </List>
+      )}
+    </>
+  )
+
+  const getReportLinks = () => (
+    <>
+      <ListItem
+        active={splittedPath[1].includes('reports')}
+        onClick={() => {
+          navigateTo('/reports')
+          setExpansion('reports')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <Icon
+          icon={
+            splittedPath[1].includes('reports') && expandedItem === 'reports'
+              ? 'down-arrow'
+              : 'right-arrow'
+          }
+          style={expandibleArrow}
+        />
+        <Icon icon="chart-bar" /> {!sidebarCollapsed && String(t('reports.label', 'Reports'))}
+      </ListItem>
+      {splittedPath[1].includes('reports') && expandedItem === 'reports' && (
+        <List layout="flush" className="nav flex-column">
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/reports')}
+            active={splittedPath[1].includes('reports') && splittedPath.length === 2}
+          >
+            <Icon icon="chart-bar" style={iconMargin} />
+            {!sidebarCollapsed && String(t('reports.list', 'Reports List'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/reports/analytics')}
+            active={splittedPath[1].includes('reports') && splittedPath[2] === 'analytics'}
+          >
+            <Icon icon="chart-bar" style={iconMargin} />
+            {!sidebarCollapsed && String(t('reports.analytics', 'Analytics'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/reports/administrative')}
+            active={splittedPath[1].includes('reports') && splittedPath[2] === 'administrative'}
+          >
+            <Icon icon="chart-bar" style={iconMargin} />
+            {!sidebarCollapsed && String(t('reports.administrative', 'Administrative Reports'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/reports/financial')}
+            active={splittedPath[1].includes('reports') && splittedPath[2] === 'financial'}
+          >
+            <Icon icon="chart-bar" style={iconMargin} />
+            {!sidebarCollapsed && String(t('reports.financial', 'Financial Reports'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/reports/custom')}
+            active={splittedPath[1].includes('reports') && splittedPath[2] === 'custom'}
+          >
+            <Icon icon="chart-bar" style={iconMargin} />
+            {!sidebarCollapsed && String(t('reports.customBuilder', 'Custom Report Builder'))}
+          </ListItem>
+        </List>
+      )}
+    </>
+  )
+
+  const getDocumentLinks = () => (
+    <>
+      <ListItem
+        active={splittedPath[1].includes('documents')}
+        onClick={() => {
+          navigateTo('/documents')
+          setExpansion('documents')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <Icon
+          icon={
+            splittedPath[1].includes('documents') && expandedItem === 'documents'
+              ? 'down-arrow'
+              : 'right-arrow'
+          }
+          style={expandibleArrow}
+        />
+        <Icon icon="file" /> {!sidebarCollapsed && String(t('documents.label', 'Documents'))}
+      </ListItem>
+      {splittedPath[1].includes('documents') && expandedItem === 'documents' && (
+        <List layout="flush" className="nav flex-column">
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyleNew}
+            onClick={() => navigateTo('/documents/upload')}
+            active={splittedPath[1].includes('documents') && splittedPath.length > 2 && splittedPath[2] === 'upload'}
+          >
+            <Icon icon="add" style={iconMargin} />
+            {!sidebarCollapsed && String(t('documents.upload', 'Upload Document'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/documents')}
+            active={splittedPath[1].includes('documents') && splittedPath.length < 3}
+          >
+            <Icon icon="file" style={iconMargin} />
+            {!sidebarCollapsed && String(t('documents.list', 'Documents List'))}
+          </ListItem>
+        </List>
+      )}
+    </>
+  )
+
+  const getPharmacyLinks = () => (
+    <>
+      <ListItem
+        active={splittedPath[1].includes('pharmacy')}
+        onClick={() => {
+          navigateTo('/pharmacy')
+          setExpansion('pharmacy')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <Icon
+          icon={
+            splittedPath[1].includes('pharmacy') && expandedItem === 'pharmacy'
+              ? 'down-arrow'
+              : 'right-arrow'
+          }
+          style={expandibleArrow}
+        />
+        <Icon icon="medication" /> {!sidebarCollapsed && String(t('pharmacy.label', 'Pharmacy'))}
+      </ListItem>
+      {splittedPath[1].includes('pharmacy') && expandedItem === 'pharmacy' && (
+        <List layout="flush" className="nav flex-column">
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyleNew}
+            onClick={() => navigateTo('/pharmacy/new')}
+            active={splittedPath[1].includes('pharmacy') && splittedPath.length > 2 && splittedPath[2] === 'new'}
+          >
+            <Icon icon="add" style={iconMargin} />
+            {!sidebarCollapsed && String(t('pharmacy.new', 'New Pharmacy'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/pharmacy')}
+            active={splittedPath[1].includes('pharmacy') && splittedPath.length < 3}
+          >
+            <Icon icon="medication" style={iconMargin} />
+            {!sidebarCollapsed && String(t('pharmacy.list', 'Pharmacies'))}
+          </ListItem>
+        </List>
+      )}
+    </>
+  )
+
+  const getInsuranceLinks = () => (
+    <>
+      <ListItem
+        active={splittedPath[1].includes('insurance')}
+        onClick={() => {
+          navigateTo('/insurance/providers')
+          setExpansion('insurance')
+        }}
+        className="nav-item"
+        style={listItemStyle}
+      >
+        <Icon
+          icon={
+            splittedPath[1].includes('insurance') && expandedItem === 'insurance'
+              ? 'down-arrow'
+              : 'right-arrow'
+          }
+          style={expandibleArrow}
+        />
+        <Icon icon="file" /> {!sidebarCollapsed && String(t('insurance.label', 'Insurance'))}
+      </ListItem>
+      {splittedPath[1].includes('insurance') && expandedItem === 'insurance' && (
+        <List layout="flush" className="nav flex-column">
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyleNew}
+            onClick={() => navigateTo('/insurance/providers/new')}
+            active={splittedPath[1].includes('insurance') && splittedPath.length > 3 && splittedPath[3] === 'new'}
+          >
+            <Icon icon="add" style={iconMargin} />
+            {!sidebarCollapsed && String(t('insurance.providers.new', 'New Provider'))}
+          </ListItem>
+          <ListItem
+            className="nav-item"
+            style={listSubItemStyle}
+            onClick={() => navigateTo('/insurance/providers')}
+            active={splittedPath[1].includes('insurance') && splittedPath.length < 4}
+          >
+            <Icon icon="file" style={iconMargin} />
+            {!sidebarCollapsed && String(t('insurance.providers.label', 'Providers'))}
+          </ListItem>
+        </List>
+      )}
+    </>
+  )
+
   const getLIMSLinks = () => (
     <>
       <ListItem
@@ -367,8 +734,123 @@ const Sidebar = () => {
           {getDashboardLink()}
           {getPatientLinks()}
           {getAppointmentLinks()}
+          {getVisitLinks()}
           {getLabLinks()}
           {getLIMSLinks()}
+          {getImagingLinks()}
+          {getIncidentLinks()}
+          {getReportLinks()}
+          {getDocumentLinks()}
+          {getPharmacyLinks()}
+          {getInsuranceLinks()}
+          <ListItem
+            active={splittedPath[1].includes('medications') || splittedPath[1].includes('prescriptions')}
+            onClick={() => {
+              navigateTo('/prescriptions')
+              setExpansion('medications')
+            }}
+            className="nav-item"
+            style={listItemStyle}
+          >
+            <Icon
+              icon={
+                (splittedPath[1].includes('medications') || splittedPath[1].includes('prescriptions')) && expandedItem === 'medications'
+                  ? 'down-arrow'
+                  : 'right-arrow'
+              }
+              style={expandibleArrow}
+            />
+            <Icon icon="medication" /> {!sidebarCollapsed && String(t('medications.label', 'Medications'))}
+          </ListItem>
+          {(splittedPath[1].includes('medications') || splittedPath[1].includes('prescriptions')) && expandedItem === 'medications' && (
+            <List layout="flush" className="nav flex-column">
+              <ListItem
+                className="nav-item"
+                style={listSubItemStyleNew}
+                onClick={() => navigateTo('/prescriptions/new')}
+                active={splittedPath[1].includes('prescriptions') && splittedPath.length > 2 && splittedPath[2] === 'new'}
+              >
+                <Icon icon="add" style={iconMargin} />
+                {!sidebarCollapsed && String(t('prescriptions.new', 'New Prescription'))}
+              </ListItem>
+              <ListItem
+                className="nav-item"
+                style={listSubItemStyle}
+                onClick={() => navigateTo('/prescriptions')}
+                active={splittedPath[1].includes('prescriptions') && splittedPath.length < 3}
+              >
+                <Icon icon="medication" style={iconMargin} />
+                {!sidebarCollapsed && String(t('prescriptions.label', 'Prescriptions'))}
+              </ListItem>
+              <ListItem
+                className="nav-item"
+                style={listSubItemStyle}
+                onClick={() => navigateTo('/medications')}
+                active={splittedPath[1].includes('medications')}
+              >
+                <Icon icon="setting" style={iconMargin} />
+                {!sidebarCollapsed && String(t('medications.catalog', 'Medication Catalog'))}
+              </ListItem>
+            </List>
+          )}
+          <ListItem
+            active={splittedPath[1].includes('billing')}
+            onClick={() => {
+              navigateTo('/billing/invoices')
+              setExpansion('billing')
+            }}
+            className="nav-item"
+            style={listItemStyle}
+          >
+            <Icon
+              icon={
+                splittedPath[1].includes('billing') && expandedItem === 'billing'
+                  ? 'down-arrow'
+                  : 'right-arrow'
+              }
+              style={expandibleArrow}
+            />
+            <Icon icon="dollar-sign" /> {!sidebarCollapsed && String(t('billing.label', 'Billing'))}
+          </ListItem>
+          {splittedPath[1].includes('billing') && expandedItem === 'billing' && (
+            <List layout="flush" className="nav flex-column">
+              <ListItem
+                className="nav-item"
+                style={listSubItemStyleNew}
+                onClick={() => navigateTo('/billing/invoices/new')}
+                active={splittedPath[1].includes('billing') && splittedPath[2] === 'invoices' && splittedPath.length > 3 && splittedPath[3] === 'new'}
+              >
+                <Icon icon="add" style={iconMargin} />
+                {!sidebarCollapsed && String(t('billing.invoices.new', 'New Invoice'))}
+              </ListItem>
+              <ListItem
+                className="nav-item"
+                style={listSubItemStyle}
+                onClick={() => navigateTo('/billing/invoices')}
+                active={splittedPath[1].includes('billing') && splittedPath[2] === 'invoices' && splittedPath.length < 4}
+              >
+                <Icon icon="dollar-sign" style={iconMargin} />
+                {!sidebarCollapsed && String(t('billing.invoices.label', 'Invoices'))}
+              </ListItem>
+              <ListItem
+                className="nav-item"
+                style={listSubItemStyle}
+                onClick={() => navigateTo('/billing/charges')}
+                active={splittedPath[1].includes('billing') && splittedPath[2] === 'charges'}
+              >
+                <Icon icon="add" style={iconMargin} />
+                {!sidebarCollapsed && String(t('billing.charges.label', 'Charges'))}
+              </ListItem>
+            </List>
+          )}
+          <ListItem
+            active={pathname.includes('settings')}
+            onClick={() => navigateTo('/settings')}
+            className="nav-item"
+            style={listItemStyle}
+          >
+            <Icon icon="setting" /> {!sidebarCollapsed && String(t('settings.label', 'Settings'))}
+          </ListItem>
         </List>
       </div>
     </nav>

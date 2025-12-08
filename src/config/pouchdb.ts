@@ -23,12 +23,34 @@ function createDb(name: string) {
   }
 
   const db = new PouchDB(name)
-  db.sync(`${apiUrl}/_db/${name}`, {
+  
+  // Only sync if CouchDB is available, handle errors gracefully
+  const syncHandler = db.sync(`${apiUrl}/_db/${name}`, {
     live: true,
     retry: true,
-  }).on('change', (info) => {
-    console.log(info)
+    back_off_function: (delay: number) => {
+      // Exponential backoff, max 30 seconds
+      return Math.min(delay * 2, 30000)
+    },
   })
+  
+  syncHandler
+    .on('change', (info) => {
+      // Silently handle changes
+    })
+    .on('error', (err: any) => {
+      // Silently handle sync errors - CouchDB may not be available
+      // Only log if it's not a connection/auth error
+      if (err?.status !== 401 && err?.status !== 404 && !err?.message?.includes('ECONNREFUSED')) {
+        console.warn(`PouchDB sync error for ${name}:`, err)
+      }
+    })
+    .on('paused', () => {
+      // Sync paused (usually due to network issues)
+    })
+    .on('active', () => {
+      // Sync resumed
+    })
 
   return db
 }

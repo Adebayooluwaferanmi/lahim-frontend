@@ -104,10 +104,27 @@ export default {
     worklists: {
       label: 'Worklists',
       generate: 'Generate Worklist',
+      generating: 'Generating...',
+      generateError: 'Failed to generate worklist',
+      view: 'View Worklist',
       date: 'Date',
       mode: 'Mode',
+      modeValues: {
+        auto: 'Auto',
+        manual: 'Manual',
+      },
+      instrumentId: 'Instrument ID (Optional)',
       orderCount: 'Order Count',
       status: 'Status',
+      allSections: 'All Sections',
+      section: {
+        chemistry: 'Chemistry',
+        hematology: 'Hematology',
+        microbiology: 'Microbiology',
+        immunology: 'Immunology',
+      },
+      noWorklists: 'No worklists found',
+      loadError: 'Failed to load worklists',
     },
     criticalValues: {
       label: 'Critical Values',

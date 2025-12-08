@@ -11,6 +11,7 @@ export default {
     list: 'List',
     search: 'Search',
     view: 'View',
+    back: 'Back',
     confirmDelete: 'Delete Confirmation',
   },
 }

@@ -19,7 +19,7 @@ describe('Navbar', () => {
   const wrapper = setup()
   const hospitalRunNavbar = wrapper.find(HospitalRunNavbar)
 
-  it('should render a HospitalRun Navbar', () => {
+  it('should render a LaHIM Navbar', () => {
     expect(hospitalRunNavbar).toHaveLength(1)
   })
 
@@ -27,8 +27,8 @@ describe('Navbar', () => {
     const header = wrapper.find('.nav-header')
     const { children } = header.first().props() as any
 
-    it('should render a HospitalRun Navbar with the navbar header', () => {
-      expect(children.props.children).toEqual('HospitalRun')
+    it('should render a LaHIM Navbar with the navbar header', () => {
+      expect(children.props.children).toEqual('LaHIM')
     })
     it('should navigate to / when the header is clicked', () => {
       act(() => {

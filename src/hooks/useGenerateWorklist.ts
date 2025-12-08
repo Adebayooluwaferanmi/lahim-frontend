@@ -4,9 +4,10 @@ import { Worklist } from './useWorklists'
 const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
 
 interface GenerateWorklistData {
-  section?: string
-  priority?: 'routine' | 'urgent' | 'stat'
-  orderIds?: string[]
+  date?: string
+  testCodes?: string[]
+  instrumentId?: string
+  mode?: 'auto' | 'manual'
 }
 
 export const useGenerateWorklist = () => {

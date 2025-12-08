@@ -1,7 +1,7 @@
 {
   "name": "@hospitalrun/frontend",
   "version": "2.0.0-alpha.3",
-  "description": "React frontend for HospitalRun",
+  "description": "React frontend for LaHIM - Laboratory & Health Information Management System",
   "private": false,
   "license": "MIT",
   "dependencies": {

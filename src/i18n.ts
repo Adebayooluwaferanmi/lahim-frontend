@@ -62,11 +62,18 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     fallbackLng: 'en',
-    debug: true,
+    debug: process.env.NODE_ENV === 'development',
     resources,
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
+    // Suppress missing key warnings in production
+    saveMissing: false,
+    missingKeyHandler: process.env.NODE_ENV === 'development' 
+      ? (lng: string[], ns: string, key: string) => {
+          console.warn(`Missing translation key: ${key} for language: ${lng.join(', ')}`)
+        }
+      : undefined,
   })
 
 export default i18n

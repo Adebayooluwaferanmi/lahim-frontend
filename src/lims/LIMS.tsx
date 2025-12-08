@@ -15,6 +15,7 @@ import SpecimenProcessing from './specimens/SpecimenProcessing'
 
 // Worklists
 import Worklists from './worklists/Worklists'
+import GenerateWorklist from './worklists/GenerateWorklist'
 import ViewWorklist from './worklists/ViewWorklist'
 
 // Instruments
@@ -41,12 +42,28 @@ import IssueInventory from './inventory/IssueInventory'
 
 // Results
 import TemplateBasedResultEntry from './results/TemplateBasedResultEntry'
+import ResultInterpretation from './results/ResultInterpretation'
 
 // Test Catalog
 import TestCatalog from './test-catalog/TestCatalog'
 
 // Critical Values
 import CriticalValues from './critical-values/CriticalValues'
+
+// Vocabularies
+import Vocabularies from './vocabularies/Vocabularies'
+
+// Workflow
+import WorkflowDashboard from './workflow/WorkflowDashboard'
+import WorkflowTimeline from './workflow/WorkflowTimeline'
+
+// Logistics
+import SpecimenTransport from './logistics/SpecimenTransport'
+import ViewSpecimenTransport from './logistics/ViewSpecimenTransport'
+import NewSpecimenTransport from './logistics/NewSpecimenTransport'
+import Equipment from './logistics/Equipment'
+import ViewEquipment from './logistics/ViewEquipment'
+import NewEquipment from './logistics/NewEquipment'
 
 const LIMS = () => {
   return (
@@ -64,6 +81,7 @@ const LIMS = () => {
 
       {/* Worklists Routes */}
       <Route path="worklists" element={<PrivateRoute isAuthenticated={true}><Worklists /></PrivateRoute>} />
+      <Route path="worklists/generate" element={<PrivateRoute isAuthenticated={true}><GenerateWorklist /></PrivateRoute>} />
       <Route path="worklists/:id" element={<PrivateRoute isAuthenticated={true}><ViewWorklist /></PrivateRoute>} />
 
       {/* Instruments Routes */}
@@ -90,12 +108,28 @@ const LIMS = () => {
 
       {/* Results Routes */}
       <Route path="results/enter" element={<PrivateRoute isAuthenticated={true}><TemplateBasedResultEntry /></PrivateRoute>} />
+      <Route path="results/:id/interpretation" element={<PrivateRoute isAuthenticated={true}><ResultInterpretation /></PrivateRoute>} />
 
       {/* Test Catalog Routes */}
       <Route path="test-catalog" element={<PrivateRoute isAuthenticated={true}><TestCatalog /></PrivateRoute>} />
 
       {/* Critical Values Routes */}
       <Route path="critical-values" element={<PrivateRoute isAuthenticated={true}><CriticalValues /></PrivateRoute>} />
+
+      {/* Vocabularies Routes */}
+      <Route path="vocabularies" element={<PrivateRoute isAuthenticated={true}><Vocabularies /></PrivateRoute>} />
+
+      {/* Workflow Routes */}
+      <Route path="workflow" element={<PrivateRoute isAuthenticated={true}><WorkflowDashboard /></PrivateRoute>} />
+      <Route path="workflow/:orderId" element={<PrivateRoute isAuthenticated={true}><WorkflowTimeline /></PrivateRoute>} />
+
+      {/* Logistics Routes */}
+      <Route path="logistics/transport" element={<PrivateRoute isAuthenticated={true}><SpecimenTransport /></PrivateRoute>} />
+      <Route path="logistics/transport/new" element={<PrivateRoute isAuthenticated={true}><NewSpecimenTransport /></PrivateRoute>} />
+      <Route path="logistics/transport/:id" element={<PrivateRoute isAuthenticated={true}><ViewSpecimenTransport /></PrivateRoute>} />
+      <Route path="logistics/equipment" element={<PrivateRoute isAuthenticated={true}><Equipment /></PrivateRoute>} />
+      <Route path="logistics/equipment/new" element={<PrivateRoute isAuthenticated={true}><NewEquipment /></PrivateRoute>} />
+      <Route path="logistics/equipment/:id" element={<PrivateRoute isAuthenticated={true}><ViewEquipment /></PrivateRoute>} />
 
       {/* Default route - redirect to lab-orders */}
       <Route path="" element={<PrivateRoute isAuthenticated={true}><LabOrders /></PrivateRoute>} />

@@ -68,15 +68,26 @@ class ApiClient {
   private async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`
+      let errorDetails: any = null
       
       try {
         const errorData = await response.json()
-        errorMessage = errorData.message || errorData.error || errorMessage
+        // The server returns both 'error' (generic) and 'message' (specific)
+        // Always prioritize 'message' as it contains the actual error details
+        if (errorData.message) {
+          errorMessage = errorData.message
+        } else if (errorData.error) {
+          errorMessage = typeof errorData.error === 'string' ? errorData.error : String(errorData.error)
+        }
+        errorDetails = errorData
       } catch {
         // If response is not JSON, use status text
       }
 
-      throw new ApiClientError(errorMessage, response.status)
+      const apiError = new ApiClientError(errorMessage, response.status)
+      // Attach full error details for better error handling
+      ;(apiError as any).details = errorDetails
+      throw apiError
     }
 
     // Handle empty responses

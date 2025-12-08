@@ -18,6 +18,39 @@ import { RootState } from './store'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 import Patients from './patients/Patients'
+import Visits from './visits/Visits'
+import NewVisit from './visits/NewVisit'
+import ViewVisit from './visits/ViewVisit'
+import Settings from './settings/Settings'
+import Medications from './medications/Medications'
+import Prescriptions from './medications/Prescriptions'
+import NewPrescription from './medications/NewPrescription'
+import Invoices from './billing/Invoices'
+import NewInvoice from './billing/NewInvoice'
+import ViewInvoice from './billing/ViewInvoice'
+import Charges from './billing/Charges'
+import NewCharge from './billing/NewCharge'
+import Imaging from './imaging/Imaging'
+import NewImaging from './imaging/NewImaging'
+import ViewImaging from './imaging/ViewImaging'
+import Incidents from './incidents/Incidents'
+import NewIncident from './incidents/NewIncident'
+import ViewIncident from './incidents/ViewIncident'
+import Reports from './reports/Reports'
+import Analytics from './reports/Analytics'
+import AdministrativeReports from './reports/AdministrativeReports'
+import FinancialReports from './reports/FinancialReports'
+import CustomReportBuilder from './reports/CustomReportBuilder'
+import Notifications from './notifications/Notifications'
+import Documents from './documents/Documents'
+import UploadDocument from './documents/UploadDocument'
+import ViewDocument from './documents/ViewDocument'
+import InsuranceProviders from './insurance/InsuranceProviders'
+import NewInsuranceProvider from './insurance/NewInsuranceProvider'
+import Pharmacies from './pharmacy/Pharmacies'
+import NewPharmacy from './pharmacy/NewPharmacy'
+import ViewPharmacy from './pharmacy/ViewPharmacy'
+import ViewPrescription from './medications/ViewPrescription'
 import { useUIStore } from './store/ui-store'
 
 const HospitalRun = () => {
@@ -104,6 +137,270 @@ const HospitalRun = () => {
                     element={
                       <PrivateRoute isAuthenticated>
                         <LIMS />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/visits"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Visits />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/visits/new"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <NewVisit />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/visits/:id"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <ViewVisit />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Settings />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/medications"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Medications />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/prescriptions"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Prescriptions />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/prescriptions/new"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <NewPrescription />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/prescriptions/:id"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <ViewPrescription />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/billing/invoices"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Invoices />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/billing/invoices/new"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <NewInvoice />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/billing/invoices/:id"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <ViewInvoice />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/billing/charges"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Charges />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/billing/charges/new"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <NewCharge />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/imaging"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Imaging />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/imaging/new"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <NewImaging />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/imaging/:id"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <ViewImaging />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/incidents"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Incidents />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/incidents/new"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <NewIncident />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/incidents/:id"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <ViewIncident />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reports"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Reports />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reports/analytics"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Analytics />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reports/administrative"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <AdministrativeReports />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reports/financial"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <FinancialReports />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/reports/custom"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <CustomReportBuilder />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/notifications"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Notifications />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/documents"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Documents />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/documents/upload"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <UploadDocument />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/documents/:id"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <ViewDocument />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/insurance/providers"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <InsuranceProviders />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/insurance/providers/new"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <NewInsuranceProvider />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/pharmacy"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <Pharmacies />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/pharmacy/new"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <NewPharmacy />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/pharmacy/:id"
+                    element={
+                      <PrivateRoute isAuthenticated>
+                        <ViewPharmacy />
                       </PrivateRoute>
                     }
                   />
