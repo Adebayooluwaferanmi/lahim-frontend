@@ -19,6 +19,7 @@ const Sidebar = () => {
 
   const listItemStyle: CSSProperties = {
     cursor: 'pointer',
+    color: 'rgba(255, 255, 255, 0.85)',
   }
 
   const expandibleArrow: CSSProperties = {
@@ -73,9 +74,10 @@ const Sidebar = () => {
     fontSize: 'small',
     borderBottomWidth: 0,
     borderTopWidth: 0,
-    color: 'black',
+    color: '#E8D5B7',
     padding: '.6rem 1.25rem',
-    backgroundColor: 'rgba(245,245,245,1)',
+    backgroundColor: 'rgba(232, 213, 183, 0.1)',
+    transition: 'all 0.15s ease-in-out',
   }
 
   const listSubItemStyle: CSSProperties = {
@@ -83,9 +85,10 @@ const Sidebar = () => {
     fontSize: 'small',
     borderBottomWidth: 0,
     borderTopWidth: 0,
-    color: 'black',
+    color: '#E8D5B7',
     padding: '.6rem 1.25rem',
-    backgroundColor: 'rgba(245,245,245,1)',
+    backgroundColor: 'rgba(232, 213, 183, 0.1)',
+    transition: 'all 0.15s ease-in-out',
   }
 
   const getDashboardLink = () => (
@@ -716,8 +719,8 @@ const Sidebar = () => {
 
   return (
     <nav
-      className="col-md-2 d-none d-md-block bg-light sidebar"
-      style={{ width: sidebarCollapsed ? '56px' : '' }}
+      className="col-md-2 d-none d-md-block sidebar"
+      style={{ width: sidebarCollapsed ? '56px' : '260px' }}
     >
       <div className="sidebar-sticky">
         <List layout="flush" className="nav flex-column">

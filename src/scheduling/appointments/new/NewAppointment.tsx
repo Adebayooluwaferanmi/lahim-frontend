@@ -70,8 +70,8 @@ const NewAppointment = () => {
   }
 
   return (
-    <div>
-      <form>
+    <div className="appointment-detail-container">
+      <form className="form-container">
         <AppointmentDetailForm
           appointment={appointment as Appointment}
           errorMessage={errorMessage}

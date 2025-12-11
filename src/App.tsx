@@ -6,7 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from './lib/query-client'
 import LoadingFallback from './components/LoadingFallback'
 import ErrorBoundary from './components/ErrorBoundary'
-import HospitalRun from './HospitalRun'
+import LaHIM from './LaHIM'
 
 import store from './store'
 
@@ -16,7 +16,7 @@ const App: React.FC = () => (
       <QueryClientProvider client={queryClient}>
         <Suspense fallback={<LoadingFallback />}>
         <BrowserRouter>
-          <HospitalRun />
+          <LaHIM />
         </BrowserRouter>
       </Suspense>
         {import.meta.env.DEV && (

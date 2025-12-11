@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button, Panel, Alert, Spinner, Container, Row, Column } from '@hospitalrun/components'
 import { useCreateLabOrder } from '../../hooks/useCreateLabOrder'
+import { useTestPanels } from '../../hooks/useTestPanels'
+import { useTestCatalog } from '../../hooks/useTestCatalog'
 import useTitle from '../../page-header/useTitle'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import TextInputWithLabelFormGroup from '../../components/input/TextInputWithLabelFormGroup'
+import SelectWithLabelFormGroup from '../../components/input/SelectWithLableFormGroup'
 
 const breadcrumbs = [{ i18nKey: 'lims.labOrders.new', location: '/lims/lab-orders/new' }]
 
@@ -17,11 +20,28 @@ const NewLabOrder = () => {
   useAddBreadcrumbs(breadcrumbs, true)
   const setButtonToolBar = useButtonToolbarSetter()
   const { mutate: createOrder, isPending: isLoading, error } = useCreateLabOrder()
+  const { data: panelsData } = useTestPanels({ active: true })
+  const { data: testCatalogData } = useTestCatalog({ active: true })
 
+  const panels = panelsData
+    ? Array.isArray(panelsData)
+      ? panelsData
+      : (panelsData as { panels?: any[] }).panels || []
+    : []
+
+  const testEntries = testCatalogData
+    ? Array.isArray(testCatalogData)
+      ? testCatalogData
+      : (testCatalogData as { entries?: any[] }).entries || []
+    : []
+
+  const [orderType, setOrderType] = useState<'panel' | 'individual'>('panel')
   const [formData, setFormData] = useState({
     patientId: '',
     patientName: '',
     priority: 'routine' as 'routine' | 'urgent' | 'stat',
+    panelId: '',
+    testCodeLoinc: '',
     notes: '',
   })
 
@@ -36,10 +56,25 @@ const NewLabOrder = () => {
       return
     }
 
+    if (orderType === 'panel' && !formData.panelId) {
+      setSubmitError(t('lims.labOrders.panelRequired', 'Please select a test panel'))
+      return
+    }
+
+    if (orderType === 'individual' && !formData.testCodeLoinc) {
+      setSubmitError(t('lims.labOrders.testRequired', 'Please select a test'))
+      return
+    }
+
     createOrder(
       {
         ...formData,
-        tests: [], // TODO: Add test selection UI
+        isPanel: orderType === 'panel',
+        // For panels, panelId is set; for individual tests, testCodeLoinc is set
+        ...(orderType === 'panel'
+          ? { panelId: formData.panelId, testCodeLoinc: undefined }
+          : { testCodeLoinc: formData.testCodeLoinc, panelId: undefined }),
+        tests: orderType === 'panel' ? [] : [{ testCode: formData.testCodeLoinc, testName: testEntries.find((t: any) => t.code === formData.testCodeLoinc)?.name || '' }],
       },
       {
         onSuccess: (data) => {
@@ -119,6 +154,65 @@ const NewLabOrder = () => {
               </div>
             </Column>
           </Row>
+
+          <Row>
+            <Column md={12}>
+              <div className="form-group">
+                <label>{String(t('lims.labOrders.orderType', 'Order Type'))}</label>
+                <select
+                  className="form-control"
+                  value={orderType}
+                  onChange={(e) => {
+                    setOrderType(e.target.value as 'panel' | 'individual')
+                    setFormData({ ...formData, panelId: '', testCodeLoinc: '' })
+                  }}
+                >
+                  <option value="panel">{String(t('lims.labOrders.orderType.panel', 'Test Panel'))}</option>
+                  <option value="individual">{String(t('lims.labOrders.orderType.individual', 'Individual Test'))}</option>
+                </select>
+              </div>
+            </Column>
+          </Row>
+
+          {orderType === 'panel' ? (
+            <Row>
+              <Column md={12}>
+                <SelectWithLabelFormGroup
+                  label={String(t('lims.labOrders.selectPanel', 'Select Test Panel'))}
+                  name="panelId"
+                  value={formData.panelId}
+                  onChange={(e) => setFormData({ ...formData, panelId: e.target.value })}
+                  isRequired
+                  options={[
+                    { value: '', label: String(t('lims.labOrders.selectPanel', 'Select Panel...')) },
+                    ...panels.map((panel: any) => ({
+                      value: panel.id || panel._id,
+                      label: `${panel.code} - ${panel.name} (${panel.parameters?.length || 0} parameters)`,
+                    })),
+                  ]}
+                />
+              </Column>
+            </Row>
+          ) : (
+            <Row>
+              <Column md={12}>
+                <SelectWithLabelFormGroup
+                  label={String(t('lims.labOrders.selectTest', 'Select Test'))}
+                  name="testCodeLoinc"
+                  value={formData.testCodeLoinc}
+                  onChange={(e) => setFormData({ ...formData, testCodeLoinc: e.target.value })}
+                  isRequired
+                  options={[
+                    { value: '', label: String(t('lims.labOrders.selectTest', 'Select Test...')) },
+                    ...testEntries.map((entry: any) => ({
+                      value: entry.code,
+                      label: `${entry.code} - ${entry.name}`,
+                    })),
+                  ]}
+                />
+              </Column>
+            </Row>
+          )}
 
           <Row>
             <Column md={12}>

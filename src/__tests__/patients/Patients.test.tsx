@@ -7,7 +7,7 @@ import { mount } from 'enzyme'
 import thunk from 'redux-thunk'
 import { act } from 'react-dom/test-utils'
 import Permissions from '../../model/Permissions'
-import HospitalRun from '../../HospitalRun'
+import LaHIM from '../../LaHIM'
 import NewPatient from '../../patients/new/NewPatient'
 import { addBreadcrumbs } from '../../breadcrumbs/breadcrumbs-slice'
 import Dashboard from '../../dashboard/Dashboard'
@@ -34,7 +34,7 @@ describe('/patients/new', () => {
       wrapper = await mount(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/patients/new']}>
-            <HospitalRun />
+            <LaHIM />
           </MemoryRouter>
         </Provider>,
       )

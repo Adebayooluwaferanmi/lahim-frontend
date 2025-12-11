@@ -1,4 +1,5 @@
 import { useApiQuery } from '../lib/queries'
+import { useCreateMutation } from '../lib/mutations'
 
 export interface TestCatalogEntry {
   id?: string
@@ -57,5 +58,14 @@ export const useTestCatalogEntry = (codeOrId: string | undefined) => {
       enabled: !!codeOrId,
     }
   )
+}
+
+/**
+ * Create a new test catalog entry
+ */
+export const useCreateTestCatalog = () => {
+  return useCreateMutation<TestCatalogEntry, Partial<TestCatalogEntry>>('/test-catalog', {
+    invalidateQueries: [['test-catalog']],
+  })
 }
 

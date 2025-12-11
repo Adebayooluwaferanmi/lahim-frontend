@@ -14,8 +14,9 @@ const Navbar = () => {
       variant="dark"
       navItems={[
         {
-          type: 'icon',
-          src: '/logo-icon.svg',
+          type: 'image',
+          src: '/logo.png',
+          alt: 'LaHIM Logo',
           onClick: () => {
             navigate('/')
           },

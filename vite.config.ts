@@ -128,7 +128,8 @@ export default defineConfig({
       transform(code, id) {
         // Handle legacy minified files that use undeclared variables
         // md5.min.js uses global variables txt and md5 without declaring them
-        if (id.includes('md5') && (id.includes('.min.js') || id.includes('.js'))) {
+        // Only apply to actual legacy md5.min.js files, not uuid's md5.js
+        if (id.includes('md5.min.js') || (id.includes('md5') && id.includes('.min.js') && !id.includes('uuid'))) {
           // The md5 library assigns to txt without declaring it
           // We need to declare it at the top level, not in a function scope
           // Replace assignments to undeclared txt with proper declaration
@@ -153,6 +154,8 @@ export default defineConfig({
       // Fix React version conflict - ensure only one version is used
       'react': path.resolve(__dirname, './node_modules/react'),
       'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+      // Workspace dependency alias
+      '@lahim/components': path.resolve(__dirname, '../components-lahim/dist/index.esm'),
       // Note: @hospitalrun/components is handled by the hospitalrunComponentsAlias plugin
       // The plugin resolves both main imports (→ index.esm) and subpaths (→ dist/scss/main.scss)
       // No alias needed here - plugin handles everything

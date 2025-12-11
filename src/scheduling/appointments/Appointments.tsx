@@ -73,7 +73,7 @@ const Appointments = () => {
   }, [appointments])
 
   return (
-    <div>
+    <div className="scheduling-appointments" style={{ width: '100%', padding: '1rem 0' }}>
       <Calendar
         events={events}
         onEventClick={(event) => {

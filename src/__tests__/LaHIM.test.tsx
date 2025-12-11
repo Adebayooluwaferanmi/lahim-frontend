@@ -18,12 +18,12 @@ import PatientRepository from '../clients/db/PatientRepository'
 import AppointmentRepository from '../clients/db/AppointmentRepository'
 import Patient from '../model/Patient'
 import Appointment from '../model/Appointment'
-import HospitalRun from '../HospitalRun'
+import LaHIM from '../LaHIM'
 import Permissions from '../model/Permissions'
 
 const mockStore = configureMockStore([thunk])
 
-describe('HospitalRun', () => {
+describe('LaHIM', () => {
   describe('routing', () => {
     describe('/appointments', () => {
       it('should render the appointments screen when /appointments is accessed', async () => {
@@ -38,7 +38,7 @@ describe('HospitalRun', () => {
         const wrapper = mount(
           <Provider store={store}>
             <MemoryRouter initialEntries={['/appointments']}>
-              <HospitalRun />
+              <LaHIM />
             </MemoryRouter>
           </Provider>,
         )
@@ -68,7 +68,7 @@ describe('HospitalRun', () => {
             })}
           >
             <MemoryRouter initialEntries={['/appointments']}>
-              <HospitalRun />
+              <LaHIM />
             </MemoryRouter>
           </Provider>,
         )
@@ -89,7 +89,7 @@ describe('HospitalRun', () => {
         const wrapper = mount(
           <Provider store={store}>
             <MemoryRouter initialEntries={['/appointments/new']}>
-              <HospitalRun />
+              <LaHIM />
             </MemoryRouter>
           </Provider>,
         )
@@ -117,7 +117,7 @@ describe('HospitalRun', () => {
             })}
           >
             <MemoryRouter initialEntries={['/appointments/new']}>
-              <HospitalRun />
+              <LaHIM />
             </MemoryRouter>
           </Provider>,
         )
@@ -151,7 +151,7 @@ describe('HospitalRun', () => {
         const wrapper = mount(
           <Provider store={store}>
             <MemoryRouter initialEntries={['/appointments/edit/123']}>
-              <HospitalRun />
+              <LaHIM />
             </MemoryRouter>
           </Provider>,
         )
@@ -182,7 +182,7 @@ describe('HospitalRun', () => {
             })}
           >
             <MemoryRouter initialEntries={['/appointments/edit/123']}>
-              <HospitalRun />
+              <LaHIM />
             </MemoryRouter>
           </Provider>,
         )
@@ -201,7 +201,7 @@ describe('HospitalRun', () => {
             })}
           >
             <MemoryRouter initialEntries={['/appointments/edit/123']}>
-              <HospitalRun />
+              <LaHIM />
             </MemoryRouter>
           </Provider>,
         )
@@ -225,7 +225,7 @@ describe('HospitalRun', () => {
           wrapper = await mount(
             <Provider store={store}>
               <MemoryRouter initialEntries={['/labs']}>
-                <HospitalRun />
+                <LaHIM />
               </MemoryRouter>
             </Provider>,
           )
@@ -247,7 +247,7 @@ describe('HospitalRun', () => {
         const wrapper = mount(
           <Provider store={store}>
             <MemoryRouter initialEntries={['/labs']}>
-              <HospitalRun />
+              <LaHIM />
             </MemoryRouter>
           </Provider>,
         )

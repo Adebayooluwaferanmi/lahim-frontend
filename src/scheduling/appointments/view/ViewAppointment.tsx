@@ -93,8 +93,10 @@ const ViewAppointment = () => {
   }
 
   return (
-    <div>
-      <AppointmentDetailForm appointment={appointment} isEditable={false} patient={patient} />
+    <div className="appointment-detail-container">
+      <div className="form-container">
+        <AppointmentDetailForm appointment={appointment} isEditable={false} patient={patient} />
+      </div>
       <Modal
         body={String(t('scheduling.appointment.deleteConfirmationMessage'))}
         buttonsAlignment="right"

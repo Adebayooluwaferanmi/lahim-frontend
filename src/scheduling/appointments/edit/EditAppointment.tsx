@@ -83,22 +83,24 @@ const EditAppointment = () => {
   }
 
   return (
-    <div>
-      <AppointmentDetailForm
-        isEditable
-        appointment={appointment}
+    <div className="appointment-detail-container">
+      <div className="form-container">
+        <AppointmentDetailForm
+          isEditable
+          appointment={appointment}
         patient={patient}
         onFieldChange={onFieldChange}
         errorMessage={errorMessage}
       />
-      <div className="row float-right">
-        <div className="btn-group btn-group-lg">
-          <Button className="mr-2" color="success" onClick={onSave}>
-            {String(t('actions.save'))}
-          </Button>
-          <Button color="danger" onClick={onCancel}>
-            {String(t('actions.cancel'))}
-          </Button>
+        <div className="row float-right">
+          <div className="btn-group btn-group-lg">
+            <Button className="mr-2" color="success" onClick={onSave}>
+              {String(t('actions.save'))}
+            </Button>
+            <Button color="danger" onClick={onCancel}>
+              {String(t('actions.cancel'))}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

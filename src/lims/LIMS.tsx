@@ -46,6 +46,12 @@ import ResultInterpretation from './results/ResultInterpretation'
 
 // Test Catalog
 import TestCatalog from './test-catalog/TestCatalog'
+import NewTestCatalog from './test-catalog/NewTestCatalog'
+
+// Test Panels
+import TestPanels from './test-panels/TestPanels'
+import NewTestPanel from './test-panels/NewTestPanel'
+import ViewTestPanel from './test-panels/ViewTestPanel'
 
 // Critical Values
 import CriticalValues from './critical-values/CriticalValues'
@@ -112,6 +118,12 @@ const LIMS = () => {
 
       {/* Test Catalog Routes */}
       <Route path="test-catalog" element={<PrivateRoute isAuthenticated={true}><TestCatalog /></PrivateRoute>} />
+      <Route path="test-catalog/new" element={<PrivateRoute isAuthenticated={true}><NewTestCatalog /></PrivateRoute>} />
+
+      {/* Test Panels Routes */}
+      <Route path="test-panels" element={<PrivateRoute isAuthenticated={true}><TestPanels /></PrivateRoute>} />
+      <Route path="test-panels/new" element={<PrivateRoute isAuthenticated={true}><NewTestPanel /></PrivateRoute>} />
+      <Route path="test-panels/:id" element={<PrivateRoute isAuthenticated={true}><ViewTestPanel /></PrivateRoute>} />
 
       {/* Critical Values Routes */}
       <Route path="critical-values" element={<PrivateRoute isAuthenticated={true}><CriticalValues /></PrivateRoute>} />

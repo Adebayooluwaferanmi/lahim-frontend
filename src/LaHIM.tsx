@@ -53,7 +53,7 @@ import ViewPharmacy from './pharmacy/ViewPharmacy'
 import ViewPrescription from './medications/ViewPrescription'
 import { useUIStore } from './store/ui-store'
 
-const HospitalRun = () => {
+const LaHIM = () => {
   const { title, sidebarCollapsed } = useUIStore()
   const { permissions } = useSelector((state: RootState) => state.user)
 
@@ -68,7 +68,8 @@ const HospitalRun = () => {
               role="main"
               className={`${
                 sidebarCollapsed ? 'col-md-10 col-lg-11' : 'col-md-9 col-lg-10'
-              } ml-sm-auto px-4`}
+              } ml-sm-auto`}
+              style={{ marginLeft: sidebarCollapsed ? '56px' : '260px' }}
             >
               <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2">{title}</h1>
@@ -415,4 +416,4 @@ const HospitalRun = () => {
   )
 }
 
-export default HospitalRun
+export default LaHIM

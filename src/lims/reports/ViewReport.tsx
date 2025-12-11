@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button, Panel, Container, Row, Column, Spinner, Alert, Modal } from '@hospitalrun/components'
 import { useReport, useDeliverReport } from '../../hooks/useReports'
+import { apiClient } from '../../lib/api-client'
 import useTitle from '../../page-header/useTitle'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
@@ -99,10 +100,11 @@ const ViewReport = () => {
         iconLocation="left"
         onClick={() => {
           // Download PDF report
-          const pdfUrl = `/reports/${id}/pdf`
+          const pdfUrl = `${apiClient.defaults.baseURL || ''}/reports/${id}/pdf`
           const link = document.createElement('a')
           link.href = pdfUrl
           link.download = `report-${report?.reportNumber || id}.pdf`
+          link.target = '_blank'
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
