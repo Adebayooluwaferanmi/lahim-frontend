@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Panel, Alert, Spinner, Container, Row, Column, Modal } from '@hospitalrun/components'
+import { Button, Panel, Alert, Spinner, Container, Row, Column, Modal } from '@lahim/components'
 import { useTestPanel, useUpdateTestPanel, useDeleteTestPanel } from '../../hooks/useTestPanels'
 import { useTestCatalog } from '../../hooks/useTestCatalog'
 import { apiClient } from '../../lib/api-client'

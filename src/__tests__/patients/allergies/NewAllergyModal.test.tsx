@@ -2,17 +2,12 @@ import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import NewAllergyModal from 'patients/allergies/NewAllergyModal'
 import { mount } from 'enzyme'
-import { Modal, Alert } from '@hospitalrun/components'
+import { Modal, Alert } from '@lahim/components'
 import { act } from '@testing-library/react'
-import createMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { Provider } from 'react-redux'
 import TextInputWithLabelFormGroup from '../../../components/input/TextInputWithLabelFormGroup'
-import * as patientSlice from '../../../patients/patient-slice'
 import PatientRepository from '../../../clients/db/PatientRepository'
 import Patient from '../../../model/Patient'
-
-const mockStore = createMockStore([thunk])
+import { usePatientStore } from '../../../store/patient-store'
 
 describe('New Allergy Modal', () => {
   const mockPatient = {
@@ -21,22 +16,25 @@ describe('New Allergy Modal', () => {
   } as Patient
 
   beforeEach(() => {
-    jest.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(mockPatient)
-    jest.spyOn(PatientRepository, 'find').mockResolvedValue(mockPatient)
+    vi.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(mockPatient)
+    vi.spyOn(PatientRepository, 'find').mockResolvedValue(mockPatient)
   })
 
   it('should render a modal with the correct labels', () => {
-    const store = mockStore({
-      patient: {
-        patient: {
-          id: '123',
-        },
-      },
+    usePatientStore.setState({
+      patient: { id: '123' } as Patient,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
     })
     const wrapper = mount(
-      <Provider store={store}>
-        <NewAllergyModal show onCloseButtonClick={jest.fn()} />
-      </Provider>,
+      <NewAllergyModal show onCloseButtonClick={vi.fn()} />,
     )
 
     const modal = wrapper.find(Modal)
@@ -54,18 +52,21 @@ describe('New Allergy Modal', () => {
       message: 'some error message',
       name: 'some name message',
     }
-    const store = mockStore({
-      patient: {
-        patient: {
-          id: '123',
-        },
-        allergyError: expectedError,
-      },
+    usePatientStore.setState({
+      patient: { id: '123' } as Patient,
+      allergyError: expectedError,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
     })
     const wrapper = mount(
-      <Provider store={store}>
-        <NewAllergyModal show onCloseButtonClick={jest.fn()} />
-      </Provider>,
+      <NewAllergyModal show onCloseButtonClick={vi.fn()} />,
     )
     wrapper.update()
 
@@ -80,18 +81,21 @@ describe('New Allergy Modal', () => {
 
   describe('cancel', () => {
     it('should call the onCloseButtonClick function when the close button is clicked', () => {
-      const onCloseButtonClickSpy = jest.fn()
-      const store = mockStore({
-        patient: {
-          patient: {
-            id: '123',
-          },
-        },
+      const onCloseButtonClickSpy = vi.fn()
+      usePatientStore.setState({
+        patient: { id: '123' } as Patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
       })
       const wrapper = mount(
-        <Provider store={store}>
-          <NewAllergyModal show onCloseButtonClick={onCloseButtonClickSpy} />
-        </Provider>,
+        <NewAllergyModal show onCloseButtonClick={onCloseButtonClickSpy} />,
       )
       act(() => {
         const modal = wrapper.find(Modal)
@@ -105,20 +109,24 @@ describe('New Allergy Modal', () => {
 
   describe('save', () => {
     it('should dispatch add allergy', () => {
-      jest.spyOn(patientSlice, 'addAllergy')
       const expectedName = 'expected name'
       const patient = {
         id: '123',
       }
-      const store = mockStore({
-        patient: {
-          patient,
-        },
+      usePatientStore.setState({
+        patient: patient as Patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
       })
       const wrapper = mount(
-        <Provider store={store}>
-          <NewAllergyModal show onCloseButtonClick={jest.fn()} />
-        </Provider>,
+        <NewAllergyModal show onCloseButtonClick={vi.fn()} />,
       )
       wrapper.update()
 
@@ -136,7 +144,7 @@ describe('New Allergy Modal', () => {
         onSave({} as React.MouseEvent<HTMLButtonElement>)
       })
 
-      expect(patientSlice.addAllergy).toHaveBeenCalledWith(patient.id, { name: expectedName })
+      expect(usePatientStore.getState().addAllergy).toHaveBeenCalledWith(patient.id, { name: expectedName })
     })
   })
 })

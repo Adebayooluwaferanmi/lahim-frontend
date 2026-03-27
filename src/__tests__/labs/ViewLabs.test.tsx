@@ -1,11 +1,8 @@
 import '../../__mocks__/matchMediaMock'
 import React from 'react'
-import { Provider } from 'react-redux'
 import { Router } from 'react-router-dom'
 import ViewLabs from 'labs/ViewLabs'
 import { mount, ReactWrapper } from 'enzyme'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import { createMemoryHistory } from 'history'
 import Permissions from 'model/Permissions'
 import { act } from '@testing-library/react'
@@ -15,26 +12,20 @@ import format from 'date-fns/format'
 import * as ButtonBarProvider from 'page-header/ButtonBarProvider'
 import SortRequest from 'clients/db/SortRequest'
 import * as titleUtil from '../../page-header/useTitle'
-
-const mockStore = configureMockStore([thunk])
+import { useUserStore } from '../../store/user-store'
 
 describe('View Labs', () => {
   describe('title', () => {
     let titleSpy: any
     beforeEach(async () => {
-      const store = mockStore({
-        title: '',
-        user: { permissions: [Permissions.ViewLabs, Permissions.RequestLab] },
-      })
-      titleSpy = jest.spyOn(titleUtil, 'default')
-      jest.spyOn(LabRepository, 'findAll').mockResolvedValue([])
+      useUserStore.setState({ permissions: [Permissions.ViewLabs, Permissions.RequestLab] })
+      titleSpy = vi.spyOn(titleUtil, 'default')
+      vi.spyOn(LabRepository, 'findAll').mockResolvedValue([])
       await act(async () => {
         await mount(
-          <Provider store={store}>
-            <Router history={createMemoryHistory()}>
-              <ViewLabs />
-            </Router>
-          </Provider>,
+          <Router history={createMemoryHistory()}>
+            <ViewLabs />
+          </Router>,
         )
       })
     })
@@ -46,20 +37,15 @@ describe('View Labs', () => {
 
   describe('button bar', () => {
     it('should display button to add new lab request', async () => {
-      const store = mockStore({
-        title: '',
-        user: { permissions: [Permissions.ViewLabs, Permissions.RequestLab] },
-      })
-      const setButtonToolBarSpy = jest.fn()
-      jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter').mockReturnValue(setButtonToolBarSpy)
-      jest.spyOn(LabRepository, 'findAll').mockResolvedValue([])
+      useUserStore.setState({ permissions: [Permissions.ViewLabs, Permissions.RequestLab] })
+      const setButtonToolBarSpy = vi.fn()
+      vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter').mockReturnValue(setButtonToolBarSpy)
+      vi.spyOn(LabRepository, 'findAll').mockResolvedValue([])
       await act(async () => {
         await mount(
-          <Provider store={store}>
-            <Router history={createMemoryHistory()}>
-              <ViewLabs />
-            </Router>
-          </Provider>,
+          <Router history={createMemoryHistory()}>
+            <ViewLabs />
+          </Router>,
         )
       })
 
@@ -68,20 +54,15 @@ describe('View Labs', () => {
     })
 
     it('should not display button to add new lab request if the user does not have permissions', async () => {
-      const store = mockStore({
-        title: '',
-        user: { permissions: [Permissions.ViewLabs] },
-      })
-      const setButtonToolBarSpy = jest.fn()
-      jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter').mockReturnValue(setButtonToolBarSpy)
-      jest.spyOn(LabRepository, 'findAll').mockResolvedValue([])
+      useUserStore.setState({ permissions: [Permissions.ViewLabs] })
+      const setButtonToolBarSpy = vi.fn()
+      vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter').mockReturnValue(setButtonToolBarSpy)
+      vi.spyOn(LabRepository, 'findAll').mockResolvedValue([])
       await act(async () => {
         await mount(
-          <Provider store={store}>
-            <Router history={createMemoryHistory()}>
-              <ViewLabs />
-            </Router>
-          </Provider>,
+          <Router history={createMemoryHistory()}>
+            <ViewLabs />
+          </Router>,
         )
       })
 
@@ -103,20 +84,15 @@ describe('View Labs', () => {
     } as Lab
 
     beforeEach(async () => {
-      const store = mockStore({
-        title: '',
-        user: { permissions: [Permissions.ViewLabs, Permissions.RequestLab] },
-      })
+      useUserStore.setState({ permissions: [Permissions.ViewLabs, Permissions.RequestLab] })
       history = createMemoryHistory()
 
-      jest.spyOn(LabRepository, 'findAll').mockResolvedValue([expectedLab])
+      vi.spyOn(LabRepository, 'findAll').mockResolvedValue([expectedLab])
       await act(async () => {
         wrapper = await mount(
-          <Provider store={store}>
-            <Router history={history}>
-              <ViewLabs />
-            </Router>
-          </Provider>,
+          <Router history={history}>
+            <ViewLabs />
+          </Router>,
         )
       })
 
@@ -170,19 +146,14 @@ describe('View Labs', () => {
   describe('sort Request', () => {
     let findAllSpy: any
     beforeEach(async () => {
-      const store = mockStore({
-        title: '',
-        user: { permissions: [Permissions.ViewLabs, Permissions.RequestLab] },
-      })
-      findAllSpy = jest.spyOn(LabRepository, 'findAll')
+      useUserStore.setState({ permissions: [Permissions.ViewLabs, Permissions.RequestLab] })
+      findAllSpy = vi.spyOn(LabRepository, 'findAll')
       findAllSpy.mockResolvedValue([])
       await act(async () => {
         await mount(
-          <Provider store={store}>
-            <Router history={createMemoryHistory()}>
-              <ViewLabs />
-            </Router>
-          </Provider>,
+          <Router history={createMemoryHistory()}>
+            <ViewLabs />
+          </Router>,
         )
       })
     })

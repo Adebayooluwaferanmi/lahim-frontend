@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Container, Row, Column, Panel, Spinner, Alert, Button } from '@hospitalrun/components'
+import { Container, Row, Column, Panel, Spinner, Alert, Button } from '@lahim/components'
 import { useAnalytics } from '../hooks/useReports'
 import useTitle from '../page-header/useTitle'
 import useAddBreadcrumbs from '../breadcrumbs/useAddBreadcrumbs'

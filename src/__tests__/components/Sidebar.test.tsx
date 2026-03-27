@@ -4,27 +4,23 @@ import { mount } from 'enzyme'
 import { createMemoryHistory } from 'history'
 import Sidebar from 'components/Sidebar'
 import { Router } from 'react-router-dom'
-import { ListItem } from '@hospitalrun/components'
+import { ListItem } from '@lahim/components'
 import { act } from '@testing-library/react'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { Provider } from 'react-redux'
-
-const mockStore = configureMockStore([thunk])
+import { useUIStore } from '../../store/ui-store'
 
 describe('Sidebar', () => {
   let history = createMemoryHistory()
-  const store = mockStore({
-    components: { sidebarCollapsed: false },
+
+  beforeEach(() => {
+    useUIStore.setState({ sidebarCollapsed: false })
   })
+
   const setup = (location: string) => {
     history = createMemoryHistory()
     navigate(location)
     return mount(
       <Router history={history}>
-        <Provider store={store}>
-          <Sidebar />
-        </Provider>
+        <Sidebar />
       </Router>,
     )
   }

@@ -1,33 +1,26 @@
 import '../../__mocks__/matchMediaMock'
 import React from 'react'
-import { Provider } from 'react-redux'
 import { mount } from 'enzyme'
 import { createMemoryHistory } from 'history'
 import { Router } from 'react-router-dom'
-import configureMockStore from 'redux-mock-store'
 import {
   Breadcrumb as HRBreadcrumb,
   BreadcrumbItem as HRBreadcrumbItem,
-} from '@hospitalrun/components'
+} from '@lahim/components'
 
 import Breadcrumbs from 'breadcrumbs/Breadcrumbs'
 import Breadcrumb from 'model/Breadcrumb'
-
-const mockStore = configureMockStore()
+import { useUIStore } from '../../store/ui-store'
 
 describe('Breadcrumbs', () => {
   const setup = (breadcrumbs: Breadcrumb[]) => {
     const navigate = createMemoryHistory()
-    const store = mockStore({
-      breadcrumbs: { breadcrumbs },
-    })
+    useUIStore.setState({ breadcrumbs })
 
     const wrapper = mount(
-      <Provider store={store}>
-        <Router history={history}>
-          <Breadcrumbs />
-        </Router>
-      </Provider>,
+      <Router history={history}>
+        <Breadcrumbs />
+      </Router>,
     )
 
     return wrapper

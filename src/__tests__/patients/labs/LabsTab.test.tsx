@@ -1,12 +1,9 @@
 import '../../../__mocks__/matchMediaMock'
 import React from 'react'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import { mount } from 'enzyme'
 import { createMemoryHistory } from 'history'
 import { Router } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import format from 'date-fns/format'
 import { act } from 'react-dom/test-utils'
 import LabsTab from '../../../patients/labs/LabsTab'
@@ -14,6 +11,8 @@ import Patient from '../../../model/Patient'
 import Lab from '../../../model/Lab'
 import Permissions from '../../../model/Permissions'
 import LabRepository from '../../../clients/db/LabRepository'
+import { usePatientStore } from '../../../store/patient-store'
+import { useUserStore } from '../../../store/user-store'
 
 const expectedPatient = {
   id: '123',
@@ -29,21 +28,27 @@ const labs = [
   } as Lab,
 ]
 
-const mockStore = configureMockStore([thunk])
 const navigate = createMemoryHistory()
 
-let user: any
-let store: any
-
 const setup = (patient = expectedPatient, permissions = [Permissions.WritePatients]) => {
-  user = { permissions }
-  store = mockStore({ patient, user })
-  jest.spyOn(LabRepository, 'findAllByPatientId').mockResolvedValue(labs)
+  usePatientStore.setState({
+    patient,
+    status: 'completed',
+    fetchPatient: vi.fn(),
+    createPatient: vi.fn(),
+    updatePatient: vi.fn(),
+    addRelatedPerson: vi.fn(),
+    removeRelatedPerson: vi.fn(),
+    addDiagnosis: vi.fn(),
+    addAllergy: vi.fn(),
+    addNote: vi.fn(),
+  })
+  useUserStore.setState({ permissions })
+
+  vi.spyOn(LabRepository, 'findAllByPatientId').mockResolvedValue(labs)
   const wrapper = mount(
     <Router history={history}>
-      <Provider store={store}>
-        <LabsTab patientId={patient.id} />
-      </Provider>
+      <LabsTab patientId={patient.id} />
     </Router>,
   )
 

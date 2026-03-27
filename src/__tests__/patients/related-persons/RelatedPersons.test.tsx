@@ -4,20 +4,16 @@ import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { mount } from 'enzyme'
 import RelatedPersonTab from 'patients/related-persons/RelatedPersonTab'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import AddRelatedPersonModal from 'patients/related-persons/AddRelatedPersonModal'
 import { act } from '@testing-library/react'
 import PatientRepository from 'clients/db/PatientRepository'
 import Patient from 'model/Patient'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { Provider } from 'react-redux'
 import Permissions from 'model/Permissions'
 import RelatedPerson from 'model/RelatedPerson'
-import { Button } from '@hospitalrun/components'
-import * as patientSlice from '../../../patients/patient-slice'
-
-const mockStore = configureMockStore([thunk])
+import { Button } from '@lahim/components'
+import { usePatientStore } from '../../../store/patient-store'
+import { useUserStore } from '../../../store/user-store'
 
 describe('Related Persons Tab', () => {
   let wrapper: any
@@ -25,11 +21,10 @@ describe('Related Persons Tab', () => {
 
   describe('Add New Related Person', () => {
     let patient: any
-    let user: any
-    jest.spyOn(components, 'Toast')
+    vi.spyOn(components, 'Toast')
 
     beforeEach(() => {
-      jest.resetAllMocks()
+      vi.resetAllMocks()
       history = createMemoryHistory()
 
       patient = {
@@ -37,18 +32,29 @@ describe('Related Persons Tab', () => {
         rev: '123',
       } as Patient
 
-      jest.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
-      jest.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient)
+      vi.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
+      vi.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient)
 
-      user = {
+      usePatientStore.setState({
+        patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
+      })
+      useUserStore.setState({
         permissions: [Permissions.WritePatients, Permissions.ReadPatients],
-      }
+      })
+
       act(() => {
         wrapper = mount(
           <Router history={history}>
-            <Provider store={mockStore({ patient, user })}>
-              <RelatedPersonTab patient={patient} />
-            </Provider>
+            <RelatedPersonTab patient={patient} />
           </Router>,
         )
       })
@@ -62,13 +68,11 @@ describe('Related Persons Tab', () => {
     })
 
     it('should not render a New Related Person button if the user does not have write privileges for a patient', () => {
-      user = { permissions: [Permissions.ReadPatients] }
+      useUserStore.setState({ permissions: [Permissions.ReadPatients] })
       act(() => {
         wrapper = mount(
           <Router history={history}>
-            <Provider store={mockStore({ patient, user })}>
-              <RelatedPersonTab patient={patient} />
-            </Provider>
+            <RelatedPersonTab patient={patient} />
           </Router>,
         )
       })
@@ -111,20 +115,30 @@ describe('Related Persons Tab', () => {
       id: '123001',
     } as Patient
 
-    const user = {
-      permissions: [Permissions.WritePatients, Permissions.ReadPatients],
-    }
-
     beforeEach(async () => {
-      jest.spyOn(PatientRepository, 'saveOrUpdate')
-      jest.spyOn(PatientRepository, 'find').mockResolvedValue(expectedRelatedPerson)
+      vi.spyOn(PatientRepository, 'saveOrUpdate')
+      vi.spyOn(PatientRepository, 'find').mockResolvedValue(expectedRelatedPerson)
+
+      usePatientStore.setState({
+        patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
+      })
+      useUserStore.setState({
+        permissions: [Permissions.WritePatients, Permissions.ReadPatients],
+      })
 
       await act(async () => {
         wrapper = await mount(
           <Router history={history}>
-            <Provider store={mockStore({ patient, user })}>
-              <RelatedPersonTab patient={patient} />
-            </Provider>
+            <RelatedPersonTab patient={patient} />
           </Router>,
         )
       })
@@ -154,8 +168,7 @@ describe('Related Persons Tab', () => {
     })
 
     it('should remove the related person when the delete button is clicked', async () => {
-      const removeRelatedPersonSpy = jest.spyOn(patientSlice, 'removeRelatedPerson')
-      const eventPropagationSpy = jest.fn()
+      const eventPropagationSpy = vi.fn()
 
       const table = wrapper.find('table')
       const tableBody = table.find('tbody')
@@ -167,7 +180,7 @@ describe('Related Persons Tab', () => {
         await onClick({ stopPropagation: eventPropagationSpy })
       })
 
-      expect(removeRelatedPersonSpy).toHaveBeenCalledWith(patient.id, expectedRelatedPerson.id)
+      expect(usePatientStore.getState().removeRelatedPerson).toHaveBeenCalledWith(patient.id, expectedRelatedPerson.id)
     })
 
     it('should navigate to related person patient profile on related person click', async () => {
@@ -189,22 +202,32 @@ describe('Related Persons Tab', () => {
       rev: '123',
     } as Patient
 
-    const user = {
-      permissions: [Permissions.WritePatients, Permissions.ReadPatients],
-    }
-
     beforeEach(async () => {
-      jest.spyOn(PatientRepository, 'find').mockResolvedValue({
+      vi.spyOn(PatientRepository, 'find').mockResolvedValue({
         fullName: 'test test',
         id: '123001',
       } as Patient)
 
+      usePatientStore.setState({
+        patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
+      })
+      useUserStore.setState({
+        permissions: [Permissions.WritePatients, Permissions.ReadPatients],
+      })
+
       await act(async () => {
         wrapper = await mount(
           <Router history={history}>
-            <Provider store={mockStore({ patient, user })}>
-              <RelatedPersonTab patient={patient} />
-            </Provider>
+            <RelatedPersonTab patient={patient} />
           </Router>,
         )
       })

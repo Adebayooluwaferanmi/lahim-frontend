@@ -6,7 +6,7 @@ import {
   useButtons,
   useButtonToolbarSetter,
 } from 'page-header/ButtonBarProvider'
-import { Button } from '@hospitalrun/components'
+import { Button } from '@lahim/components'
 
 describe('Button Bar Provider', () => {
   it('should update and fetch data from the button bar provider', () => {

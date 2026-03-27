@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextInput, Label } from '@hospitalrun/components'
+import { TextInput, Label } from '@lahim/components'
 
 interface Props {
   value: string

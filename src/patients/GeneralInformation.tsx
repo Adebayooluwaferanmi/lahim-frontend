@@ -1,5 +1,5 @@
 import React from 'react'
-import { Panel, Checkbox, Alert } from '@hospitalrun/components'
+import { Panel, Checkbox, Alert } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import { startOfDay, subYears, differenceInYears } from 'date-fns'
 

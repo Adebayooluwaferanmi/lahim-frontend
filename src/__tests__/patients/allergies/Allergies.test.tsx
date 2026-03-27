@@ -3,18 +3,16 @@ import React from 'react'
 import { mount } from 'enzyme'
 import Allergies from 'patients/allergies/Allergies'
 import Permissions from 'model/Permissions'
-import configureMockStore from 'redux-mock-store'
 import { createMemoryHistory } from 'history'
-import thunk from 'redux-thunk'
 import { Router } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import Patient from 'model/Patient'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import { act } from '@testing-library/react'
 import PatientRepository from 'clients/db/PatientRepository'
 import Allergy from 'model/Allergy'
+import { usePatientStore } from '../../../store/patient-store'
+import { useUserStore } from '../../../store/user-store'
 
-const mockStore = configureMockStore([thunk])
 const navigate = createMemoryHistory()
 const expectedPatient = {
   id: '123',
@@ -25,17 +23,24 @@ const expectedPatient = {
   ],
 } as Patient
 
-let user: any
-let store: any
-
 const setup = (patient = expectedPatient, permissions = [Permissions.AddAllergy]) => {
-  user = { permissions }
-  store = mockStore({ patient, user })
+  usePatientStore.setState({
+    patient,
+    status: 'completed',
+    fetchPatient: vi.fn(),
+    createPatient: vi.fn(),
+    updatePatient: vi.fn(),
+    addRelatedPerson: vi.fn(),
+    removeRelatedPerson: vi.fn(),
+    addDiagnosis: vi.fn(),
+    addAllergy: vi.fn(),
+    addNote: vi.fn(),
+  })
+  useUserStore.setState({ permissions })
+
   const wrapper = mount(
     <Router history={history}>
-      <Provider store={store}>
-        <Allergies patient={patient} />
-      </Provider>
+      <Allergies patient={patient} />
     </Router>,
   )
 
@@ -44,8 +49,8 @@ const setup = (patient = expectedPatient, permissions = [Permissions.AddAllergy]
 
 describe('Allergies', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
-    jest.spyOn(PatientRepository, 'saveOrUpdate')
+    vi.resetAllMocks()
+    vi.spyOn(PatientRepository, 'saveOrUpdate')
   })
 
   describe('add new allergy button', () => {

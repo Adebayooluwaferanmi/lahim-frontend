@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import useTitle from 'page-header/useTitle'
 import { useTranslation } from 'react-i18next'
-import { Typeahead, Label, Button, Alert } from '@hospitalrun/components'
+import { Typeahead, Label, Button, Alert } from '@lahim/components'
 import PatientRepository from 'clients/db/PatientRepository'
 import Patient from 'model/Patient'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
@@ -9,16 +9,13 @@ import { useNavigate } from 'react-router-dom'
 import Lab from 'model/Lab'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
-import { useSelector } from 'react-redux'
-import { requestLab } from 'labs/lab-slice'
-import { RootState, useAppDispatch } from 'store'
+import { useLabStore } from 'store/lab-store'
 
 const NewLabRequest = () => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   useTitle(t('labs.requests.new'))
-  const { status, error } = useSelector((state: RootState) => state.lab)
+  const { status, error, requestLab } = useLabStore()
 
   const [newLabRequest, setNewLabRequest] = useState({
     patientId: '',
@@ -64,7 +61,7 @@ const NewLabRequest = () => {
       navigate(`/labs/${createdLab.id}`)
     }
 
-    dispatch(requestLab(newLab, onSuccess))
+    requestLab(newLab, onSuccess)
   }
 
   const onCancel = () => {

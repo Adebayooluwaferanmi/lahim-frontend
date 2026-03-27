@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { useAppDispatch } from '../../store'
 import { useParams, Route, useNavigate, useLocation } from 'react-router-dom'
-import { Panel, Spinner, TabsHeader, Tab, Button } from '@hospitalrun/components'
+import { Panel, Spinner, TabsHeader, Tab, Button } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
 import Allergies from 'patients/allergies/Allergies'
 import Diagnoses from 'patients/diagnoses/Diagnoses'
 import useTitle from '../../page-header/useTitle'
-import { fetchPatient } from '../patient-slice'
-import { RootState } from '../../store'
+import { usePatientStore } from '../../store/patient-store'
+import { useUserStore } from '../../store/user-store'
 import { getPatientFullName } from '../util/patient-name-util'
 import Permissions from '../../model/Permissions'
 import Patient from '../../model/Patient'
@@ -34,11 +32,12 @@ const getPatientCode = (p: Patient): string => {
 const ViewPatient = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
   const location = useLocation()
 
-  const { patient, status } = useSelector((state: RootState) => state.patient)
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const patient = usePatientStore((s) => s.patient)
+  const status = usePatientStore((s) => s.status)
+  const fetchPatient = usePatientStore((s) => s.fetchPatient)
+  const permissions = useUserStore((s) => s.permissions)
 
   useTitle(`${getPatientFullName(patient)} (${getPatientCode(patient)})`)
 
@@ -53,7 +52,7 @@ const ViewPatient = () => {
   const { id } = useParams()
   useEffect(() => {
     if (id) {
-      dispatch(fetchPatient(id))
+      fetchPatient(id)
     }
 
     const buttons = []
@@ -78,7 +77,7 @@ const ViewPatient = () => {
     return () => {
       setButtonToolBar([])
     }
-  }, [dispatch, id, setButtonToolBar, navigate, patient.id, permissions, t])
+  }, [id, fetchPatient, setButtonToolBar, navigate, patient.id, permissions, t])
 
   if (status === 'loading' || !patient) {
     return <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />

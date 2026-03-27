@@ -7,7 +7,7 @@ import React, { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRealtimeSubscription, RealtimeEvent } from '../lib/realtime'
 import { useLabOrders, LabOrder } from '../hooks/useLabOrders'
-import { Alert, Spinner } from '@hospitalrun/components'
+import { Alert, Spinner } from '@lahim/components'
 
 /**
  * Example: Real-time Lab Orders List

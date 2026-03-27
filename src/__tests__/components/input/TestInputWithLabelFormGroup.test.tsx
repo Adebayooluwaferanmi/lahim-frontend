@@ -1,6 +1,6 @@
 import '../../../__mocks__/matchMediaMock'
 import React from 'react'
-import { Label, TextInput } from '@hospitalrun/components'
+import { Label, TextInput } from '@lahim/components'
 import { shallow } from 'enzyme'
 import TextInputWithLabelFormGroup from '../../../components/input/TextInputWithLabelFormGroup'
 

@@ -194,13 +194,8 @@ class SocketIOManager {
 
 // Get Socket.io URL from environment or construct from API URL
 const getSocketIOUrl = (): string => {
-  // Support both Vite (import.meta.env) and legacy (process.env) for compatibility
-  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 
-                 (typeof process !== 'undefined' && process.env?.REACT_APP_HOSPITALRUN_API) || 
-                 'http://localhost:3000'
-  const wsUrl = import.meta.env.VITE_SOCKETIO_URL || 
-                (typeof process !== 'undefined' && process.env?.REACT_APP_SOCKETIO_URL) || 
-                apiUrl
+  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
+  const wsUrl = import.meta.env.VITE_SOCKETIO_URL || apiUrl
   return wsUrl
 }
 

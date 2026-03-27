@@ -1,22 +1,16 @@
-import React from 'react'
 import { renderHook } from '@testing-library/react-hooks'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { Provider } from 'react-redux'
 import useTitle from '../../page-header/useTitle'
-import * as titleSlice from '../../page-header/title-slice'
-
-const store = configureMockStore([thunk])
+import { useUIStore } from '../../store/ui-store'
 
 describe('useTitle', () => {
-  it('should call the updateTitle with the correct data', () => {
-    const wrapper = ({ children }: any) => <Provider store={store({})}>{children}</Provider>
+  beforeEach(() => {
+    useUIStore.setState({ title: '' })
+  })
 
-    jest.spyOn(titleSlice, 'updateTitle')
+  it('should call the updateTitle with the correct data', () => {
     const expectedTitle = 'title'
 
-    renderHook(() => useTitle(expectedTitle), { wrapper } as any)
-    expect(titleSlice.updateTitle).toHaveBeenCalledTimes(1)
-    expect(titleSlice.updateTitle).toHaveBeenCalledWith(expectedTitle)
+    renderHook(() => useTitle(expectedTitle))
+    expect(useUIStore.getState().title).toBe(expectedTitle)
   })
 })

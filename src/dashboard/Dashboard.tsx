@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Container, Row, Column, Panel, Spinner, Alert, Table } from '@hospitalrun/components'
+import { Container, Row, Column, Panel, Spinner, Alert, Table } from '@lahim/components'
 import useTitle from '../page-header/useTitle'
 import { useVisits } from '../hooks/useVisits'
 import { usePrescriptions } from '../hooks/useMedications'

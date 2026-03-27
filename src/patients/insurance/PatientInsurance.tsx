@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Panel, Alert, Spinner, Container, Row, Column, Table, Badge } from '@hospitalrun/components'
+import { Button, Panel, Alert, Spinner, Container, Row, Column, Table, Badge } from '@lahim/components'
 import { 
   usePatientInsurance, 
   useAddPatientInsurance, 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Label } from '@hospitalrun/components'
+import { TextField, Label } from '@lahim/components'
 
 interface Props {
   value: string

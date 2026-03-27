@@ -1,6 +1,6 @@
 import '../../../__mocks__/matchMediaMock'
 import React from 'react'
-import { Label, TextField } from '@hospitalrun/components'
+import { Label, TextField } from '@lahim/components'
 import { shallow } from 'enzyme'
 import TextFieldWithLabelFormGroup from '../../../components/input/TextFieldWithLabelFormGroup'
 

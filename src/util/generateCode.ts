@@ -1,7 +1,7 @@
-import shortid from 'shortid'
+import { nanoid } from 'nanoid'
 
 const generateCode = (prefix: string) => {
-  const id = shortid.generate()
+  const id = nanoid(10)
   return `${prefix}-${id}`
 }
 

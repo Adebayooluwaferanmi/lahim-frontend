@@ -2,21 +2,16 @@ import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
 import { Router, Route } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import { createMemoryHistory } from 'history'
 import { act } from 'react-dom/test-utils'
-import configureMockStore, { MockStore } from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { Button } from '@hospitalrun/components'
+import { Button } from '@lahim/components'
 import { subDays } from 'date-fns'
 import EditPatient from '../../../patients/edit/EditPatient'
 import GeneralInformation from '../../../patients/GeneralInformation'
 import Patient from '../../../model/Patient'
 import * as titleUtil from '../../../page-header/useTitle'
-import * as patientSlice from '../../../patients/patient-slice'
 import PatientRepository from '../../../clients/db/PatientRepository'
-
-const mockStore = configureMockStore([thunk])
+import { usePatientStore } from '../../../store/patient-store'
 
 describe('Edit Patient', () => {
   const patient = {
@@ -38,24 +33,33 @@ describe('Edit Patient', () => {
   } as Patient
 
   let history: any
-  let store: MockStore
 
   const setup = () => {
-    jest.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient)
-    jest.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
+    vi.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient)
+    vi.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
 
     history = createMemoryHistory()
-    store = mockStore({ patient: { patient } })
+
+    usePatientStore.setState({
+      patient,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
+    })
 
     navigate('/patients/edit/123')
     const wrapper = mount(
-      <Provider store={store}>
-        <Router history={history}>
-          <Route path="/patients/edit/:id">
-            <EditPatient />
-          </Route>
-        </Router>
-      </Provider>,
+      <Router history={history}>
+        <Route path="/patients/edit/:id">
+          <EditPatient />
+        </Route>
+      </Router>,
     )
 
     wrapper.update()
@@ -63,7 +67,7 @@ describe('Edit Patient', () => {
   }
 
   beforeEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it('should render an edit patient form', async () => {
@@ -80,13 +84,11 @@ describe('Edit Patient', () => {
       await setup()
     })
 
-    expect(PatientRepository.find).toHaveBeenCalledWith(patient.id)
-    expect(store.getActions()).toContainEqual(patientSlice.fetchPatientStart())
-    expect(store.getActions()).toContainEqual(patientSlice.fetchPatientSuccess(patient))
+    expect(usePatientStore.getState().fetchPatient).toHaveBeenCalledWith(patient.id)
   })
 
   it('should use "Edit Patient: " plus patient full name as the title', async () => {
-    jest.spyOn(titleUtil, 'default')
+    vi.spyOn(titleUtil, 'default')
     await act(async () => {
       await setup()
     })
@@ -111,9 +113,7 @@ describe('Edit Patient', () => {
       await onClick()
     })
 
-    expect(PatientRepository.saveOrUpdate).toHaveBeenCalledWith(patient)
-    expect(store.getActions()).toContainEqual(patientSlice.updatePatientStart())
-    expect(store.getActions()).toContainEqual(patientSlice.updatePatientSuccess(patient))
+    expect(usePatientStore.getState().updatePatient).toHaveBeenCalled()
   })
 
   it('should navigate to /patients/:id when cancel is clicked', async () => {

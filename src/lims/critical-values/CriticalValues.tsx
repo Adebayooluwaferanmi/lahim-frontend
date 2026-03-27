@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import format from 'date-fns/format'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import { useNavigate } from 'react-router-dom'
-import { Container, Spinner, Alert } from '@hospitalrun/components'
+import { Container, Spinner, Alert } from '@lahim/components'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
 import { useApiQuery } from '../../lib/queries'
 

@@ -4,7 +4,7 @@
  */
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { Alert } from '@hospitalrun/components'
+import { Alert } from '@lahim/components'
 
 interface Props {
   children: ReactNode

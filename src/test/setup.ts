@@ -15,20 +15,11 @@ afterEach(() => {
   cleanup()
 })
 
-// Mock environment variables for tests
-// Vitest uses import.meta.env, but we also set process.env for compatibility
-if (typeof import.meta !== 'undefined') {
-  // @ts-ignore - Vitest allows setting import.meta.env
-  import.meta.env = {
-    ...import.meta.env,
-    VITE_HOSPITALRUN_API: 'http://localhost:3000',
-    VITE_SOCKETIO_URL: 'http://localhost:3000',
-  }
-}
-// @ts-ignore - Allow setting process.env in test environment
-if (typeof process !== 'undefined') {
-  process.env.REACT_APP_HOSPITALRUN_API = 'http://localhost:3000'
-  process.env.REACT_APP_SOCKETIO_URL = 'http://localhost:3000'
+// @ts-ignore - Vitest allows setting import.meta.env
+import.meta.env = {
+  ...import.meta.env,
+  VITE_HOSPITALRUN_API: 'http://localhost:3000',
+  VITE_SOCKETIO_URL: 'http://localhost:3000',
 }
 
 // Mock window.matchMedia

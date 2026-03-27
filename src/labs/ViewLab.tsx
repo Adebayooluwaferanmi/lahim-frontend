@@ -5,13 +5,12 @@ import Lab from 'model/Lab'
 import Patient from 'model/Patient'
 import useTitle from 'page-header/useTitle'
 import { useTranslation } from 'react-i18next'
-import { Row, Column, Badge, Button, Alert } from '@hospitalrun/components'
+import { Row, Column, Badge, Button, Alert } from '@lahim/components'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
-import { useSelector } from 'react-redux'
 import Permissions from 'model/Permissions'
-import { RootState, useAppDispatch } from '../store'
-import { cancelLab, completeLab, updateLab, fetchLab } from './lab-slice'
+import { useLabStore } from '../store/lab-store'
+import { useUserStore } from '../store/user-store'
 
 const getTitle = (patient: Patient | undefined, lab: Lab | undefined) =>
   patient && lab ? `${lab.type} for ${patient.fullName}(${lab.code})` : ''
@@ -20,9 +19,8 @@ const ViewLab = () => {
   const { id } = useParams()
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const { permissions } = useSelector((state: RootState) => state.user)
-  const { lab, patient, status, error } = useSelector((state: RootState) => state.lab)
+  const permissions = useUserStore((s) => s.permissions)
+  const { lab, patient, status, error, fetchLab, updateLab, completeLab, cancelLab } = useLabStore()
 
   const [labToView, setLabToView] = useState<Lab>()
   const [isEditable, setIsEditable] = useState<boolean>(true)
@@ -39,9 +37,9 @@ const ViewLab = () => {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchLab(id))
+      fetchLab(id)
     }
-  }, [id, dispatch])
+  }, [id, fetchLab])
 
   useEffect(() => {
     if (lab) {
@@ -67,7 +65,7 @@ const ViewLab = () => {
       navigate('/labs')
     }
     if (labToView) {
-      dispatch(updateLab(labToView, onSuccess))
+      updateLab(labToView, onSuccess)
     }
   }
 
@@ -77,7 +75,7 @@ const ViewLab = () => {
     }
 
     if (labToView) {
-      dispatch(completeLab(labToView, onSuccess))
+      completeLab(labToView, onSuccess)
     }
   }
 
@@ -87,7 +85,7 @@ const ViewLab = () => {
     }
 
     if (labToView) {
-      dispatch(cancelLab(labToView, onSuccess))
+      cancelLab(labToView, onSuccess)
     }
   }
 

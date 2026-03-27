@@ -262,22 +262,14 @@ class SSEManager {
 
 // Get WebSocket URL from environment or construct from API URL
 const getWebSocketUrl = (): string => {
-  // Support both Vite (import.meta.env) and legacy (process.env) for compatibility
-  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 
-                 (typeof process !== 'undefined' && process.env?.REACT_APP_HOSPITALRUN_API) || 
-                 'http://localhost:3000'
-  const wsUrl = import.meta.env.VITE_WS_URL || 
-                (typeof process !== 'undefined' && process.env?.REACT_APP_WS_URL) || 
-                apiUrl.replace(/^http/, 'ws')
+  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
+  const wsUrl = import.meta.env.VITE_WS_URL || apiUrl.replace(/^http/, 'ws')
   return `${wsUrl}/realtime`
 }
 
 // Get SSE URL from environment or construct from API URL
 const getSSEUrl = (): string => {
-  // Support both Vite (import.meta.env) and legacy (process.env) for compatibility
-  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 
-                 (typeof process !== 'undefined' && process.env?.REACT_APP_HOSPITALRUN_API) || 
-                 'http://localhost:3000'
+  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
   return `${apiUrl}/realtime/sse`
 }
 

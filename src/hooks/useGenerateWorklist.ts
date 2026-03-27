@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Worklist } from './useWorklists'
 
-const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
+const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
 
 interface GenerateWorklistData {
   date?: string

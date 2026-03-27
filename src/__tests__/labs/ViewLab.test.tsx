@@ -1,9 +1,7 @@
 import '../../__mocks__/matchMediaMock'
 import React from 'react'
-import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router-dom'
 import { mount } from 'enzyme'
-import thunk from 'redux-thunk'
 import { createMemoryHistory } from 'history'
 import Permissions from 'model/Permissions'
 import { act } from '@testing-library/react'
@@ -12,14 +10,13 @@ import PatientRepository from 'clients/db/PatientRepository'
 import Lab from 'model/Lab'
 import Patient from 'model/Patient'
 import * as ButtonBarProvider from 'page-header/ButtonBarProvider'
-import createMockStore from 'redux-mock-store'
-import { Badge, Button, Alert } from '@hospitalrun/components'
+import { Badge, Button, Alert } from '@lahim/components'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
 import format from 'date-fns/format'
 import * as titleUtil from '../../page-header/useTitle'
 import ViewLab from '../../labs/ViewLab'
-
-const mockStore = createMockStore([thunk])
+import { useLabStore } from '../../store/lab-store'
+import { useUserStore } from '../../store/user-store'
 
 describe('View Labs', () => {
   let history: any
@@ -39,41 +36,40 @@ describe('View Labs', () => {
   let labRepositorySaveSpy: any
   const expectedDate = new Date()
   const setup = async (lab: Lab, permissions: Permissions[], error = {}) => {
-    jest.resetAllMocks()
-    Date.now = jest.fn(() => expectedDate.valueOf())
-    setButtonToolBarSpy = jest.fn()
-    titleSpy = jest.spyOn(titleUtil, 'default')
-    jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter').mockReturnValue(setButtonToolBarSpy)
-    jest.spyOn(LabRepository, 'find').mockResolvedValue(lab)
-    labRepositorySaveSpy = jest.spyOn(LabRepository, 'saveOrUpdate').mockResolvedValue(mockLab)
-    jest.spyOn(PatientRepository, 'find').mockResolvedValue(mockPatient as Patient)
+    vi.resetAllMocks()
+    Date.now = vi.fn(() => expectedDate.valueOf())
+    setButtonToolBarSpy = vi.fn()
+    titleSpy = vi.spyOn(titleUtil, 'default')
+    vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter').mockReturnValue(setButtonToolBarSpy)
+    vi.spyOn(LabRepository, 'find').mockResolvedValue(lab)
+    labRepositorySaveSpy = vi.spyOn(LabRepository, 'saveOrUpdate').mockResolvedValue(mockLab)
+    vi.spyOn(PatientRepository, 'find').mockResolvedValue(mockPatient as Patient)
 
     history = createMemoryHistory()
-    navigate(`labs/${lab.id}`)
-    const store = mockStore({
-      title: '',
-      user: {
-        permissions,
-      },
-      lab: {
-        lab,
-        patient: mockPatient,
-        error,
-        status: Object.keys(error).length > 0 ? 'error' : 'success',
-      },
+    history.push(`/labs/${lab.id}`)
+
+    useUserStore.setState({ permissions })
+    useLabStore.setState({
+      lab,
+      patient: mockPatient as Patient,
+      error,
+      status: Object.keys(error).length > 0 ? 'error' : 'success',
+      fetchLab: vi.fn(),
+      requestLab: vi.fn(),
+      cancelLab: vi.fn(),
+      completeLab: vi.fn(),
+      updateLab: vi.fn(),
     })
 
     let wrapper: any
     await act(async () => {
       wrapper = await mount(
         <ButtonBarProvider.ButtonBarProvider>
-          <Provider store={store}>
-            <Router history={history}>
-              <Route path="/labs/:id">
-                <ViewLab />
-              </Route>
-            </Router>
-          </Provider>
+          <Router history={history}>
+            <Route path="/labs/:id">
+              <ViewLab />
+            </Route>
+          </Router>
         </ButtonBarProvider.ButtonBarProvider>,
       )
     })
@@ -257,7 +253,7 @@ describe('View Labs', () => {
 
     describe('completed lab request', () => {
       it('should display a primary badge if the status is completed', async () => {
-        jest.resetAllMocks()
+        vi.resetAllMocks()
         const expectedLab = { ...mockLab, status: 'completed' } as Lab
         const wrapper = await setup(expectedLab, [Permissions.ViewLab])
         const labStatusDiv = wrapper.find('.lab-status')

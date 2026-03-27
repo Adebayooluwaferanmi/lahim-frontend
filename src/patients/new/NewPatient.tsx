@@ -1,16 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
-import { useAppDispatch } from '../../store'
-import { Button, Toast } from '@hospitalrun/components'
+import { Button, Toast } from '@lahim/components'
 import GeneralInformation from '../GeneralInformation'
 import useTitle from '../../page-header/useTitle'
 import Patient from '../../model/Patient'
-import { createPatient } from '../patient-slice'
+import { usePatientStore } from '../../store/patient-store'
 import { getPatientName } from '../util/patient-name-util'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
-import { RootState } from '../../store'
 
 const breadcrumbs = [
   { i18nKey: 'patients.label', location: '/patients' },
@@ -20,8 +17,8 @@ const breadcrumbs = [
 const NewPatient = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const { createError } = useSelector((state: RootState) => state.patient)
+  const createError = usePatientStore((s) => s.createError)
+  const createPatient = usePatientStore((s) => s.createPatient)
 
   const [patient, setPatient] = useState({} as Patient)
 
@@ -42,14 +39,12 @@ const NewPatient = () => {
   }
 
   const onSave = () => {
-    dispatch(
-      createPatient(
-        {
-          ...patient,
-          fullName: getPatientName(patient.givenName, patient.familyName, patient.suffix),
-        },
-        onSuccessfulSave,
-      ),
+    createPatient(
+      {
+        ...patient,
+        fullName: getPatientName(patient.givenName, patient.familyName, patient.suffix),
+      },
+      onSuccessfulSave,
     )
   }
 

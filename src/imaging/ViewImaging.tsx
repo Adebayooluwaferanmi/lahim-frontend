@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Panel, Alert, Spinner, Container, Row, Column, Badge } from '@hospitalrun/components'
+import { Button, Panel, Alert, Spinner, Container, Row, Column, Badge } from '@lahim/components'
 import { useImagingById, useUpdateImaging, useUploadImage, useImagingTypes } from '../hooks/useImaging'
 import useTitle from '../page-header/useTitle'
 import useAddBreadcrumbs from '../breadcrumbs/useAddBreadcrumbs'

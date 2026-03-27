@@ -2,17 +2,16 @@ import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
 import { createMemoryHistory } from 'history'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import Patient from 'model/Patient'
 import Diagnosis from 'model/Diagnosis'
 import Permissions from 'model/Permissions'
 import { Router } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import Diagnoses from 'patients/diagnoses/Diagnoses'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import { act } from 'react-dom/test-utils'
 import PatientRepository from 'clients/db/PatientRepository'
+import { usePatientStore } from '../../../store/patient-store'
+import { useUserStore } from '../../../store/user-store'
 
 const expectedPatient = {
   id: '123',
@@ -21,20 +20,26 @@ const expectedPatient = {
   ],
 } as Patient
 
-const mockStore = configureMockStore([thunk])
 const navigate = createMemoryHistory()
 
-let user: any
-let store: any
-
 const setup = (patient = expectedPatient, permissions = [Permissions.AddDiagnosis]) => {
-  user = { permissions }
-  store = mockStore({ patient, user })
+  usePatientStore.setState({
+    patient,
+    status: 'completed',
+    fetchPatient: vi.fn(),
+    createPatient: vi.fn(),
+    updatePatient: vi.fn(),
+    addRelatedPerson: vi.fn(),
+    removeRelatedPerson: vi.fn(),
+    addDiagnosis: vi.fn(),
+    addAllergy: vi.fn(),
+    addNote: vi.fn(),
+  })
+  useUserStore.setState({ permissions })
+
   const wrapper = mount(
     <Router history={history}>
-      <Provider store={store}>
-        <Diagnoses patient={patient} />
-      </Provider>
+      <Diagnoses patient={patient} />
     </Router>,
   )
 
@@ -43,8 +48,8 @@ const setup = (patient = expectedPatient, permissions = [Permissions.AddDiagnosi
 describe('Diagnoses', () => {
   describe('add diagnoses button', () => {
     beforeEach(() => {
-      jest.resetAllMocks()
-      jest.spyOn(PatientRepository, 'saveOrUpdate')
+      vi.resetAllMocks()
+      vi.spyOn(PatientRepository, 'saveOrUpdate')
     })
 
     it('should render a add diagnoses button', () => {

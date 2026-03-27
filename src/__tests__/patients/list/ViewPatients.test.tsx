@@ -1,21 +1,14 @@
 import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
-import { TextInput, Spinner } from '@hospitalrun/components'
+import { TextInput, Spinner } from '@lahim/components'
 import { MemoryRouter } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import thunk from 'redux-thunk'
-import configureStore from 'redux-mock-store'
-import { mocked } from 'ts-jest/utils'
 import { act } from 'react-dom/test-utils'
 import * as ButtonBarProvider from 'page-header/ButtonBarProvider'
 import format from 'date-fns/format'
 import ViewPatients from '../../../patients/list/ViewPatients'
 import PatientRepository from '../../../clients/db/PatientRepository'
-import * as patientSlice from '../../../patients/patients-slice'
-
-const middlewares = [thunk]
-const mockStore = configureStore(middlewares)
+import { usePatientsStore } from '../../../store/patients-store'
 
 describe('Patients', () => {
   const patients = [
@@ -29,33 +22,31 @@ describe('Patients', () => {
       dateOfBirth: new Date().toISOString(),
     },
   ]
-  const mockedPatientRepository = mocked(PatientRepository, true)
+  const mockedPatientRepository = vi.mocked(PatientRepository, true)
 
   const setup = (isLoading?: boolean) => {
-    const store = mockStore({
-      patients: {
-        patients,
-        isLoading,
-      },
+    usePatientsStore.setState({
+      patients,
+      isLoading: isLoading ?? false,
+      fetchPatients: vi.fn(),
+      searchPatients: vi.fn(),
     })
     return mount(
-      <Provider store={store}>
-        <MemoryRouter>
-          <ViewPatients />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter>
+        <ViewPatients />
+      </MemoryRouter>,
     )
   }
 
   beforeEach(() => {
-    jest.resetAllMocks()
-    jest.spyOn(PatientRepository, 'findAll')
+    vi.resetAllMocks()
+    vi.spyOn(PatientRepository, 'findAll')
     mockedPatientRepository.findAll.mockResolvedValue([])
   })
 
   describe('layout', () => {
     afterEach(() => {
-      jest.restoreAllMocks()
+      vi.restoreAllMocks()
     })
 
     it('should render a loading bar if it is loading', () => {
@@ -90,9 +81,9 @@ describe('Patients', () => {
     })
 
     it('should add a "New Patient" button to the button tool bar', () => {
-      jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
-      const setButtonToolBarSpy = jest.fn()
-      mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
+      vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
+      const setButtonToolBarSpy = vi.fn()
+      vi.mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
 
       setup()
 
@@ -102,14 +93,12 @@ describe('Patients', () => {
   })
 
   describe('search functionality', () => {
-    beforeEach(() => jest.useFakeTimers())
+    beforeEach(() => vi.useFakeTimers())
 
-    afterEach(() => jest.useRealTimers())
+    afterEach(() => vi.useRealTimers())
 
     it('should search for patients after the search text has not changed for 500 milliseconds', () => {
-      const searchPatientsSpy = jest.spyOn(patientSlice, 'searchPatients')
       const wrapper = setup()
-      searchPatientsSpy.mockClear()
       const expectedSearchText = 'search text'
 
       act(() => {
@@ -124,13 +113,13 @@ describe('Patients', () => {
       })
 
       act(() => {
-        jest.advanceTimersByTime(500)
+        vi.advanceTimersByTime(500)
       })
 
       wrapper.update()
 
-      expect(searchPatientsSpy).toHaveBeenCalledTimes(1)
-      expect(searchPatientsSpy).toHaveBeenLastCalledWith(expectedSearchText)
+      expect(usePatientsStore.getState().searchPatients).toHaveBeenCalledTimes(1)
+      expect(usePatientsStore.getState().searchPatients).toHaveBeenLastCalledWith(expectedSearchText)
     })
   })
 })

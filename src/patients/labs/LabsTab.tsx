@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert } from '@hospitalrun/components'
+import { Alert } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import format from 'date-fns/format'
 import { useNavigate } from 'react-router-dom'

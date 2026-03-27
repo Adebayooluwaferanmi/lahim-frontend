@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Container, Row, Column, Panel, Spinner, Alert, Button } from '@hospitalrun/components'
+import { Container, Row, Column, Panel, Spinner, Alert, Button } from '@lahim/components'
 import { useWorkflowTimeline, useAdvanceOrder } from '../../hooks/useWorkflow'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import useTitle from '../../page-header/useTitle'

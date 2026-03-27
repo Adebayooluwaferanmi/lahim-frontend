@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Container, Row, Column, TextInput, Spinner, Alert, Table, Badge } from '@hospitalrun/components'
+import { Button, Container, Row, Column, TextInput, Spinner, Alert, Table, Badge } from '@lahim/components'
 import { useDocuments } from '../hooks/useDocuments'
 import { useButtonToolbarSetter } from '../page-header/ButtonBarProvider'
 import useTitle from '../page-header/useTitle'

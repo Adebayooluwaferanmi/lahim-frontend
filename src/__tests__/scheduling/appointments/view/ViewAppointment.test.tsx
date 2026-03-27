@@ -1,9 +1,6 @@
 import '../../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
-import { Provider } from 'react-redux'
-import configureMockStore, { MockStore } from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import Appointment from 'model/Appointment'
 import ViewAppointment from 'scheduling/appointments/view/ViewAppointment'
 import { Router, Route } from 'react-router-dom'
@@ -11,16 +8,15 @@ import { createMemoryHistory } from 'history'
 import AppointmentRepository from 'clients/db/AppointmentRepository'
 import { mocked } from 'ts-jest/utils'
 import { act } from 'react-dom/test-utils'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import AppointmentDetailForm from 'scheduling/appointments/AppointmentDetailForm'
 import PatientRepository from 'clients/db/PatientRepository'
 import Patient from 'model/Patient'
 import * as ButtonBarProvider from 'page-header/ButtonBarProvider'
 import Permissions from 'model/Permissions'
 import * as titleUtil from '../../../../page-header/useTitle'
-import * as appointmentSlice from '../../../../scheduling/appointments/appointment-slice'
-
-const mockStore = configureMockStore([thunk])
+import { useAppointmentStore } from '../../../../store/appointment-store'
+import { useUserStore } from '../../../../store/user-store'
 
 const appointment = {
   id: '123',
@@ -37,41 +33,39 @@ const patient = {
 
 describe('View Appointment', () => {
   let history: any
-  let store: MockStore
 
   const setup = (isLoading: boolean, permissions = [Permissions.ReadAppointments]) => {
-    jest.spyOn(AppointmentRepository, 'find')
-    jest.spyOn(AppointmentRepository, 'delete')
+    vi.spyOn(AppointmentRepository, 'find')
+    vi.spyOn(AppointmentRepository, 'delete')
     const mockedAppointmentRepository = mocked(AppointmentRepository, true)
     mockedAppointmentRepository.find.mockResolvedValue(appointment)
     mockedAppointmentRepository.delete.mockResolvedValue(appointment)
 
-    jest.spyOn(PatientRepository, 'find')
+    vi.spyOn(PatientRepository, 'find')
     const mockedPatientRepository = mocked(PatientRepository, true)
     mockedPatientRepository.find.mockResolvedValue(patient)
 
     history = createMemoryHistory()
-    navigate('/appointments/123')
+    history.push('/appointments/123')
 
-    store = mockStore({
-      user: {
-        permissions,
-      },
-      appointment: {
-        appointment,
-        isLoading,
-        patient,
-      },
+    useAppointmentStore.setState({
+      appointment,
+      isLoading,
+      patient,
+      fetchAppointment: vi.fn(),
+      createAppointment: vi.fn(),
+      updateAppointment: vi.fn(),
+      deleteAppointment: vi.fn(),
     })
 
+    useUserStore.setState({ permissions })
+
     const wrapper = mount(
-      <Provider store={store}>
-        <Router history={history}>
-          <Route path="/appointments/:id">
-            <ViewAppointment />
-          </Route>
-        </Router>
-      </Provider>,
+      <Router history={history}>
+        <Route path="/appointments/:id">
+          <ViewAppointment />
+        </Route>
+      </Router>,
     )
 
     wrapper.update()
@@ -79,11 +73,11 @@ describe('View Appointment', () => {
   }
 
   beforeEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it('should use the correct title', async () => {
-    jest.spyOn(titleUtil, 'default')
+    vi.spyOn(titleUtil, 'default')
     await act(async () => {
       await setup(true)
     })
@@ -92,8 +86,8 @@ describe('View Appointment', () => {
   })
 
   it('should add a "Edit Appointment" button to the button tool bar if has WriteAppointment permissions', () => {
-    jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
-    const setButtonToolBarSpy = jest.fn()
+    vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
+    const setButtonToolBarSpy = vi.fn()
     mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
 
     setup(true, [Permissions.WriteAppointments, Permissions.ReadAppointments])
@@ -103,8 +97,8 @@ describe('View Appointment', () => {
   })
 
   it('should add a "Delete Appointment" button to the button tool bar if has DeleteAppointment permissions', () => {
-    jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
-    const setButtonToolBarSpy = jest.fn()
+    vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
+    const setButtonToolBarSpy = vi.fn()
     mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
 
     setup(true, [Permissions.DeleteAppointment, Permissions.ReadAppointments])
@@ -116,8 +110,8 @@ describe('View Appointment', () => {
   })
 
   it('button toolbar empty if has only ReadAppointments permission', () => {
-    jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
-    const setButtonToolBarSpy = jest.fn()
+    vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
+    const setButtonToolBarSpy = vi.fn()
     mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
 
     setup(true)
@@ -127,15 +121,14 @@ describe('View Appointment', () => {
   })
 
   it('should dispatch getAppointment if id is present', async () => {
+    const fetchAppointmentMock = vi.fn()
+    useAppointmentStore.setState({ fetchAppointment: fetchAppointmentMock })
+
     await act(async () => {
       await setup(true)
     })
 
     expect(AppointmentRepository.find).toHaveBeenCalledWith(appointment.id)
-    expect(store.getActions()).toContainEqual(appointmentSlice.fetchAppointmentStart())
-    expect(store.getActions()).toContainEqual(
-      appointmentSlice.fetchAppointmentSuccess({ appointment, patient }),
-    )
   })
 
   it('should render a loading spinner', async () => {
@@ -176,13 +169,13 @@ describe('View Appointment', () => {
   })
 
   describe('delete appointment', () => {
-    let setButtonToolBarSpy = jest.fn()
-    let deleteAppointmentSpy = jest.spyOn(AppointmentRepository, 'delete')
+    let setButtonToolBarSpy = vi.fn()
+    let deleteAppointmentSpy = vi.spyOn(AppointmentRepository, 'delete')
     beforeEach(() => {
-      jest.resetAllMocks()
-      jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
-      deleteAppointmentSpy = jest.spyOn(AppointmentRepository, 'delete')
-      setButtonToolBarSpy = jest.fn()
+      vi.resetAllMocks()
+      vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
+      deleteAppointmentSpy = vi.spyOn(AppointmentRepository, 'delete')
+      setButtonToolBarSpy = vi.fn()
       mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
     })
 
@@ -209,7 +202,7 @@ describe('View Appointment', () => {
 
       act(() => {
         const { onClick } = (actualButtons[0] as any).props
-        onClick({ preventDefault: jest.fn() })
+        onClick({ preventDefault: vi.fn() })
       })
       wrapper.update()
 
@@ -228,7 +221,7 @@ describe('View Appointment', () => {
 
       act(() => {
         const { onClick } = (actualButtons[0] as any).props
-        onClick({ preventDefault: jest.fn() })
+        onClick({ preventDefault: vi.fn() })
       })
       wrapper.update()
 
@@ -242,7 +235,7 @@ describe('View Appointment', () => {
       expect(deleteConfirmationModal.prop('show')).toEqual(false)
     })
 
-    it('should dispatch DELETE_APPOINTMENT action when modal confirmation button is clicked', async () => {
+    it('should call deleteAppointment when modal confirmation button is clicked', async () => {
       let wrapper: any
       await act(async () => {
         wrapper = await setup(false, [Permissions.ReadAppointments, Permissions.DeleteAppointment])
@@ -257,13 +250,10 @@ describe('View Appointment', () => {
 
       expect(deleteAppointmentSpy).toHaveBeenCalledTimes(1)
       expect(deleteAppointmentSpy).toHaveBeenCalledWith(appointment)
-
-      expect(store.getActions()).toContainEqual(appointmentSlice.deleteAppointmentStart())
-      expect(store.getActions()).toContainEqual(appointmentSlice.deleteAppointmentSuccess())
     })
 
     it('should navigate to /appointments and display a message when delete is successful', async () => {
-      jest.spyOn(components, 'Toast')
+      vi.spyOn(components, 'Toast')
       const mockedComponents = mocked(components, true)
 
       let wrapper: any

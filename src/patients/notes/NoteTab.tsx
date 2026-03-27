@@ -1,12 +1,11 @@
 /* eslint-disable react/no-danger */
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Button, List, ListItem, Alert } from '@hospitalrun/components'
+import { Button, List, ListItem, Alert } from '@lahim/components'
 import NewNoteModal from 'patients/notes/NewNoteModal'
 import Note from 'model/Note'
 import Patient from 'model/Patient'
-import { RootState } from '../../store'
+import { useUserStore } from '../../store/user-store'
 import Permissions from '../../model/Permissions'
 
 interface Props {
@@ -16,7 +15,7 @@ interface Props {
 const NoteTab = (props: Props) => {
   const { patient } = props
   const { t } = useTranslation()
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const permissions = useUserStore((state) => state.permissions)
   const [showNewNoteModal, setShowNoteModal] = useState<boolean>(false)
 
   const onNewNoteClick = () => {

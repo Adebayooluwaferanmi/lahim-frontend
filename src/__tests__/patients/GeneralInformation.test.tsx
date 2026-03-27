@@ -5,7 +5,7 @@ import { mount, ReactWrapper } from 'enzyme'
 import GeneralInformation from 'patients/GeneralInformation'
 import { createMemoryHistory } from 'history'
 import { startOfDay, subYears } from 'date-fns'
-import { Alert } from '@hospitalrun/components'
+import { Alert } from '@lahim/components'
 import { act } from '@testing-library/react'
 import Patient from '../../model/Patient'
 

@@ -3,14 +3,13 @@ import useTitle from 'page-header/useTitle'
 import { useTranslation } from 'react-i18next'
 import format from 'date-fns/format'
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
-import { Button } from '@hospitalrun/components'
+import { Button } from '@lahim/components'
 import { useNavigate } from 'react-router-dom'
 import LabRepository from 'clients/db/LabRepository'
 import SortRequest from 'clients/db/SortRequest'
 import Lab from 'model/Lab'
-import { useSelector } from 'react-redux'
+import { useUserStore } from '../store/user-store'
 import Permissions from 'model/Permissions'
-import { RootState } from '../store'
 
 const ViewLabs = () => {
   const { t } = useTranslation()
@@ -18,7 +17,7 @@ const ViewLabs = () => {
   const setButtons = useButtonToolbarSetter()
   useTitle(t('labs.label'))
 
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const permissions = useUserStore((state) => state.permissions)
   const [labs, setLabs] = useState<Lab[]>([])
 
   const getButtons = useCallback(() => {
@@ -39,7 +38,7 @@ const ViewLabs = () => {
     }
 
     return buttons
-  }, [permissions, history, t])
+  }, [permissions, navigate, t])
 
   useEffect(() => {
     const fetch = async () => {

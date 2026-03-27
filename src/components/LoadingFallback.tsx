@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { Spinner } from '@hospitalrun/components'
+import { Spinner } from '@lahim/components'
 
 interface LoadingFallbackProps {
   message?: string

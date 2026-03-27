@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Badge } from '@hospitalrun/components'
+import { Badge } from '@lahim/components'
 import { useNotifications, useUnreadNotificationsCount, useMarkNotificationRead } from '../hooks/useNotifications'
 import { Notification, NotificationType } from '../model/Notification'
 

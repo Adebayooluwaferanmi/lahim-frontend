@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Alert } from '@hospitalrun/components'
+import { Modal, Alert } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import Allergy from 'model/Allergy'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
-import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from '../../store'
-import { addAllergy } from '../patient-slice'
+import { usePatientStore } from '../../store/patient-store'
 
 interface NewAllergyModalProps {
   show: boolean
@@ -14,9 +12,10 @@ interface NewAllergyModalProps {
 
 const NewAllergyModal = (props: NewAllergyModalProps) => {
   const { show, onCloseButtonClick } = props
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { allergyError, patient } = useSelector((state: RootState) => state.patient)
+  const allergyError = usePatientStore((s) => s.allergyError)
+  const patient = usePatientStore((s) => s.patient)
+  const addAllergy = usePatientStore((s) => s.addAllergy)
 
   const [allergy, setAllergy] = useState({ name: '' })
 
@@ -30,7 +29,7 @@ const NewAllergyModal = (props: NewAllergyModalProps) => {
   }
 
   const onSaveButtonClick = () => {
-    dispatch(addAllergy(patient.id, allergy as Allergy))
+    addAllergy(patient.id, allergy as Allergy)
   }
 
   const onClose = () => {

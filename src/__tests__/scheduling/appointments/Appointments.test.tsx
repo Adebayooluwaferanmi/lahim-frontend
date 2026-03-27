@@ -2,11 +2,8 @@ import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
 import { MemoryRouter } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import Appointments from 'scheduling/appointments/Appointments'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { Calendar } from '@hospitalrun/components'
+import { Calendar } from '@lahim/components'
 import { act } from '@testing-library/react'
 import PatientRepository from 'clients/db/PatientRepository'
 import { mocked } from 'ts-jest/utils'
@@ -15,6 +12,7 @@ import * as ButtonBarProvider from 'page-header/ButtonBarProvider'
 import AppointmentRepository from 'clients/db/AppointmentRepository'
 import Appointment from 'model/Appointment'
 import * as titleUtil from '../../../page-header/useTitle'
+import { useAppointmentsStore } from '../../../store/appointments-store'
 
 describe('Appointments', () => {
   const expectedAppointments = [
@@ -30,25 +28,29 @@ describe('Appointments', () => {
   ] as Appointment[]
 
   const setup = async () => {
-    jest.spyOn(AppointmentRepository, 'findAll').mockResolvedValue(expectedAppointments)
-    jest.spyOn(PatientRepository, 'find')
+    vi.spyOn(AppointmentRepository, 'findAll').mockResolvedValue(expectedAppointments)
+    vi.spyOn(PatientRepository, 'find')
     const mockedPatientRepository = mocked(PatientRepository, true)
     mockedPatientRepository.find.mockResolvedValue({
       id: '123',
       fullName: 'patient full name',
     } as Patient)
-    const mockStore = configureMockStore([thunk])
+
+    useAppointmentsStore.setState({
+      appointments: expectedAppointments,
+      fetchAppointments: vi.fn(),
+      fetchPatientAppointments: vi.fn(),
+    })
+
     return mount(
-      <Provider store={mockStore({ appointments: { appointments: expectedAppointments } })}>
-        <MemoryRouter initialEntries={['/appointments']}>
-          <Appointments />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter initialEntries={['/appointments']}>
+        <Appointments />
+      </MemoryRouter>,
     )
   }
 
   it('should use "Appointments" as the header', async () => {
-    jest.spyOn(titleUtil, 'default')
+    vi.spyOn(titleUtil, 'default')
     await act(async () => {
       await setup()
     })
@@ -56,8 +58,8 @@ describe('Appointments', () => {
   })
 
   it('should add a "New Appointment" button to the button tool bar', async () => {
-    jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
-    const setButtonToolBarSpy = jest.fn()
+    vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
+    const setButtonToolBarSpy = vi.fn()
     mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
 
     await act(async () => {

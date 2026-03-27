@@ -11,12 +11,8 @@ PouchDB.plugin(memoryAdapter)
 PouchDB.plugin(PouchdbFind)
 
 function createDb(name: string) {
-  // Support both Vite (import.meta.env) and legacy (process.env) for compatibility
-  const isTest = import.meta.env.MODE === 'test' || 
-                 (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test')
-  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 
-                 (typeof process !== 'undefined' && process.env?.REACT_APP_HOSPITALRUN_API) || 
-                 'http://localhost:3000'
+  const isTest = import.meta.env.MODE === 'test'
+  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
 
   if (isTest) {
     return new PouchDB(name, { adapter: 'memory' })

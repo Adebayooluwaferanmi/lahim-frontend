@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Container, Row, Column, Panel, Spinner, Alert } from '@hospitalrun/components'
+import { Container, Row, Column, Panel, Spinner, Alert } from '@lahim/components'
 import { useWorkflowDashboard } from '../../hooks/useWorkflow'
 import { useButtonToolbarSetter } from '../../page-header/ButtonBarProvider'
 import useTitle from '../../page-header/useTitle'

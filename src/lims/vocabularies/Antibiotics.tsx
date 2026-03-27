@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Row, Column, TextInput, Spinner, Alert, Modal } from '@hospitalrun/components'
+import { Button, Row, Column, TextInput, Spinner, Alert, Modal } from '@lahim/components'
 import {
   useAntibiotics,
   useCreateAntibiotic,

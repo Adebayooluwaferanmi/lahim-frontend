@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Panel, Alert, Spinner, Container, Row, Column, Table } from '@hospitalrun/components'
+import { Button, Panel, Alert, Spinner, Container, Row, Column, Table } from '@lahim/components'
 import { useVisit, useUpdateVisit, useDischargePatient } from '../hooks/useVisits'
 import { useImaging } from '../hooks/useImaging'
 import { useIncidents } from '../hooks/useIncidents'

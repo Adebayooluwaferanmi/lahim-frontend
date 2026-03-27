@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Container, Row, Column, Spinner, Alert, Table, Button, Badge } from '@hospitalrun/components'
+import { Container, Row, Column, Spinner, Alert, Table, Button, Badge } from '@lahim/components'
 import { useNotifications, useMarkAllNotificationsRead, useMarkNotificationRead } from '../hooks/useNotifications'
 import { useButtonToolbarSetter } from '../page-header/ButtonBarProvider'
 import useTitle from '../page-header/useTitle'

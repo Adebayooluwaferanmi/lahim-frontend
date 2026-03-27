@@ -1,13 +1,9 @@
 import '../../../__mocks__/matchMediaMock'
 import React from 'react'
-import { Provider } from 'react-redux'
 import { mount } from 'enzyme'
-import { mocked } from 'ts-jest/utils'
 import { act } from 'react-dom/test-utils'
 import { Route, Router } from 'react-router-dom'
-import { TabsHeader, Tab } from '@hospitalrun/components'
-import configureMockStore, { MockStore } from 'redux-mock-store'
-import thunk from 'redux-thunk'
+import { TabsHeader, Tab } from '@lahim/components'
 import GeneralInformation from 'patients/GeneralInformation'
 import { createMemoryHistory } from 'history'
 import RelatedPersonTab from 'patients/related-persons/RelatedPersonTab'
@@ -19,12 +15,11 @@ import Patient from '../../../model/Patient'
 import PatientRepository from '../../../clients/db/PatientRepository'
 import * as titleUtil from '../../../page-header/useTitle'
 import ViewPatient from '../../../patients/view/ViewPatient'
-import * as patientSlice from '../../../patients/patient-slice'
 import Permissions from '../../../model/Permissions'
 import LabsTab from '../../../patients/labs/LabsTab'
 import LabRepository from '../../../clients/db/LabRepository'
-
-const mockStore = configureMockStore([thunk])
+import { usePatientStore } from '../../../store/patient-store'
+import { useUserStore } from '../../../store/user-store'
 
 describe('ViewPatient', () => {
   const patient = {
@@ -45,28 +40,35 @@ describe('ViewPatient', () => {
   } as Patient
 
   let history: any
-  let store: MockStore
 
   const setup = (permissions = [Permissions.ReadPatients]) => {
-    jest.spyOn(PatientRepository, 'find')
-    jest.spyOn(LabRepository, 'findAllByPatientId').mockResolvedValue([])
-    const mockedPatientRepository = mocked(PatientRepository, true)
+    vi.spyOn(PatientRepository, 'find')
+    vi.spyOn(LabRepository, 'findAllByPatientId').mockResolvedValue([])
+    const mockedPatientRepository = vi.mocked(PatientRepository, true)
     mockedPatientRepository.find.mockResolvedValue(patient)
     history = createMemoryHistory()
-    store = mockStore({
-      patient: { patient },
-      user: { permissions },
+
+    usePatientStore.setState({
+      patient,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
     })
+    useUserStore.setState({ permissions })
 
     navigate('/patients/123')
     const wrapper = mount(
-      <Provider store={store}>
-        <Router history={history}>
-          <Route path="/patients/:id">
-            <ViewPatient />
-          </Route>
-        </Router>
-      </Provider>,
+      <Router history={history}>
+        <Route path="/patients/:id">
+          <ViewPatient />
+        </Route>
+      </Router>,
     )
 
     wrapper.update()
@@ -74,7 +76,7 @@ describe('ViewPatient', () => {
   }
 
   beforeEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it('should dispatch fetchPatient when component loads', async () => {
@@ -82,13 +84,11 @@ describe('ViewPatient', () => {
       await setup()
     })
 
-    expect(PatientRepository.find).toHaveBeenCalledWith(patient.id)
-    expect(store.getActions()).toContainEqual(patientSlice.fetchPatientStart())
-    expect(store.getActions()).toContainEqual(patientSlice.fetchPatientSuccess(patient))
+    expect(usePatientStore.getState().fetchPatient).toHaveBeenCalledWith(patient.id)
   })
 
   it('should render a header with the patients given, family, and suffix', async () => {
-    jest.spyOn(titleUtil, 'default')
+    vi.spyOn(titleUtil, 'default')
     await act(async () => {
       await setup()
     })
@@ -98,9 +98,9 @@ describe('ViewPatient', () => {
   })
 
   it('should add a "Edit Patient" button to the button tool bar if has WritePatients permissions', () => {
-    jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
-    const setButtonToolBarSpy = jest.fn()
-    mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
+    vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
+    const setButtonToolBarSpy = vi.fn()
+    vi.mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
 
     setup([Permissions.WritePatients])
 
@@ -109,9 +109,9 @@ describe('ViewPatient', () => {
   })
 
   it('button toolbar empty if only has ReadPatients permission', () => {
-    jest.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
-    const setButtonToolBarSpy = jest.fn()
-    mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
+    vi.spyOn(ButtonBarProvider, 'useButtonToolbarSetter')
+    const setButtonToolBarSpy = vi.fn()
+    vi.mocked(ButtonBarProvider).useButtonToolbarSetter.mockReturnValue(setButtonToolBarSpy)
 
     setup()
 

@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
-import { Modal, Alert, Typeahead, Label } from '@hospitalrun/components'
+import { Modal, Alert, Typeahead, Label } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
 import RelatedPerson from 'model/RelatedPerson'
 import PatientRepository from 'clients/db/PatientRepository'
 import Patient from 'model/Patient'
-import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from '../../store'
-import { addRelatedPerson } from '../patient-slice'
+import { usePatientStore } from '../../store/patient-store'
 
 interface Props {
   show: boolean
@@ -16,9 +14,10 @@ interface Props {
 }
 
 const AddRelatedPersonModal = (props: Props) => {
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { patient, relatedPersonError } = useSelector((state: RootState) => state.patient)
+  const patient = usePatientStore((s) => s.patient)
+  const relatedPersonError = usePatientStore((s) => s.relatedPersonError)
+  const addRelatedPerson = usePatientStore((s) => s.addRelatedPerson)
 
   const { show, toggle, onCloseButtonClick } = props
   const [relatedPerson, setRelatedPerson] = useState({
@@ -109,7 +108,7 @@ const AddRelatedPersonModal = (props: Props) => {
         icon: 'add',
         iconLocation: 'left',
         onClick: () => {
-          dispatch(addRelatedPerson(patient.id, relatedPerson as RelatedPerson))
+          addRelatedPerson(patient.id, relatedPerson as RelatedPerson)
         },
       }}
     />

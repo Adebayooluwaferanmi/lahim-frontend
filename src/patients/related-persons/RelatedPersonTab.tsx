@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Alert, Spinner } from '@hospitalrun/components'
+import { Button, Alert, Spinner } from '@lahim/components'
 import AddRelatedPersonModal from 'patients/related-persons/AddRelatedPersonModal'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import Patient from 'model/Patient'
-import { removeRelatedPerson } from 'patients/patient-slice'
-import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from 'store'
+import { usePatientStore } from '../../store/patient-store'
+import { useUserStore } from '../../store/user-store'
 import Permissions from 'model/Permissions'
 import PatientRepository from 'clients/db/PatientRepository'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
@@ -16,7 +15,7 @@ interface Props {
 }
 
 const RelatedPersonTab = (props: Props) => {
-  const dispatch = useAppDispatch()
+  const removeRelatedPerson = usePatientStore((s) => s.removeRelatedPerson)
   const navigate = useNavigate()
 
   const navigateTo = (location: string) => {
@@ -24,7 +23,7 @@ const RelatedPersonTab = (props: Props) => {
   }
   const { patient } = props
   const { t } = useTranslation()
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const permissions = useUserStore((s) => s.permissions)
   const [showNewRelatedPersonModal, setShowRelatedPersonModal] = useState<boolean>(false)
   const [relatedPersons, setRelatedPersons] = useState<Patient[] | undefined>(undefined)
 
@@ -70,7 +69,7 @@ const RelatedPersonTab = (props: Props) => {
     relatedPerson: Patient,
   ) => {
     event.stopPropagation()
-    dispatch(removeRelatedPerson(patient.id, relatedPerson.id))
+    removeRelatedPerson(patient.id, relatedPerson.id)
   }
 
   return (

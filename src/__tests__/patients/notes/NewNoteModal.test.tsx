@@ -2,22 +2,17 @@ import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import NewNoteModal from 'patients/notes/NewNoteModal'
 import { mount } from 'enzyme'
-import { Alert, Modal } from '@hospitalrun/components'
+import { Alert, Modal } from '@lahim/components'
 import { act } from '@testing-library/react'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
-import createMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { Provider } from 'react-redux'
-import * as patientSlice from '../../../patients/patient-slice'
 import PatientRepository from '../../../clients/db/PatientRepository'
 import Patient from '../../../model/Patient'
-
-const mockStore = createMockStore([thunk])
+import { usePatientStore } from '../../../store/patient-store'
 
 describe('New Note Modal', () => {
   beforeEach(() => {
-    jest.spyOn(PatientRepository, 'find')
-    jest.spyOn(PatientRepository, 'saveOrUpdate')
+    vi.spyOn(PatientRepository, 'find')
+    vi.spyOn(PatientRepository, 'saveOrUpdate')
   })
 
   it('should render a modal with the correct labels', () => {
@@ -25,15 +20,20 @@ describe('New Note Modal', () => {
       id: '1234',
       givenName: 'some name',
     }
-    const store = mockStore({
-      patient: {
-        patient: expectedPatient,
-      },
+    usePatientStore.setState({
+      patient: expectedPatient as Patient,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
     })
     const wrapper = mount(
-      <Provider store={store}>
-        <NewNoteModal show onCloseButtonClick={jest.fn()} toggle={jest.fn()} />
-      </Provider>,
+      <NewNoteModal show onCloseButtonClick={vi.fn()} toggle={vi.fn()} />,
     )
     const modal = wrapper.find(Modal)
     expect(modal).toHaveLength(1)
@@ -50,15 +50,20 @@ describe('New Note Modal', () => {
       id: '1234',
       givenName: 'some name',
     }
-    const store = mockStore({
-      patient: {
-        patient: expectedPatient,
-      },
+    usePatientStore.setState({
+      patient: expectedPatient as Patient,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
     })
     const wrapper = mount(
-      <Provider store={store}>
-        <NewNoteModal show onCloseButtonClick={jest.fn()} toggle={jest.fn()} />
-      </Provider>,
+      <NewNoteModal show onCloseButtonClick={vi.fn()} toggle={vi.fn()} />,
     )
 
     const noteTextField = wrapper.find(TextFieldWithLabelFormGroup)
@@ -76,16 +81,21 @@ describe('New Note Modal', () => {
       message: 'some message',
       note: 'some note error',
     }
-    const store = mockStore({
-      patient: {
-        patient: expectedPatient,
-        noteError: expectedError,
-      },
+    usePatientStore.setState({
+      patient: expectedPatient as Patient,
+      noteError: expectedError,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
     })
     const wrapper = mount(
-      <Provider store={store}>
-        <NewNoteModal show onCloseButtonClick={jest.fn()} toggle={jest.fn()} />
-      </Provider>,
+      <NewNoteModal show onCloseButtonClick={vi.fn()} toggle={vi.fn()} />,
     )
 
     const alert = wrapper.find(Alert)
@@ -98,20 +108,25 @@ describe('New Note Modal', () => {
 
   describe('on cancel', () => {
     it('should call the onCloseButtonCLick function when the cancel button is clicked', () => {
-      const onCloseButtonClickSpy = jest.fn()
+      const onCloseButtonClickSpy = vi.fn()
       const expectedPatient = {
         id: '1234',
         givenName: 'some name',
       }
-      const store = mockStore({
-        patient: {
-          patient: expectedPatient,
-        },
+      usePatientStore.setState({
+        patient: expectedPatient as Patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
       })
       const wrapper = mount(
-        <Provider store={store}>
-          <NewNoteModal show onCloseButtonClick={onCloseButtonClickSpy} toggle={jest.fn()} />
-        </Provider>,
+        <NewNoteModal show onCloseButtonClick={onCloseButtonClickSpy} toggle={vi.fn()} />,
       )
 
       act(() => {
@@ -127,24 +142,28 @@ describe('New Note Modal', () => {
   describe('on save', () => {
     it('should dispatch add note', () => {
       const expectedNote = 'some note'
-      jest.spyOn(patientSlice, 'addNote')
       const expectedPatient = {
         id: '1234',
         givenName: 'some name',
       }
-      const store = mockStore({
-        patient: {
-          patient: expectedPatient,
-        },
+      usePatientStore.setState({
+        patient: expectedPatient as Patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
       })
 
-      jest.spyOn(PatientRepository, 'find').mockResolvedValue(expectedPatient as Patient)
-      jest.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(expectedPatient as Patient)
+      vi.spyOn(PatientRepository, 'find').mockResolvedValue(expectedPatient as Patient)
+      vi.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(expectedPatient as Patient)
 
       const wrapper = mount(
-        <Provider store={store}>
-          <NewNoteModal show onCloseButtonClick={jest.fn()} toggle={jest.fn()} />
-        </Provider>,
+        <NewNoteModal show onCloseButtonClick={vi.fn()} toggle={vi.fn()} />,
       )
 
       act(() => {
@@ -160,7 +179,7 @@ describe('New Note Modal', () => {
         onClick()
       })
 
-      expect(patientSlice.addNote).toHaveBeenCalledWith(expectedPatient.id, { text: expectedNote })
+      expect(usePatientStore.getState().addNote).toHaveBeenCalledWith(expectedPatient.id, { text: expectedNote })
     })
   })
 })

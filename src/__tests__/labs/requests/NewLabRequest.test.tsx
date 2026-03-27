@@ -4,11 +4,8 @@ import NewLabRequest from 'labs/requests/NewLabRequest'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
 import { mount, ReactWrapper } from 'enzyme'
-import { Button, Typeahead, Label, Alert } from '@hospitalrun/components'
+import { Button, Typeahead, Label, Alert } from '@lahim/components'
 import { Router } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import { createMemoryHistory } from 'history'
 import { act } from 'react-dom/test-utils'
 import LabRepository from 'clients/db/LabRepository'
@@ -16,25 +13,30 @@ import PatientRepository from 'clients/db/PatientRepository'
 import Lab from 'model/Lab'
 import Patient from 'model/Patient'
 import * as titleUtil from '../../../page-header/useTitle'
-
-const mockStore = configureMockStore([thunk])
+import { useLabStore } from '../../../store/lab-store'
 
 describe('New Lab Request', () => {
   describe('title and breadcrumbs', () => {
     let titleSpy: any
-    const navigate = createMemoryHistory()
+    const history = createMemoryHistory()
 
     beforeEach(() => {
-      const store = mockStore({ title: '', lab: { status: 'loading', error: {} } })
-      titleSpy = jest.spyOn(titleUtil, 'default')
-      navigate('/labs/new')
+      useLabStore.setState({
+        status: 'loading',
+        error: {},
+        fetchLab: vi.fn(),
+        requestLab: vi.fn(),
+        cancelLab: vi.fn(),
+        completeLab: vi.fn(),
+        updateLab: vi.fn(),
+      })
+      titleSpy = vi.spyOn(titleUtil, 'default')
+      history.push('/labs/new')
 
       mount(
-        <Provider store={store}>
-          <Router history={history}>
-            <NewLabRequest />
-          </Router>
-        </Provider>,
+        <Router history={history}>
+          <NewLabRequest />
+        </Router>,
       )
     })
 
@@ -45,18 +47,24 @@ describe('New Lab Request', () => {
 
   describe('form layout', () => {
     let wrapper: ReactWrapper
-    const navigate = createMemoryHistory()
+    const history = createMemoryHistory()
 
     beforeEach(() => {
-      const store = mockStore({ title: '', lab: { status: 'loading', error: {} } })
-      navigate('/labs/new')
+      useLabStore.setState({
+        status: 'loading',
+        error: {},
+        fetchLab: vi.fn(),
+        requestLab: vi.fn(),
+        cancelLab: vi.fn(),
+        completeLab: vi.fn(),
+        updateLab: vi.fn(),
+      })
+      history.push('/labs/new')
 
       wrapper = mount(
-        <Provider store={store}>
-          <Router history={history}>
-            <NewLabRequest />
-          </Router>
-        </Provider>,
+        <Router history={history}>
+          <NewLabRequest />
+        </Router>,
       )
     })
 
@@ -108,7 +116,7 @@ describe('New Lab Request', () => {
 
   describe('errors', () => {
     let wrapper: ReactWrapper
-    const navigate = createMemoryHistory()
+    const history = createMemoryHistory()
     const error = {
       message: 'some message',
       patient: 'some patient message',
@@ -116,14 +124,20 @@ describe('New Lab Request', () => {
     }
 
     beforeEach(() => {
-      navigate('/labs/new')
-      const store = mockStore({ title: '', lab: { status: 'error', error } })
+      history.push('/labs/new')
+      useLabStore.setState({
+        status: 'error',
+        error,
+        fetchLab: vi.fn(),
+        requestLab: vi.fn(),
+        cancelLab: vi.fn(),
+        completeLab: vi.fn(),
+        updateLab: vi.fn(),
+      })
       wrapper = mount(
-        <Provider store={store}>
-          <Router history={history}>
-            <NewLabRequest />
-          </Router>
-        </Provider>,
+        <Router history={history}>
+          <NewLabRequest />
+        </Router>,
       )
     })
 
@@ -145,17 +159,23 @@ describe('New Lab Request', () => {
 
   describe('on cancel', () => {
     let wrapper: ReactWrapper
-    const navigate = createMemoryHistory()
+    const history = createMemoryHistory()
 
     beforeEach(() => {
-      navigate('/labs/new')
-      const store = mockStore({ title: '', lab: { status: 'loading', error: {} } })
+      history.push('/labs/new')
+      useLabStore.setState({
+        status: 'loading',
+        error: {},
+        fetchLab: vi.fn(),
+        requestLab: vi.fn(),
+        cancelLab: vi.fn(),
+        completeLab: vi.fn(),
+        updateLab: vi.fn(),
+      })
       wrapper = mount(
-        <Provider store={store}>
-          <Router history={history}>
-            <NewLabRequest />
-          </Router>
-        </Provider>,
+        <Router history={history}>
+          <NewLabRequest />
+        </Router>,
       )
     })
 
@@ -173,7 +193,7 @@ describe('New Lab Request', () => {
 
   describe('on save', () => {
     let wrapper: ReactWrapper
-    const navigate = createMemoryHistory()
+    const history = createMemoryHistory()
     let labRepositorySaveSpy: any
     const expectedDate = new Date()
     const expectedLab = {
@@ -186,22 +206,28 @@ describe('New Lab Request', () => {
     } as Lab
 
     beforeEach(() => {
-      jest.resetAllMocks()
-      Date.now = jest.fn(() => expectedDate.valueOf())
-      labRepositorySaveSpy = jest.spyOn(LabRepository, 'save').mockResolvedValue(expectedLab as Lab)
+      vi.resetAllMocks()
+      Date.now = vi.fn(() => expectedDate.valueOf())
+      labRepositorySaveSpy = vi.spyOn(LabRepository, 'save').mockResolvedValue(expectedLab as Lab)
 
-      jest
+      vi
         .spyOn(PatientRepository, 'search')
         .mockResolvedValue([{ id: expectedLab.patientId, fullName: 'some full name' }] as Patient[])
 
-      navigate('/labs/new')
-      const store = mockStore({ title: '', lab: { status: 'loading', error: {} } })
+      history.push('/labs/new')
+      useLabStore.setState({
+        status: 'loading',
+        error: {},
+        fetchLab: vi.fn(),
+        requestLab: vi.fn(),
+        cancelLab: vi.fn(),
+        completeLab: vi.fn(),
+        updateLab: vi.fn(),
+      })
       wrapper = mount(
-        <Provider store={store}>
-          <Router history={history}>
-            <NewLabRequest />
-          </Router>
-        </Provider>,
+        <Router history={history}>
+          <NewLabRequest />
+        </Router>,
       )
     })
 

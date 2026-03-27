@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
-import { useAppDispatch } from '../../../store'
-import { Spinner, Button } from '@hospitalrun/components'
+import { Spinner, Button } from '@lahim/components'
 import { isBefore } from 'date-fns'
 
 import AppointmentDetailForm from '../AppointmentDetailForm'
 import useTitle from '../../../page-header/useTitle'
 import Appointment from '../../../model/Appointment'
-import { updateAppointment, fetchAppointment } from '../appointment-slice'
-import { RootState } from '../../../store'
+import { useAppointmentStore } from '../../../store/appointment-store'
 import { getAppointmentLabel } from '../util/scheduling-appointment.util'
 import useAddBreadcrumbs from '../../../breadcrumbs/useAddBreadcrumbs'
 
@@ -18,36 +15,34 @@ const EditAppointment = () => {
   const { t } = useTranslation()
   useTitle(t('scheduling.appointments.editAppointment'))
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
+  const { appointment: storeAppointment, patient, isLoading, fetchAppointment, updateAppointment } =
+    useAppointmentStore()
 
   const [appointment, setAppointment] = useState({} as Appointment)
   const [errorMessage, setErrorMessage] = useState('')
-  const { appointment: reduxAppointment, patient, isLoading } = useSelector(
-    (state: RootState) => state.appointment,
-  )
   const breadcrumbs = [
     { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
     {
-      text: getAppointmentLabel(reduxAppointment),
-      location: `/appointments/${reduxAppointment.id}`,
+      text: getAppointmentLabel(storeAppointment),
+      location: `/appointments/${storeAppointment.id}`,
     },
     {
       i18nKey: 'scheduling.appointments.editAppointment',
-      location: `/appointments/edit/${reduxAppointment.id}`,
+      location: `/appointments/edit/${storeAppointment.id}`,
     },
   ]
   useAddBreadcrumbs(breadcrumbs, true)
 
   useEffect(() => {
-    setAppointment(reduxAppointment)
-  }, [reduxAppointment])
+    setAppointment(storeAppointment)
+  }, [storeAppointment])
 
   const { id } = useParams()
   useEffect(() => {
     if (id) {
-      dispatch(fetchAppointment(id))
+      fetchAppointment(id)
     }
-  }, [id, dispatch])
+  }, [fetchAppointment, id])
 
   const onCancel = () => {
     navigate(`/appointments/${appointment.id}`)
@@ -68,7 +63,7 @@ const EditAppointment = () => {
       return
     }
 
-    dispatch(updateAppointment(appointment as Appointment, onSaveSuccess))
+    updateAppointment(appointment as Appointment, onSaveSuccess)
   }
 
   const onFieldChange = (key: string, value: string | boolean) => {

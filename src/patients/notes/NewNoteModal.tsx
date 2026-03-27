@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
-import { Modal, Alert } from '@hospitalrun/components'
+import { Modal, Alert } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import TextFieldWithLabelFormGroup from 'components/input/TextFieldWithLabelFormGroup'
-import { addNote } from 'patients/patient-slice'
-import { useSelector } from 'react-redux'
 import Note from '../../model/Note'
-import { RootState, useAppDispatch } from '../../store'
+import { usePatientStore } from '../../store/patient-store'
 
 interface Props {
   show: boolean
@@ -15,8 +13,9 @@ interface Props {
 
 const NewNoteModal = (props: Props) => {
   const { show, toggle, onCloseButtonClick } = props
-  const dispatch = useAppDispatch()
-  const { patient, noteError } = useSelector((state: RootState) => state.patient)
+  const patient = usePatientStore((s) => s.patient)
+  const noteError = usePatientStore((s) => s.noteError)
+  const addNote = usePatientStore((s) => s.addNote)
   const { t } = useTranslation()
   const [note, setNote] = useState({
     text: '',
@@ -35,7 +34,7 @@ const NewNoteModal = (props: Props) => {
   }
 
   const onSaveButtonClick = () => {
-    dispatch(addNote(patient.id, note as Note))
+    addNote(patient.id, note as Note)
   }
 
   const body = (

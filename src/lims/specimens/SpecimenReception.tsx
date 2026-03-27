@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Panel, Container, Row, Column, Spinner, Alert, Modal } from '@hospitalrun/components'
+import { Button, Panel, Container, Row, Column, Spinner, Alert, Modal } from '@lahim/components'
 import { useSpecimen } from '../../hooks/useSpecimens'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '../../lib/api-client'

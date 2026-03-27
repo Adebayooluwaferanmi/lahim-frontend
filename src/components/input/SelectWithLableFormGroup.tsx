@@ -1,5 +1,5 @@
 import React from 'react'
-import { Label } from '@hospitalrun/components'
+import { Label } from '@lahim/components'
 
 interface Option {
   label: string

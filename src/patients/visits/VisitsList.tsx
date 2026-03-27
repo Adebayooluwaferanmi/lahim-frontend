@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Button, Table, Alert, Spinner } from '@hospitalrun/components'
+import { Button, Table, Alert, Spinner } from '@lahim/components'
 import { useVisits } from '../../hooks/useVisits'
 
 interface Props {

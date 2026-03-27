@@ -2,15 +2,13 @@ import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
 import { createMemoryHistory } from 'history'
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import Patient from 'model/Patient'
 import { Router } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import AppointmentsList from 'patients/appointments/AppointmentsList'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import { act } from 'react-dom/test-utils'
-// import PatientRepository from 'clients/db/PatientRepository' # Lint warning: 'PatientRepository' is defined but never used
+import { usePatientStore } from '../../../store/patient-store'
+import { useAppointmentsStore } from '../../../store/appointments-store'
 
 const expectedPatient = {
   id: '123',
@@ -27,18 +25,31 @@ const expectedAppointments = [
   },
 ]
 
-const mockStore = configureMockStore([thunk])
 const navigate = createMemoryHistory()
 
-let store: any
-
 const setup = (patient = expectedPatient, appointments = expectedAppointments) => {
-  store = mockStore({ patient, appointments: { appointments } })
+  usePatientStore.setState({
+    patient,
+    status: 'completed',
+    fetchPatient: vi.fn(),
+    createPatient: vi.fn(),
+    updatePatient: vi.fn(),
+    addRelatedPerson: vi.fn(),
+    removeRelatedPerson: vi.fn(),
+    addDiagnosis: vi.fn(),
+    addAllergy: vi.fn(),
+    addNote: vi.fn(),
+  })
+  useAppointmentsStore.setState({
+    appointments,
+    isLoading: false,
+    fetchAppointments: vi.fn(),
+    fetchPatientAppointments: vi.fn(),
+  })
+
   const wrapper = mount(
     <Router history={history}>
-      <Provider store={store}>
-        <AppointmentsList patientId={patient.id} />
-      </Provider>
+      <AppointmentsList patientId={patient.id} />
     </Router>,
   )
 

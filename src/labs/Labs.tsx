@@ -2,15 +2,14 @@ import React from 'react'
 import PrivateRoute from 'components/PrivateRoute'
 import { Routes, Route } from 'react-router-dom'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
-import { useSelector } from 'react-redux'
 import Permissions from 'model/Permissions'
 import LabRequests from './ViewLabs'
 import NewLabRequest from './requests/NewLabRequest'
 import ViewLab from './ViewLab'
-import { RootState } from '../store'
+import { useUserStore } from '../store/user-store'
 
 const Labs = () => {
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const permissions = useUserStore((state) => state.permissions)
   const breadcrumbs = [
     {
       i18nKey: 'labs.label',

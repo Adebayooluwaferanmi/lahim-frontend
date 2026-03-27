@@ -10,7 +10,7 @@ import {
   Alert,
   Panel,
   Modal,
-} from '@hospitalrun/components'
+} from '@lahim/components'
 import {
   useSpecimenTransport,
   useSpecimenTransportStatus,

@@ -2,7 +2,6 @@ import '../../../../__mocks__/matchMediaMock'
 import React from 'react'
 import NewAppointment from 'scheduling/appointments/new/NewAppointment'
 import { Router, Route } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import { mount } from 'enzyme'
 import { roundToNearestMinutes, addMinutes } from 'date-fns'
 import { createMemoryHistory, MemoryHistory } from 'history'
@@ -10,49 +9,47 @@ import { act } from '@testing-library/react'
 import subDays from 'date-fns/subDays'
 import AppointmentRepository from 'clients/db/AppointmentRepository'
 import { mocked } from 'ts-jest/utils'
-import configureMockStore, { MockStore } from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import Appointment from 'model/Appointment'
 import Patient from 'model/Patient'
 import AppointmentDetailForm from 'scheduling/appointments/AppointmentDetailForm'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import * as titleUtil from '../../../../page-header/useTitle'
-import * as appointmentSlice from '../../../../scheduling/appointments/appointment-slice'
 import LabRepository from '../../../../clients/db/LabRepository'
 import Lab from '../../../../model/Lab'
+import { useAppointmentStore } from '../../../../store/appointment-store'
 
-const mockStore = configureMockStore([thunk])
 const mockedComponents = mocked(components, true)
 
 describe('New Appointment', () => {
   let history: MemoryHistory
-  let store: MockStore
   const expectedNewAppointment = { id: '123' }
 
   const setup = () => {
-    jest.spyOn(AppointmentRepository, 'save')
+    vi.spyOn(AppointmentRepository, 'save')
     mocked(AppointmentRepository, true).save.mockResolvedValue(
       expectedNewAppointment as Appointment,
     )
-    jest.spyOn(LabRepository, 'findAllByPatientId').mockResolvedValue([] as Lab[])
+    vi.spyOn(LabRepository, 'findAllByPatientId').mockResolvedValue([] as Lab[])
 
     history = createMemoryHistory()
-    store = mockStore({
-      appointment: {
-        appointment: {} as Appointment,
-        patient: {} as Patient,
-      },
+
+    useAppointmentStore.setState({
+      appointment: {} as Appointment,
+      patient: {} as Patient,
+      isLoading: false,
+      fetchAppointment: vi.fn(),
+      createAppointment: vi.fn(),
+      updateAppointment: vi.fn(),
+      deleteAppointment: vi.fn(),
     })
 
-    navigate('/appointments/new')
+    history.push('/appointments/new')
     const wrapper = mount(
-      <Provider store={store}>
-        <Router history={history}>
-          <Route path="/appointments/new">
-            <NewAppointment />
-          </Route>
-        </Router>
-      </Provider>,
+      <Router history={history}>
+        <Route path="/appointments/new">
+          <NewAppointment />
+        </Route>
+      </Router>,
     )
 
     wrapper.update()
@@ -61,7 +58,7 @@ describe('New Appointment', () => {
 
   describe('header', () => {
     it('should use "New Appointment" as the header', async () => {
-      jest.spyOn(titleUtil, 'default')
+      vi.spyOn(titleUtil, 'default')
       await act(async () => {
         await setup()
       })
@@ -157,12 +154,10 @@ describe('New Appointment', () => {
       })
 
       expect(AppointmentRepository.save).toHaveBeenCalledWith(expectedAppointment)
-      expect(store.getActions()).toContainEqual(appointmentSlice.createAppointmentStart())
-      expect(store.getActions()).toContainEqual(appointmentSlice.createAppointmentSuccess())
     })
 
     it('should navigate to /appointments/:id when a new appointment is created', async () => {
-      jest.spyOn(components, 'Toast')
+      vi.spyOn(components, 'Toast')
       let wrapper: any
       await act(async () => {
         wrapper = await setup()

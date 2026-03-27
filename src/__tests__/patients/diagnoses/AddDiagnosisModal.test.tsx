@@ -1,39 +1,37 @@
 import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
-import { Modal, Alert } from '@hospitalrun/components'
+import { Modal, Alert } from '@lahim/components'
 import { act } from '@testing-library/react'
 import AddDiagnosisModal from 'patients/diagnoses/AddDiagnosisModal'
-import createMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import { Provider } from 'react-redux'
 import TextInputWithLabelFormGroup from '../../../components/input/TextInputWithLabelFormGroup'
 import DatePickerWithLabelFormGroup from '../../../components/input/DatePickerWithLabelFormGroup'
 import Diagnosis from '../../../model/Diagnosis'
-import * as patientSlice from '../../../patients/patient-slice'
 import PatientRepository from '../../../clients/db/PatientRepository'
 import Patient from '../../../model/Patient'
-
-const mockStore = createMockStore([thunk])
+import { usePatientStore } from '../../../store/patient-store'
 
 describe('Add Diagnosis Modal', () => {
   beforeEach(() => {
-    jest.spyOn(PatientRepository, 'find')
-    jest.spyOn(PatientRepository, 'saveOrUpdate')
+    vi.spyOn(PatientRepository, 'find')
+    vi.spyOn(PatientRepository, 'saveOrUpdate')
   })
 
   it('should render a modal with the correct labels', () => {
-    const store = mockStore({
-      patient: {
-        patient: {
-          id: '1234',
-        },
-      },
+    usePatientStore.setState({
+      patient: { id: '1234' } as Patient,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
     })
     const wrapper = mount(
-      <Provider store={store}>
-        <AddDiagnosisModal show onCloseButtonClick={jest.fn()} />
-      </Provider>,
+      <AddDiagnosisModal show onCloseButtonClick={vi.fn()} />,
     )
     wrapper.update()
     const modal = wrapper.find(Modal)
@@ -52,15 +50,21 @@ describe('Add Diagnosis Modal', () => {
       date: 'some date message',
       name: 'some date message',
     }
-    const store = mockStore({
-      patient: {
-        diagnosisError: expectedDiagnosisError,
-      },
+    usePatientStore.setState({
+      patient: {} as Patient,
+      diagnosisError: expectedDiagnosisError,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
     })
     const wrapper = mount(
-      <Provider store={store}>
-        <AddDiagnosisModal show onCloseButtonClick={jest.fn()} />
-      </Provider>,
+      <AddDiagnosisModal show onCloseButtonClick={vi.fn()} />,
     )
     wrapper.update()
 
@@ -80,18 +84,21 @@ describe('Add Diagnosis Modal', () => {
 
   describe('cancel', () => {
     it('should call the onCloseButtonClick function when the close button is clicked', () => {
-      const onCloseButtonClickSpy = jest.fn()
-      const store = mockStore({
-        patient: {
-          patient: {
-            id: '1234',
-          },
-        },
+      const onCloseButtonClickSpy = vi.fn()
+      usePatientStore.setState({
+        patient: { id: '1234' } as Patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
       })
       const wrapper = mount(
-        <Provider store={store}>
-          <AddDiagnosisModal show onCloseButtonClick={onCloseButtonClickSpy} />
-        </Provider>,
+        <AddDiagnosisModal show onCloseButtonClick={onCloseButtonClickSpy} />,
       )
       wrapper.update()
 
@@ -109,29 +116,33 @@ describe('Add Diagnosis Modal', () => {
     it('should dispatch add diagnosis', () => {
       const expectedName = 'expected name'
       const expectedDate = new Date()
-      jest.spyOn(patientSlice, 'addDiagnosis')
       const patient = {
         id: '1234',
         givenName: 'some name',
       }
 
-      jest.spyOn(PatientRepository, 'find').mockResolvedValue(patient as Patient)
-      jest.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient as Patient)
+      vi.spyOn(PatientRepository, 'find').mockResolvedValue(patient as Patient)
+      vi.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient as Patient)
 
       const diagnosis = {
         name: expectedName,
         diagnosisDate: expectedDate.toISOString(),
       } as Diagnosis
 
-      const store = mockStore({
-        patient: {
-          patient,
-        },
+      usePatientStore.setState({
+        patient: patient as Patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
       })
       const wrapper = mount(
-        <Provider store={store}>
-          <AddDiagnosisModal show onCloseButtonClick={jest.fn()} />
-        </Provider>,
+        <AddDiagnosisModal show onCloseButtonClick={vi.fn()} />,
       )
 
       act(() => {
@@ -154,7 +165,7 @@ describe('Add Diagnosis Modal', () => {
         onClick()
       })
 
-      expect(patientSlice.addDiagnosis).toHaveBeenCalledWith(patient.id, { ...diagnosis })
+      expect(usePatientStore.getState().addDiagnosis).toHaveBeenCalledWith(patient.id, { ...diagnosis })
     })
   })
 })

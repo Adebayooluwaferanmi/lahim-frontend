@@ -36,58 +36,21 @@ function scssTildeImporter(): Plugin {
   }
 }
 
-// Plugin to handle @hospitalrun/components imports
-function hospitalrunComponentsAlias(): Plugin {
+// Plugin to handle @lahim/components SCSS subpath imports
+function lahimComponentsScss(): Plugin {
   return {
-    name: 'hospitalrun-components-alias',
+    name: 'lahim-components-scss',
     enforce: 'pre',
-    resolveId(id, importer) {
-      // Handle SCSS subpath imports first
-      if (id.startsWith('@hospitalrun/components/')) {
-        const subpath = id.replace('@hospitalrun/components/', '')
-        
-        // Try direct path first (e.g., scss/main.scss -> dist/scss/main.scss)
+    resolveId(id) {
+      if (id.startsWith('@lahim/components/') && id.endsWith('.scss')) {
+        const subpath = id.replace('@lahim/components/', '')
         const resolvedPath = path.resolve(__dirname, `../components-lahim/dist/${subpath}`)
         if (fs.existsSync(resolvedPath)) {
           return resolvedPath
         }
-        
-        // If not found, try alternative paths for SCSS files
-        if (subpath.endsWith('.scss')) {
-          // Try dist/scss/filename.scss (if subpath is just filename)
-          const basename = path.basename(subpath)
-          const altPath = path.resolve(__dirname, `../components-lahim/dist/scss/${basename}`)
-          if (fs.existsSync(altPath)) {
-            return altPath
-          }
-          // Also try the source scss directory as fallback
-          const sourcePath = path.resolve(__dirname, `../components-lahim/scss/${basename}`)
-          if (fs.existsSync(sourcePath)) {
-            return sourcePath
-          }
-        }
-        
-        return null
-      }
-      // Handle main package import - FORCE ESM version
-      if (id === '@hospitalrun/components') {
-        const esmPath = path.resolve(__dirname, '../components-lahim/dist/index.esm')
-        // Return the absolute path to ESM file
-        return esmPath
-      }
-      // Also handle if Vite resolves to index.js - redirect to index.esm
-      if (id && id.includes('components-lahim/dist/index.js') && !id.includes('.esm')) {
-        const esmPath = path.resolve(__dirname, '../components-lahim/dist/index.esm')
-        return esmPath
-      }
-      return null
-    },
-    load(id) {
-      // If somehow index.js is being loaded, redirect to index.esm
-      if (id && id.includes('components-lahim/dist/index.js') && !id.includes('.esm')) {
-        const esmPath = path.resolve(__dirname, '../components-lahim/dist/index.esm')
-        if (fs.existsSync(esmPath)) {
-          return fs.readFileSync(esmPath, 'utf-8')
+        const sourcePath = path.resolve(__dirname, `../components-lahim/scss/${path.basename(subpath)}`)
+        if (fs.existsSync(sourcePath)) {
+          return sourcePath
         }
       }
       return null
@@ -102,7 +65,7 @@ export default defineConfig({
   base: process.env.VITE_BASE_PATH ? `/${process.env.VITE_BASE_PATH}/` : '/',
   plugins: [
     scssTildeImporter(),
-    hospitalrunComponentsAlias(),
+    lahimComponentsScss(),
     react(),
     // Node.js polyfills for browser compatibility
     nodePolyfills({
@@ -151,14 +114,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      // Fix React version conflict - ensure only one version is used
-      'react': path.resolve(__dirname, './node_modules/react'),
-      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+      'react': path.resolve(__dirname, '../../node_modules/react'),
+      'react-dom': path.resolve(__dirname, '../../node_modules/react-dom'),
+      // SCSS subpath must be aliased before the bare module alias
+      '@lahim/components/scss': path.resolve(__dirname, '../components-lahim/dist/scss'),
       // Workspace dependency alias
       '@lahim/components': path.resolve(__dirname, '../components-lahim/dist/index.esm'),
-      // Note: @hospitalrun/components is handled by the hospitalrunComponentsAlias plugin
-      // The plugin resolves both main imports (→ index.esm) and subpaths (→ dist/scss/main.scss)
-      // No alias needed here - plugin handles everything
       // Path aliases - support baseUrl from tsconfig
       '@': path.resolve(__dirname, './src'),
       // Support imports without @ prefix (baseUrl: "./src")
@@ -175,8 +136,7 @@ export default defineConfig({
       'lims': path.resolve(__dirname, './src/lims'),
       'store': path.resolve(__dirname, './src/store'),
       'config': path.resolve(__dirname, './src/config'),
-      // Support ~ prefix for node_modules in SCSS
-      '~': path.resolve(__dirname, './node_modules'),
+      '~': path.resolve(__dirname, '../../node_modules'),
     },
   },
   define: {
@@ -240,7 +200,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router', 'react-router-dom'],
-          'redux-vendor': ['@reduxjs/toolkit', 'react-redux', 'redux', 'redux-thunk'],
+          'state-vendor': ['zustand'],
           'query-vendor': ['@tanstack/react-query', '@tanstack/react-query-devtools'],
           'components-vendor': ['@lahim/components'],
           'pouchdb-vendor': ['pouchdb', 'pouchdb-adapter-memory', 'pouchdb-find', 'pouchdb-quick-search'],

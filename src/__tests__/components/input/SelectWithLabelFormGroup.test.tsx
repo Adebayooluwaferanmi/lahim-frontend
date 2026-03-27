@@ -1,7 +1,7 @@
 import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { shallow } from 'enzyme'
-import { Label, Select } from '@hospitalrun/components'
+import { Label, Select } from '@lahim/components'
 import SelectWithLabelFormGroup from '../../../components/input/SelectWithLableFormGroup'
 
 describe('select with label form group', () => {

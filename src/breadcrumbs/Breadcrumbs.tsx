@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Breadcrumb, BreadcrumbItem } from '@hospitalrun/components'
+import { Breadcrumb, BreadcrumbItem } from '@lahim/components'
 import { useUIStore } from '../store/ui-store'
 
 const Breadcrumbs = () => {

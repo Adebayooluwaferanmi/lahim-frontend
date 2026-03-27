@@ -3,13 +3,12 @@ import useTitle from 'page-header/useTitle'
 import { useTranslation } from 'react-i18next'
 import roundToNearestMinutes from 'date-fns/roundToNearestMinutes'
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../../../store'
 import Appointment from 'model/Appointment'
 import addMinutes from 'date-fns/addMinutes'
 import { isBefore } from 'date-fns'
-import { Button, Toast } from '@hospitalrun/components'
+import { Button, Toast } from '@lahim/components'
 import useAddBreadcrumbs from '../../../breadcrumbs/useAddBreadcrumbs'
-import { createAppointment } from '../appointment-slice'
+import { useAppointmentStore } from '../../../store/appointment-store'
 import AppointmentDetailForm from '../AppointmentDetailForm'
 
 const breadcrumbs = [
@@ -20,7 +19,7 @@ const breadcrumbs = [
 const NewAppointment = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
+  const { createAppointment } = useAppointmentStore()
   useTitle(t('scheduling.appointments.new'))
   useAddBreadcrumbs(breadcrumbs, true)
   const startDateTime = roundToNearestMinutes(new Date(), { nearestTo: 15 })
@@ -59,7 +58,7 @@ const NewAppointment = () => {
       return
     }
 
-    dispatch(createAppointment(appointment as Appointment, onNewAppointmentSaveSuccess))
+    createAppointment(appointment as Appointment, onNewAppointmentSaveSuccess)
   }
 
   const onFieldChange = (key: string, value: string | boolean) => {

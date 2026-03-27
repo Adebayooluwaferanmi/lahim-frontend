@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Alert } from '@hospitalrun/components'
+import { Modal, Alert } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import Diagnosis from 'model/Diagnosis'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'
 import DatePickerWithLabelFormGroup from 'components/input/DatePickerWithLabelFormGroup'
-import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from '../../store'
-import { addDiagnosis } from '../patient-slice'
+import { usePatientStore } from '../../store/patient-store'
 
 interface Props {
   show: boolean
@@ -15,8 +13,9 @@ interface Props {
 
 const AddDiagnosisModal = (props: Props) => {
   const { show, onCloseButtonClick } = props
-  const dispatch = useAppDispatch()
-  const { diagnosisError, patient } = useSelector((state: RootState) => state.patient)
+  const diagnosisError = usePatientStore((s) => s.diagnosisError)
+  const patient = usePatientStore((s) => s.patient)
+  const addDiagnosis = usePatientStore((s) => s.addDiagnosis)
   const { t } = useTranslation()
 
   const [diagnosis, setDiagnosis] = useState({ name: '', diagnosisDate: new Date().toISOString() })
@@ -26,7 +25,7 @@ const AddDiagnosisModal = (props: Props) => {
   }, [show])
 
   const onSaveButtonClick = () => {
-    dispatch(addDiagnosis(patient.id, diagnosis as Diagnosis))
+    addDiagnosis(patient.id, diagnosis as Diagnosis)
   }
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {

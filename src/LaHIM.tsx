@@ -1,7 +1,6 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { Toaster } from '@hospitalrun/components'
+import { Toaster } from '@lahim/components'
 import Appointments from 'scheduling/appointments/Appointments'
 import NewAppointment from 'scheduling/appointments/new/NewAppointment'
 import EditAppointment from 'scheduling/appointments/edit/EditAppointment'
@@ -14,7 +13,7 @@ import LIMS from './lims/LIMS'
 import Sidebar from './components/Sidebar'
 import Permissions from './model/Permissions'
 import Dashboard from './dashboard/Dashboard'
-import { RootState } from './store'
+import { useUserStore } from './store/user-store'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
 import Patients from './patients/Patients'
@@ -55,7 +54,7 @@ import { useUIStore } from './store/ui-store'
 
 const LaHIM = () => {
   const { title, sidebarCollapsed } = useUIStore()
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const permissions = useUserStore((state) => state.permissions)
 
   return (
     <div>

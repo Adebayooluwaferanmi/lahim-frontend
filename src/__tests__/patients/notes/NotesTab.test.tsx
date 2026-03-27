@@ -3,36 +3,41 @@ import React from 'react'
 import PatientRepository from 'clients/db/PatientRepository'
 import Note from 'model/Note'
 import { createMemoryHistory } from 'history'
-import configureMockStore from 'redux-mock-store'
 import Patient from 'model/Patient'
-import thunk from 'redux-thunk'
 import { mount } from 'enzyme'
 import { Router } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import NoteTab from 'patients/notes/NoteTab'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import { act } from 'react-dom/test-utils'
 import Permissions from '../../../model/Permissions'
+import { usePatientStore } from '../../../store/patient-store'
+import { useUserStore } from '../../../store/user-store'
 
 const expectedPatient = {
   id: '123',
   notes: [{ date: new Date().toISOString(), text: 'notes1' } as Note],
 } as Patient
 
-const mockStore = configureMockStore([thunk])
 const navigate = createMemoryHistory()
 
-let user: any
-let store: any
-
 const setup = (patient = expectedPatient, permissions = [Permissions.WritePatients]) => {
-  user = { permissions }
-  store = mockStore({ patient, user })
+  usePatientStore.setState({
+    patient,
+    status: 'completed',
+    fetchPatient: vi.fn(),
+    createPatient: vi.fn(),
+    updatePatient: vi.fn(),
+    addRelatedPerson: vi.fn(),
+    removeRelatedPerson: vi.fn(),
+    addDiagnosis: vi.fn(),
+    addAllergy: vi.fn(),
+    addNote: vi.fn(),
+  })
+  useUserStore.setState({ permissions })
+
   const wrapper = mount(
     <Router history={history}>
-      <Provider store={store}>
-        <NoteTab patient={patient} />
-      </Provider>
+      <NoteTab patient={patient} />
     </Router>,
   )
 
@@ -42,8 +47,8 @@ const setup = (patient = expectedPatient, permissions = [Permissions.WritePatien
 describe('Notes Tab', () => {
   describe('Add New Note', () => {
     beforeEach(() => {
-      jest.resetAllMocks()
-      jest.spyOn(PatientRepository, 'saveOrUpdate')
+      vi.resetAllMocks()
+      vi.spyOn(PatientRepository, 'saveOrUpdate')
     })
 
     it('should render a add notes button', () => {

@@ -1,5 +1,4 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { Routes, Route } from 'react-router-dom'
 import PrivateRoute from '../components/PrivateRoute'
 import Permissions from '../model/Permissions'
@@ -7,10 +6,10 @@ import ViewPatients from './list/ViewPatients'
 import NewPatient from './new/NewPatient'
 import EditPatient from './edit/EditPatient'
 import ViewPatient from './view/ViewPatient'
-import { RootState } from '../store'
+import { useUserStore } from '../store/user-store'
 
 const Patients = () => {
-  const permissions = useSelector((state: RootState) => state.user.permissions)
+  const permissions = useUserStore((state) => state.permissions)
   return (
     <Routes>
       <Route

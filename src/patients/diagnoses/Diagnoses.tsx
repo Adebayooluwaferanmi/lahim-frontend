@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { RootState } from 'store'
 import Patient from 'model/Patient'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
-import { useSelector } from 'react-redux'
+import { useUserStore } from 'store/user-store'
 import Permissions from 'model/Permissions'
-import { Button, List, ListItem, Alert } from '@hospitalrun/components'
+import { Button, List, ListItem, Alert } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import Diagnosis from 'model/Diagnosis'
 import AddDiagnosisModal from './AddDiagnosisModal'
@@ -16,7 +15,7 @@ interface Props {
 const Diagnoses = (props: Props) => {
   const { patient } = props
   const { t } = useTranslation()
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const permissions = useUserStore((state) => state.permissions)
   const [showDiagnosisModal, setShowDiagnosisModal] = useState(false)
 
   const breadcrumbs = [

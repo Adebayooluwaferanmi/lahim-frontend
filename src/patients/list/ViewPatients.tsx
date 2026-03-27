@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useAppDispatch } from '../../store'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Spinner, Button, Container, Row, TextInput, Column } from '@hospitalrun/components'
+import { Spinner, Button, Container, Row, TextInput, Column } from '@lahim/components'
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
 import format from 'date-fns/format'
-import { RootState } from '../../store'
-import { fetchPatients, searchPatients } from '../patients-slice'
+import { usePatientsStore } from '../../store/patients-store'
 import useTitle from '../../page-header/useTitle'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
 import useDebounce from '../../hooks/debounce'
@@ -19,8 +16,10 @@ const ViewPatients = () => {
   const navigate = useNavigate()
   useTitle(t('patients.label'))
   useAddBreadcrumbs(breadcrumbs, true)
-  const dispatch = useAppDispatch()
-  const { patients, isLoading } = useSelector((state: RootState) => state.patients)
+  const patients = usePatientsStore((s) => s.patients)
+  const isLoading = usePatientsStore((s) => s.isLoading)
+  const fetchPatients = usePatientsStore((s) => s.fetchPatients)
+  const searchPatients = usePatientsStore((s) => s.searchPatients)
 
   const setButtonToolBar = useButtonToolbarSetter()
 
@@ -29,11 +28,11 @@ const ViewPatients = () => {
   const debouncedSearchText = useDebounce(searchText, 500)
 
   useEffect(() => {
-    dispatch(searchPatients(debouncedSearchText))
-  }, [dispatch, debouncedSearchText])
+    searchPatients(debouncedSearchText)
+  }, [searchPatients, debouncedSearchText])
 
   useEffect(() => {
-    dispatch(fetchPatients())
+    fetchPatients()
 
     setButtonToolBar([
       <Button
@@ -50,7 +49,7 @@ const ViewPatients = () => {
     return () => {
       setButtonToolBar([])
     }
-  }, [dispatch, setButtonToolBar, t, history])
+  }, [fetchPatients, setButtonToolBar, t])
 
   const loadingIndicator = <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
   const table = (

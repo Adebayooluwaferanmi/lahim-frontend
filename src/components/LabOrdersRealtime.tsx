@@ -11,7 +11,7 @@ import React from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSocketIOSubscription, useSocketIOStatus } from '../lib/realtime-socketio'
 import { apiClient } from '../lib/api-client'
-import { Alert, Spinner } from '@hospitalrun/components'
+import { Alert, Spinner } from '@lahim/components'
 
 interface LabOrder {
   id: string

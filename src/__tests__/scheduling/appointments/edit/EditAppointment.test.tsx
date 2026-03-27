@@ -2,24 +2,19 @@ import '../../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
 import { Router, Route } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import { mocked } from 'ts-jest/utils'
 import { createMemoryHistory } from 'history'
 import { act } from 'react-dom/test-utils'
-import configureMockStore, { MockStore } from 'redux-mock-store'
-import thunk from 'redux-thunk'
 import { roundToNearestMinutes, addMinutes, subDays } from 'date-fns'
-import { Button, Alert } from '@hospitalrun/components'
+import { Button, Alert } from '@lahim/components'
 import EditAppointment from '../../../../scheduling/appointments/edit/EditAppointment'
 import AppointmentDetailForm from '../../../../scheduling/appointments/AppointmentDetailForm'
 import Appointment from '../../../../model/Appointment'
 import Patient from '../../../../model/Patient'
 import * as titleUtil from '../../../../page-header/useTitle'
-import * as appointmentSlice from '../../../../scheduling/appointments/appointment-slice'
 import AppointmentRepository from '../../../../clients/db/AppointmentRepository'
 import PatientRepository from '../../../../clients/db/PatientRepository'
-
-const mockStore = configureMockStore([thunk])
+import { useAppointmentStore } from '../../../../store/appointment-store'
 
 describe('Edit Appointment', () => {
   const appointment = {
@@ -51,12 +46,11 @@ describe('Edit Appointment', () => {
   } as Patient
 
   let history: any
-  let store: MockStore
 
   const setup = () => {
-    jest.spyOn(AppointmentRepository, 'saveOrUpdate')
-    jest.spyOn(AppointmentRepository, 'find')
-    jest.spyOn(PatientRepository, 'find')
+    vi.spyOn(AppointmentRepository, 'saveOrUpdate')
+    vi.spyOn(AppointmentRepository, 'find')
+    vi.spyOn(PatientRepository, 'find')
 
     const mockedAppointmentRepository = mocked(AppointmentRepository, true)
     mockedAppointmentRepository.find.mockResolvedValue(appointment)
@@ -66,17 +60,24 @@ describe('Edit Appointment', () => {
     mockedPatientRepository.find.mockResolvedValue(patient)
 
     history = createMemoryHistory()
-    store = mockStore({ appointment: { appointment, patient } })
 
-    navigate('/appointments/edit/123')
+    useAppointmentStore.setState({
+      appointment,
+      patient,
+      isLoading: false,
+      fetchAppointment: vi.fn(),
+      createAppointment: vi.fn(),
+      updateAppointment: vi.fn(),
+      deleteAppointment: vi.fn(),
+    })
+
+    history.push('/appointments/edit/123')
     const wrapper = mount(
-      <Provider store={store}>
-        <Router history={history}>
-          <Route path="/appointments/edit/:id">
-            <EditAppointment />
-          </Route>
-        </Router>
-      </Provider>,
+      <Router history={history}>
+        <Route path="/appointments/edit/:id">
+          <EditAppointment />
+        </Route>
+      </Router>,
     )
 
     wrapper.update()
@@ -84,7 +85,7 @@ describe('Edit Appointment', () => {
   }
 
   beforeEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it('should render an edit appointment form', async () => {
@@ -105,14 +106,10 @@ describe('Edit Appointment', () => {
 
     expect(AppointmentRepository.find).toHaveBeenCalledWith(appointment.id)
     expect(PatientRepository.find).toHaveBeenCalledWith(appointment.patientId)
-    expect(store.getActions()).toContainEqual(appointmentSlice.fetchAppointmentStart())
-    expect(store.getActions()).toContainEqual(
-      appointmentSlice.fetchAppointmentSuccess({ appointment, patient }),
-    )
   })
 
   it('should use the correct title', async () => {
-    jest.spyOn(titleUtil, 'default')
+    vi.spyOn(titleUtil, 'default')
     await act(async () => {
       await setup()
     })
@@ -178,10 +175,6 @@ describe('Edit Appointment', () => {
     })
 
     expect(AppointmentRepository.saveOrUpdate).toHaveBeenCalledWith(appointment)
-    expect(store.getActions()).toContainEqual(appointmentSlice.updateAppointmentStart())
-    expect(store.getActions()).toContainEqual(
-      appointmentSlice.updateAppointmentSuccess(appointment),
-    )
   })
 
   it('should navigate to /appointments/:id when save is successful', async () => {

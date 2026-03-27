@@ -7,10 +7,7 @@
  * - TypeScript support
  */
 
-// Support both Vite (import.meta.env) and legacy (process.env) for compatibility
-const API_BASE_URL = import.meta.env.VITE_HOSPITALRUN_API || 
-                     (typeof process !== 'undefined' && process.env?.REACT_APP_HOSPITALRUN_API) || 
-                     'http://localhost:3000'
+const API_BASE_URL = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
 
 export interface ApiError {
   message: string

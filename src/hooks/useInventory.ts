@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-const apiUrl = process.env.REACT_APP_HOSPITALRUN_API || 'http://localhost:3000'
+const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
 
 export interface InventoryItem {
   id?: string

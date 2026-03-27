@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Panel, Alert, Spinner, Container, Row, Column, Badge } from '@hospitalrun/components'
+import { Button, Panel, Alert, Spinner, Container, Row, Column, Badge } from '@lahim/components'
 import { usePharmacies, useRoutePrescriptionToPharmacy, usePrescriptionPharmacyStatus, Pharmacy } from '../hooks/usePharmacy'
 import { usePrescriptions } from '../hooks/useMedications'
 import useTitle from '../page-header/useTitle'

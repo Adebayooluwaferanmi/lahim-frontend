@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import useTitle from 'page-header/useTitle'
-import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from 'store'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Spinner, Button, Modal, Toast } from '@hospitalrun/components'
+import { Spinner, Button, Modal, Toast } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
 import Permissions from 'model/Permissions'
-import { fetchAppointment, deleteAppointment } from '../appointment-slice'
+import { useAppointmentStore } from 'store/appointment-store'
+import { useUserStore } from 'store/user-store'
 import AppointmentDetailForm from '../AppointmentDetailForm'
 import { getAppointmentLabel } from '../util/scheduling-appointment.util'
 import useAddBreadcrumbs from '../../../breadcrumbs/useAddBreadcrumbs'
@@ -15,11 +14,10 @@ import useAddBreadcrumbs from '../../../breadcrumbs/useAddBreadcrumbs'
 const ViewAppointment = () => {
   const { t } = useTranslation()
   useTitle(t('scheduling.appointments.viewAppointment'))
-  const dispatch = useAppDispatch()
   const { id } = useParams()
   const navigate = useNavigate()
-  const { appointment, patient, isLoading } = useSelector((state: RootState) => state.appointment)
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const { appointment, patient, isLoading, fetchAppointment, deleteAppointment } = useAppointmentStore()
+  const permissions = useUserStore((s) => s.permissions)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false)
   const setButtonToolBar = useButtonToolbarSetter()
 
@@ -40,7 +38,7 @@ const ViewAppointment = () => {
   }
 
   const onDeleteConfirmationButtonClick = () => {
-    dispatch(deleteAppointment(appointment, onDeleteSuccess))
+    deleteAppointment(appointment, onDeleteSuccess)
     setShowDeleteConfirmation(false)
   }
 
@@ -76,17 +74,17 @@ const ViewAppointment = () => {
     }
 
     setButtonToolBar(buttons)
-  }, [appointment.id, history, permissions, setButtonToolBar, t])
+  }, [appointment.id, navigate, permissions, setButtonToolBar, t])
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchAppointment(id))
+      fetchAppointment(id)
     }
 
     return () => {
       setButtonToolBar([])
     }
-  }, [dispatch, id, setButtonToolBar])
+  }, [fetchAppointment, id, setButtonToolBar])
 
   if (!appointment.id || isLoading) {
     return <Spinner type="BarLoader" loading />

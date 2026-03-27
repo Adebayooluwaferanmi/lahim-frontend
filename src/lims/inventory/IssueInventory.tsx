@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Panel, Alert, Spinner, Container, Row, Column } from '@hospitalrun/components'
+import { Button, Panel, Alert, Spinner, Container, Row, Column } from '@lahim/components'
 import { useIssueInventory } from '../../hooks/useInventory'
 import { useInventoryItems } from '../../hooks/useInventory'
 import useTitle from '../../page-header/useTitle'

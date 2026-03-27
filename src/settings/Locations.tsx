@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Table, Alert, Spinner, Panel, Row, Column } from '@hospitalrun/components'
+import { Button, Table, Alert, Spinner, Panel, Row, Column } from '@lahim/components'
 import {
   useLocations,
   useCreateLocation,

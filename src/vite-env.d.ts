@@ -14,13 +14,3 @@ interface ImportMeta {
   readonly env: ImportMetaEnv
 }
 
-// For backward compatibility with process.env
-declare namespace NodeJS {
-  interface ProcessEnv {
-    readonly NODE_ENV: 'development' | 'production' | 'test'
-    readonly REACT_APP_HOSPITALRUN_API?: string
-    readonly REACT_APP_SOCKETIO_URL?: string
-    readonly REACT_APP_WS_URL?: string
-  }
-}
-

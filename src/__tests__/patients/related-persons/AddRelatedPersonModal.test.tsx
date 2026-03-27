@@ -1,18 +1,13 @@
 import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { ReactWrapper, mount } from 'enzyme'
-import { Modal, Alert, Typeahead } from '@hospitalrun/components'
+import { Modal, Alert, Typeahead } from '@lahim/components'
 import { act } from '@testing-library/react'
-import { Provider } from 'react-redux'
-import thunk from 'redux-thunk'
-import configureMockStore, { MockStore } from 'redux-mock-store'
 import Patient from 'model/Patient'
 import TextInputWithLabelFormGroup from '../../../components/input/TextInputWithLabelFormGroup'
 import AddRelatedPersonModal from '../../../patients/related-persons/AddRelatedPersonModal'
-import * as patientSlice from '../../../patients/patient-slice'
 import PatientRepository from '../../../clients/db/PatientRepository'
-
-const mockStore = configureMockStore([thunk])
+import { usePatientStore } from '../../../store/patient-store'
 
 describe('Add Related Person Modal', () => {
   const patient = {
@@ -32,22 +27,28 @@ describe('Add Related Person Modal', () => {
     dateOfBirth: new Date().toISOString(),
   } as Patient
 
-  let store: MockStore
-
   describe('layout', () => {
     let wrapper: ReactWrapper
 
-    store = mockStore({
-      patient: { patient },
-    })
     beforeEach(() => {
-      jest.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
-      jest.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient)
+      vi.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
+      vi.spyOn(PatientRepository, 'saveOrUpdate').mockResolvedValue(patient)
+
+      usePatientStore.setState({
+        patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
+      })
 
       wrapper = mount(
-        <Provider store={store}>
-          <AddRelatedPersonModal show onCloseButtonClick={jest.fn()} toggle={jest.fn()} />
-        </Provider>,
+        <AddRelatedPersonModal show onCloseButtonClick={vi.fn()} toggle={vi.fn()} />,
       )
     })
 
@@ -95,16 +96,21 @@ describe('Add Related Person Modal', () => {
         relatedPerson: 'some related person error',
         relationshipType: 'some relationship type error',
       }
-      store = mockStore({
-        patient: {
-          patient,
-          relatedPersonError: expectedError,
-        },
+      usePatientStore.setState({
+        patient,
+        relatedPersonError: expectedError,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
       })
       wrapper = mount(
-        <Provider store={store}>
-          <AddRelatedPersonModal show onCloseButtonClick={jest.fn()} toggle={jest.fn()} />
-        </Provider>,
+        <AddRelatedPersonModal show onCloseButtonClick={vi.fn()} toggle={vi.fn()} />,
       )
 
       const alert = wrapper.find(Alert)
@@ -120,18 +126,24 @@ describe('Add Related Person Modal', () => {
   })
 
   describe('save', () => {
-    jest.spyOn(patientSlice, 'addRelatedPerson')
     let wrapper: ReactWrapper
-    store = mockStore({
-      patient: {
-        patient,
-      },
-    })
+
     beforeEach(() => {
+      usePatientStore.setState({
+        patient,
+        status: 'completed',
+        fetchPatient: vi.fn(),
+        createPatient: vi.fn(),
+        updatePatient: vi.fn(),
+        addRelatedPerson: vi.fn(),
+        removeRelatedPerson: vi.fn(),
+        addDiagnosis: vi.fn(),
+        addAllergy: vi.fn(),
+        addNote: vi.fn(),
+      })
+
       wrapper = mount(
-        <Provider store={store}>
-          <AddRelatedPersonModal show onCloseButtonClick={jest.fn()} toggle={jest.fn()} />
-        </Provider>,
+        <AddRelatedPersonModal show onCloseButtonClick={vi.fn()} toggle={vi.fn()} />,
       )
     })
 
@@ -153,7 +165,7 @@ describe('Add Related Person Modal', () => {
         onClick({} as React.MouseEvent<HTMLButtonElement, MouseEvent>)
       })
 
-      expect(patientSlice.addRelatedPerson).toHaveBeenCalledWith(patient.id, {
+      expect(usePatientStore.getState().addRelatedPerson).toHaveBeenCalledWith(patient.id, {
         patientId: '123',
         type: 'relationship',
       })

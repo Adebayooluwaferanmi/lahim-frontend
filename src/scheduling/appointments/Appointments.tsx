@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Calendar, Button } from '@hospitalrun/components'
+import { Calendar, Button } from '@lahim/components'
 import useTitle from 'page-header/useTitle'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
-import { RootState, useAppDispatch } from 'store'
 import { useNavigate } from 'react-router-dom'
 import PatientRepository from 'clients/db/PatientRepository'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from 'page-header/ButtonBarProvider'
-import { fetchAppointments } from './appointments-slice'
+import { useAppointmentsStore } from 'store/appointments-store'
 
 interface Event {
   id: string
@@ -24,14 +22,13 @@ const Appointments = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   useTitle(t('scheduling.appointments.label'))
-  const dispatch = useAppDispatch()
-  const { appointments } = useSelector((state: RootState) => state.appointments)
+  const { appointments, fetchAppointments } = useAppointmentsStore()
   const [events, setEvents] = useState<Event[]>([])
   const setButtonToolBar = useButtonToolbarSetter()
   useAddBreadcrumbs(breadcrumbs, true)
 
   useEffect(() => {
-    dispatch(fetchAppointments())
+    fetchAppointments()
     setButtonToolBar([
       <Button
         key="newAppointmentButton"
@@ -47,7 +44,7 @@ const Appointments = () => {
     return () => {
       setButtonToolBar([])
     }
-  }, [dispatch, setButtonToolBar, history, t])
+  }, [fetchAppointments, setButtonToolBar, t])
 
   useEffect(() => {
     const getAppointments = async () => {

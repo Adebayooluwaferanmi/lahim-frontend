@@ -1,4 +1,3 @@
-import shortid from 'shortid'
 import LabRepository from '../../../clients/db/LabRepository'
 import Lab from '../../../model/Lab'
 
@@ -9,6 +8,6 @@ describe('lab repository', () => {
       type: 'test',
     } as Lab)
 
-    expect(shortid.isValid(newLab.code)).toBeTruthy()
+    expect(newLab.code).toMatch(/^L-[A-Za-z0-9_-]{10}$/)
   })
 })

@@ -1,7 +1,7 @@
 import React from 'react'
 import Appointment from 'model/Appointment'
 import DateTimePickerWithLabelFormGroup from 'components/input/DateTimePickerWithLabelFormGroup'
-import { Typeahead, Label, Alert } from '@hospitalrun/components'
+import { Typeahead, Label, Alert } from '@lahim/components'
 import Patient from 'model/Patient'
 import PatientRepository from 'clients/db/PatientRepository'
 import TextInputWithLabelFormGroup from 'components/input/TextInputWithLabelFormGroup'

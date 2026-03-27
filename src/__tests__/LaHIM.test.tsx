@@ -2,16 +2,12 @@ import '../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
 import { MemoryRouter } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import thunk from 'redux-thunk'
-import configureMockStore from 'redux-mock-store'
-import { Toaster } from '@hospitalrun/components'
+import { Toaster } from '@lahim/components'
 import { act } from 'react-dom/test-utils'
 import Dashboard from 'dashboard/Dashboard'
 import Appointments from 'scheduling/appointments/Appointments'
 import NewAppointment from 'scheduling/appointments/new/NewAppointment'
 import EditAppointment from 'scheduling/appointments/edit/EditAppointment'
-import { addBreadcrumbs } from 'breadcrumbs/breadcrumbs-slice'
 import ViewLabs from 'labs/ViewLabs'
 import LabRepository from 'clients/db/LabRepository'
 import PatientRepository from '../clients/db/PatientRepository'
@@ -20,27 +16,25 @@ import Patient from '../model/Patient'
 import Appointment from '../model/Appointment'
 import LaHIM from '../LaHIM'
 import Permissions from '../model/Permissions'
-
-const mockStore = configureMockStore([thunk])
+import { useUIStore } from '../store/ui-store'
+import { useUserStore } from '../store/user-store'
 
 describe('LaHIM', () => {
+  beforeEach(() => {
+    useUIStore.setState({ title: '', sidebarCollapsed: false, breadcrumbs: [], buttons: [] })
+    useUserStore.setState({ permissions: [] })
+  })
+
   describe('routing', () => {
     describe('/appointments', () => {
       it('should render the appointments screen when /appointments is accessed', async () => {
-        const store = mockStore({
-          title: 'test',
-          user: { permissions: [Permissions.ReadAppointments] },
-          appointments: { appointments: [] },
-          breadcrumbs: { breadcrumbs: [] },
-          components: { sidebarCollapsed: false },
-        })
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({ permissions: [Permissions.ReadAppointments] })
 
         const wrapper = mount(
-          <Provider store={store}>
-            <MemoryRouter initialEntries={['/appointments']}>
-              <LaHIM />
-            </MemoryRouter>
-          </Provider>,
+          <MemoryRouter initialEntries={['/appointments']}>
+            <LaHIM />
+          </MemoryRouter>,
         )
 
         await act(async () => {
@@ -49,28 +43,22 @@ describe('LaHIM', () => {
 
         expect(wrapper.find(Appointments)).toHaveLength(1)
 
-        expect(store.getActions()).toContainEqual(
-          addBreadcrumbs([
-            { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
-            { i18nKey: 'dashboard.label', location: '/' },
+        expect(useUIStore.getState().breadcrumbs).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ i18nKey: 'scheduling.appointments.label', location: '/appointments' }),
+            expect.objectContaining({ i18nKey: 'dashboard.label', location: '/' }),
           ]),
         )
       })
 
       it('should render the Dashboard when the user does not have read appointment privileges', () => {
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({ permissions: [] })
+
         const wrapper = mount(
-          <Provider
-            store={mockStore({
-              title: 'test',
-              user: { permissions: [] },
-              breadcrumbs: { breadcrumbs: [] },
-              components: { sidebarCollapsed: false },
-            })}
-          >
-            <MemoryRouter initialEntries={['/appointments']}>
-              <LaHIM />
-            </MemoryRouter>
-          </Provider>,
+          <MemoryRouter initialEntries={['/appointments']}>
+            <LaHIM />
+          </MemoryRouter>,
         )
 
         expect(wrapper.find(Dashboard)).toHaveLength(1)
@@ -79,47 +67,35 @@ describe('LaHIM', () => {
 
     describe('/appointments/new', () => {
       it('should render the new appointment screen when /appointments/new is accessed', async () => {
-        const store = mockStore({
-          title: 'test',
-          user: { permissions: [Permissions.WriteAppointments] },
-          breadcrumbs: { breadcrumbs: [] },
-          components: { sidebarCollapsed: false },
-        })
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({ permissions: [Permissions.WriteAppointments] })
 
         const wrapper = mount(
-          <Provider store={store}>
-            <MemoryRouter initialEntries={['/appointments/new']}>
-              <LaHIM />
-            </MemoryRouter>
-          </Provider>,
+          <MemoryRouter initialEntries={['/appointments/new']}>
+            <LaHIM />
+          </MemoryRouter>,
         )
 
         wrapper.update()
 
         expect(wrapper.find(NewAppointment)).toHaveLength(1)
-        expect(store.getActions()).toContainEqual(
-          addBreadcrumbs([
-            { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
-            { i18nKey: 'scheduling.appointments.new', location: '/appointments/new' },
-            { i18nKey: 'dashboard.label', location: '/' },
+        expect(useUIStore.getState().breadcrumbs).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ i18nKey: 'scheduling.appointments.label', location: '/appointments' }),
+            expect.objectContaining({ i18nKey: 'scheduling.appointments.new', location: '/appointments/new' }),
+            expect.objectContaining({ i18nKey: 'dashboard.label', location: '/' }),
           ]),
         )
       })
 
       it('should render the Dashboard when the user does not have read appointment privileges', () => {
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({ permissions: [] })
+
         const wrapper = mount(
-          <Provider
-            store={mockStore({
-              title: 'test',
-              user: { permissions: [] },
-              breadcrumbs: { breadcrumbs: [] },
-              components: { sidebarCollapsed: false },
-            })}
-          >
-            <MemoryRouter initialEntries={['/appointments/new']}>
-              <LaHIM />
-            </MemoryRouter>
-          </Provider>,
+          <MemoryRouter initialEntries={['/appointments/new']}>
+            <LaHIM />
+          </MemoryRouter>,
         )
 
         expect(wrapper.find(Dashboard)).toHaveLength(1)
@@ -137,73 +113,56 @@ describe('LaHIM', () => {
           id: '456',
         } as Patient
 
-        jest.spyOn(AppointmentRepository, 'find').mockResolvedValue(appointment)
-        jest.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
+        vi.spyOn(AppointmentRepository, 'find').mockResolvedValue(appointment)
+        vi.spyOn(PatientRepository, 'find').mockResolvedValue(patient)
 
-        const store = mockStore({
-          title: 'test',
-          user: { permissions: [Permissions.WriteAppointments, Permissions.ReadAppointments] },
-          appointment: { appointment, patient: {} as Patient },
-          breadcrumbs: { breadcrumbs: [] },
-          components: { sidebarCollapsed: false },
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({
+          permissions: [Permissions.WriteAppointments, Permissions.ReadAppointments],
         })
 
         const wrapper = mount(
-          <Provider store={store}>
-            <MemoryRouter initialEntries={['/appointments/edit/123']}>
-              <LaHIM />
-            </MemoryRouter>
-          </Provider>,
+          <MemoryRouter initialEntries={['/appointments/edit/123']}>
+            <LaHIM />
+          </MemoryRouter>,
         )
 
         expect(wrapper.find(EditAppointment)).toHaveLength(1)
 
-        expect(store.getActions()).toContainEqual(
-          addBreadcrumbs([
-            { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
-            { text: '123', location: '/appointments/123' },
-            {
+        expect(useUIStore.getState().breadcrumbs).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ i18nKey: 'scheduling.appointments.label', location: '/appointments' }),
+            expect.objectContaining({ text: '123', location: '/appointments/123' }),
+            expect.objectContaining({
               i18nKey: 'scheduling.appointments.editAppointment',
               location: '/appointments/edit/123',
-            },
-            { i18nKey: 'dashboard.label', location: '/' },
+            }),
+            expect.objectContaining({ i18nKey: 'dashboard.label', location: '/' }),
           ]),
         )
       })
 
       it('should render the Dashboard when the user does not have read appointment privileges', () => {
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({ permissions: [Permissions.WriteAppointments] })
+
         const wrapper = mount(
-          <Provider
-            store={mockStore({
-              title: 'test',
-              user: { permissions: [Permissions.WriteAppointments] },
-              breadcrumbs: { breadcrumbs: [] },
-              components: { sidebarCollapsed: false },
-            })}
-          >
-            <MemoryRouter initialEntries={['/appointments/edit/123']}>
-              <LaHIM />
-            </MemoryRouter>
-          </Provider>,
+          <MemoryRouter initialEntries={['/appointments/edit/123']}>
+            <LaHIM />
+          </MemoryRouter>,
         )
 
         expect(wrapper.find(Dashboard)).toHaveLength(1)
       })
 
       it('should render the Dashboard when the user does not have write appointment privileges', () => {
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({ permissions: [Permissions.ReadAppointments] })
+
         const wrapper = mount(
-          <Provider
-            store={mockStore({
-              title: 'test',
-              user: { permissions: [Permissions.ReadAppointments] },
-              breadcrumbs: { breadcrumbs: [] },
-              components: { sidebarCollapsed: false },
-            })}
-          >
-            <MemoryRouter initialEntries={['/appointments/edit/123']}>
-              <LaHIM />
-            </MemoryRouter>
-          </Provider>,
+          <MemoryRouter initialEntries={['/appointments/edit/123']}>
+            <LaHIM />
+          </MemoryRouter>,
         )
 
         expect(wrapper.find(Dashboard)).toHaveLength(1)
@@ -212,22 +171,16 @@ describe('LaHIM', () => {
 
     describe('/labs', () => {
       it('should render the Labs component when /labs is accessed', async () => {
-        jest.spyOn(LabRepository, 'findAll').mockResolvedValue([])
-        const store = mockStore({
-          title: 'test',
-          user: { permissions: [Permissions.ViewLabs] },
-          breadcrumbs: { breadcrumbs: [] },
-          components: { sidebarCollapsed: false },
-        })
+        vi.spyOn(LabRepository, 'findAll').mockResolvedValue([])
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({ permissions: [Permissions.ViewLabs] })
 
         let wrapper: any
         await act(async () => {
           wrapper = await mount(
-            <Provider store={store}>
-              <MemoryRouter initialEntries={['/labs']}>
-                <LaHIM />
-              </MemoryRouter>
-            </Provider>,
+            <MemoryRouter initialEntries={['/labs']}>
+              <LaHIM />
+            </MemoryRouter>,
           )
         })
         wrapper.update()
@@ -236,20 +189,14 @@ describe('LaHIM', () => {
       })
 
       it('should render the dashboard if the user does not have permissions to view labs', () => {
-        jest.spyOn(LabRepository, 'findAll').mockResolvedValue([])
-        const store = mockStore({
-          title: 'test',
-          user: { permissions: [] },
-          breadcrumbs: { breadcrumbs: [] },
-          components: { sidebarCollapsed: false },
-        })
+        vi.spyOn(LabRepository, 'findAll').mockResolvedValue([])
+        useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+        useUserStore.setState({ permissions: [] })
 
         const wrapper = mount(
-          <Provider store={store}>
-            <MemoryRouter initialEntries={['/labs']}>
-              <LaHIM />
-            </MemoryRouter>
-          </Provider>,
+          <MemoryRouter initialEntries={['/labs']}>
+            <LaHIM />
+          </MemoryRouter>,
         )
 
         expect(wrapper.find(ViewLabs)).toHaveLength(0)
@@ -260,19 +207,13 @@ describe('LaHIM', () => {
 
   describe('layout', () => {
     it('should render a Toaster', () => {
+      useUIStore.setState({ title: 'test', sidebarCollapsed: false, breadcrumbs: [] })
+      useUserStore.setState({ permissions: [Permissions.WritePatients] })
+
       const wrapper = mount(
-        <Provider
-          store={mockStore({
-            title: 'test',
-            user: { permissions: [Permissions.WritePatients] },
-            breadcrumbs: { breadcrumbs: [] },
-            components: { sidebarCollapsed: false },
-          })}
-        >
-          <MemoryRouter initialEntries={['/']}>
-            <HospitalRun />
-          </MemoryRouter>
-        </Provider>,
+        <MemoryRouter initialEntries={['/']}>
+          <HospitalRun />
+        </MemoryRouter>,
       )
 
       expect(wrapper.find(Toaster)).toHaveLength(1)

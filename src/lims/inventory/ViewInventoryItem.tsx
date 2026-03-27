@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Button, Panel, Container, Row, Column, Spinner, Alert, Badge } from '@hospitalrun/components'
+import { Button, Panel, Container, Row, Column, Spinner, Alert, Badge } from '@lahim/components'
 import { useInventoryItem, useStockLevels, useInventoryTransactions } from '../../hooks/useInventory'
 import useTitle from '../../page-header/useTitle'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'

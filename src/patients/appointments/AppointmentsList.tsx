@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { TextInput, Button, List, ListItem, Container, Row, Column } from '@hospitalrun/components'
-import { RootState, useAppDispatch } from '../../store'
-import { fetchPatientAppointments } from '../../scheduling/appointments/appointments-slice'
+import { TextInput, Button, List, ListItem, Container, Row, Column } from '@lahim/components'
+import { useAppointmentsStore } from '../../store/appointments-store'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
 
 interface Props {
@@ -12,12 +10,11 @@ interface Props {
 }
 
 const AppointmentsList = (props: Props) => {
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { appointments, fetchPatientAppointments } = useAppointmentsStore()
 
   const { patientId } = props
-  const { appointments } = useSelector((state: RootState) => state.appointments)
   const [searchText, setSearchText] = useState<string>('')
 
   const breadcrumbs = [
@@ -29,8 +26,8 @@ const AppointmentsList = (props: Props) => {
   useAddBreadcrumbs(breadcrumbs)
 
   useEffect(() => {
-    dispatch(fetchPatientAppointments(patientId))
-  }, [dispatch, patientId])
+    fetchPatientAppointments(patientId)
+  }, [fetchPatientAppointments, patientId])
 
   const list = (
     // inline style added to pick up on newlines for string literal
@@ -49,7 +46,7 @@ const AppointmentsList = (props: Props) => {
 
   const onSearchFormSubmit = (event: React.FormEvent | React.MouseEvent) => {
     event.preventDefault()
-    dispatch(fetchPatientAppointments(patientId, searchText))
+    fetchPatientAppointments(patientId, searchText)
   }
 
   return (

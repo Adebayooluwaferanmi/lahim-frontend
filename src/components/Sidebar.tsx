@@ -1,5 +1,5 @@
 import React, { useState, CSSProperties } from 'react'
-import { List, ListItem, Icon } from '@hospitalrun/components'
+import { List, ListItem, Icon } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useUIStore } from '../store/ui-store'

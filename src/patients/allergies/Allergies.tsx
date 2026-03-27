@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import useAddBreadcrumbs from 'breadcrumbs/useAddBreadcrumbs'
 import Patient from 'model/Patient'
-import { Button, List, ListItem, Alert } from '@hospitalrun/components'
-import { useSelector } from 'react-redux'
-import { RootState } from 'store'
+import { Button, List, ListItem, Alert } from '@lahim/components'
+import { useUserStore } from 'store/user-store'
 import Permissions from 'model/Permissions'
 import { useTranslation } from 'react-i18next'
 import Allergy from 'model/Allergy'
@@ -16,7 +15,7 @@ interface AllergiesProps {
 const Allergies = (props: AllergiesProps) => {
   const { t } = useTranslation()
   const { patient } = props
-  const { permissions } = useSelector((state: RootState) => state.user)
+  const permissions = useUserStore((state) => state.permissions)
   const [showNewAllergyModal, setShowNewAllergyModal] = useState(false)
 
   const breadcrumbs = [

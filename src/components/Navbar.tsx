@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Navbar as HospitalRunNavbar } from '@hospitalrun/components'
+import { Navbar as HospitalRunNavbar } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import NotificationCenter from '../notifications/NotificationCenter'
 

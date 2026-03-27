@@ -2,21 +2,15 @@ import '../../../__mocks__/matchMediaMock'
 import React from 'react'
 import { mount } from 'enzyme'
 import { Router, Route } from 'react-router-dom'
-import { Provider } from 'react-redux'
-import { mocked } from 'ts-jest/utils'
 import { createMemoryHistory } from 'history'
 import { act } from 'react-dom/test-utils'
-import configureMockStore, { MockStore } from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import * as components from '@hospitalrun/components'
+import * as components from '@lahim/components'
 import NewPatient from '../../../patients/new/NewPatient'
 import GeneralInformation from '../../../patients/GeneralInformation'
 import Patient from '../../../model/Patient'
-import * as patientSlice from '../../../patients/patient-slice'
 import * as titleUtil from '../../../page-header/useTitle'
 import PatientRepository from '../../../clients/db/PatientRepository'
-
-const mockStore = configureMockStore([thunk])
+import { usePatientStore } from '../../../store/patient-store'
 
 describe('New Patient', () => {
   const patient = {
@@ -25,25 +19,35 @@ describe('New Patient', () => {
   } as Patient
 
   let history: any
-  let store: MockStore
 
   const setup = (error?: any) => {
-    jest.spyOn(PatientRepository, 'save')
-    const mockedPatientRepository = mocked(PatientRepository, true)
+    vi.spyOn(PatientRepository, 'save')
+    const mockedPatientRepository = vi.mocked(PatientRepository, true)
     mockedPatientRepository.save.mockResolvedValue(patient)
 
     history = createMemoryHistory()
-    store = mockStore({ patient: { patient: {} as Patient, createError: error } })
+
+    usePatientStore.setState({
+      patient: {} as Patient,
+      createError: error,
+      status: 'completed',
+      fetchPatient: vi.fn(),
+      createPatient: vi.fn(),
+      updatePatient: vi.fn(),
+      addRelatedPerson: vi.fn(),
+      removeRelatedPerson: vi.fn(),
+      addDiagnosis: vi.fn(),
+      addAllergy: vi.fn(),
+      addNote: vi.fn(),
+    })
 
     navigate('/patients/new')
     const wrapper = mount(
-      <Provider store={store}>
-        <Router history={history}>
-          <Route path="/patients/new">
-            <NewPatient />
-          </Route>
-        </Router>
-      </Provider>,
+      <Router history={history}>
+        <Route path="/patients/new">
+          <NewPatient />
+        </Route>
+      </Router>,
     )
 
     wrapper.update()
@@ -51,7 +55,7 @@ describe('New Patient', () => {
   }
 
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   it('should render a general information form', async () => {
@@ -64,7 +68,7 @@ describe('New Patient', () => {
   })
 
   it('should use "New Patient" as the header', async () => {
-    jest.spyOn(titleUtil, 'default')
+    vi.spyOn(titleUtil, 'default')
     await act(async () => {
       await setup()
     })
@@ -106,14 +110,12 @@ describe('New Patient', () => {
       await onClick()
     })
 
-    expect(PatientRepository.save).toHaveBeenCalledWith(patient)
-    expect(store.getActions()).toContainEqual(patientSlice.createPatientStart())
-    expect(store.getActions()).toContainEqual(patientSlice.createPatientSuccess())
+    expect(usePatientStore.getState().createPatient).toHaveBeenCalled()
   })
 
   it('should navigate to /patients/:id and display a message after a new patient is successfully created', async () => {
-    jest.spyOn(components, 'Toast')
-    const mockedComponents = mocked(components, true)
+    vi.spyOn(components, 'Toast')
+    const mockedComponents = vi.mocked(components, true)
     let wrapper: any
     await act(async () => {
       wrapper = await setup()

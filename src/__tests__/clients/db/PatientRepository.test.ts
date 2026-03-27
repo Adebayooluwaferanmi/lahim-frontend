@@ -1,7 +1,6 @@
 import { patients } from 'config/pouchdb'
 import PatientRepository from 'clients/db/PatientRepository'
 import Patient from 'model/Patient'
-import shortid from 'shortid'
 import { getTime, isAfter } from 'date-fns'
 
 const uuidV4Regex = /^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i
@@ -117,7 +116,7 @@ describe('patient repository', () => {
         fullName: 'test1 test1',
       } as Patient)
 
-      expect(shortid.isValid(newPatient.code)).toBeTruthy()
+      expect(newPatient.code).toMatch(/^P-[A-Za-z0-9_-]{10}$/)
     })
 
     it('should generate a timestamp for created date and last updated date', async () => {

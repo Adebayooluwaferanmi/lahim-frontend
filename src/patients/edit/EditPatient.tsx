@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
-import { useAppDispatch } from '../../store'
-import { Spinner, Button, Toast } from '@hospitalrun/components'
+import { Spinner, Button, Toast } from '@lahim/components'
 import GeneralInformation from '../GeneralInformation'
 import useTitle from '../../page-header/useTitle'
 import Patient from '../../model/Patient'
-import { updatePatient, fetchPatient } from '../patient-slice'
-import { RootState } from '../../store'
+import { usePatientStore } from '../../store/patient-store'
 import { getPatientFullName, getPatientName } from '../util/patient-name-util'
 import useAddBreadcrumbs from '../../breadcrumbs/useAddBreadcrumbs'
 
@@ -23,13 +20,14 @@ const getPatientCode = (p: Patient): string => {
 const EditPatient = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
 
   const [patient, setPatient] = useState({} as Patient)
 
-  const { patient: reduxPatient, status, updateError } = useSelector(
-    (state: RootState) => state.patient,
-  )
+  const reduxPatient = usePatientStore((s) => s.patient)
+  const status = usePatientStore((s) => s.status)
+  const updateError = usePatientStore((s) => s.updateError)
+  const fetchPatient = usePatientStore((s) => s.fetchPatient)
+  const updatePatient = usePatientStore((s) => s.updatePatient)
 
   useTitle(
     `${String(t('patients.editPatient'))}: ${getPatientFullName(reduxPatient)} (${getPatientCode(
@@ -51,9 +49,9 @@ const EditPatient = () => {
   const { id } = useParams()
   useEffect(() => {
     if (id) {
-      dispatch(fetchPatient(id))
+      fetchPatient(id)
     }
-  }, [id, dispatch])
+  }, [id, fetchPatient])
 
   const onCancel = () => {
     navigate(`/patients/${patient.id}`)
@@ -69,14 +67,12 @@ const EditPatient = () => {
   }
 
   const onSave = async () => {
-    await dispatch(
-      updatePatient(
-        {
-          ...patient,
-          fullName: getPatientName(patient.givenName, patient.familyName, patient.suffix),
-        },
-        onSuccessfulSave,
-      ),
+    await updatePatient(
+      {
+        ...patient,
+        fullName: getPatientName(patient.givenName, patient.familyName, patient.suffix),
+      },
+      onSuccessfulSave,
     )
   }
 
