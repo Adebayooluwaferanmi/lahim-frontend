@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from './runtime-config'
+
 /**
  * Centralized API Client for optimized real-time read/write operations
  * Features:
@@ -7,7 +9,7 @@
  * - TypeScript support
  */
 
-const API_BASE_URL = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
+const API_BASE_URL = getApiBaseUrl()
 
 export interface ApiError {
   message: string
@@ -211,4 +213,3 @@ export const apiClient = new ApiClient()
 
 // Export class for custom instances
 export default ApiClient
-

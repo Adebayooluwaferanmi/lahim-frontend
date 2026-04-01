@@ -18,6 +18,7 @@ afterEach(() => {
 // @ts-ignore - Vitest allows setting import.meta.env
 import.meta.env = {
   ...import.meta.env,
+  VITE_LAHIM_API: 'http://localhost:3000',
   VITE_HOSPITALRUN_API: 'http://localhost:3000',
   VITE_SOCKETIO_URL: 'http://localhost:3000',
 }
@@ -55,4 +56,3 @@ global.ResizeObserver = class ResizeObserver {
   observe() {}
   unobserve() {}
 } as any
-

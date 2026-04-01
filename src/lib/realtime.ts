@@ -4,6 +4,7 @@
  */
 
 import React from 'react'
+import { getApiBaseUrl, getWebSocketBaseUrl } from './runtime-config'
 
 export type RealtimeEventType = 'create' | 'update' | 'delete' | 'patch'
 
@@ -262,14 +263,13 @@ class SSEManager {
 
 // Get WebSocket URL from environment or construct from API URL
 const getWebSocketUrl = (): string => {
-  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
-  const wsUrl = import.meta.env.VITE_WS_URL || apiUrl.replace(/^http/, 'ws')
+  const wsUrl = getWebSocketBaseUrl()
   return `${wsUrl}/realtime`
 }
 
 // Get SSE URL from environment or construct from API URL
 const getSSEUrl = (): string => {
-  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
+  const apiUrl = getApiBaseUrl()
   return `${apiUrl}/realtime/sse`
 }
 
@@ -293,4 +293,3 @@ export const useRealtimeSubscription = (
     return unsubscribe
   }, [resource, callback, manager])
 }
-

@@ -5,6 +5,7 @@ import memoryAdapter from 'pouchdb-adapter-memory'
 import search from 'pouchdb-quick-search'
 import PouchdbFind from 'pouchdb-find'
 /* eslint-enable */
+import { legacyPouchSyncClient } from '../lib/sync-contract'
 
 PouchDB.plugin(search)
 PouchDB.plugin(memoryAdapter)
@@ -12,7 +13,7 @@ PouchDB.plugin(PouchdbFind)
 
 function createDb(name: string) {
   const isTest = import.meta.env.MODE === 'test'
-  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
+  const { remoteDbUrl } = legacyPouchSyncClient.getEndpoint(name)
 
   if (isTest) {
     return new PouchDB(name, { adapter: 'memory' })
@@ -21,7 +22,7 @@ function createDb(name: string) {
   const db = new PouchDB(name)
   
   // Only sync if CouchDB is available, handle errors gracefully
-  const syncHandler = db.sync(`${apiUrl}/_db/${name}`, {
+  const syncHandler = db.sync(remoteDbUrl, {
     live: true,
     retry: true,
     back_off_function: (delay: number) => {

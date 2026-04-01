@@ -12,6 +12,7 @@
 import { io, Socket } from 'socket.io-client'
 import React from 'react'
 import { RealtimeEvent, RealtimeCallback } from './realtime'
+import { getSocketIOBaseUrl } from './runtime-config'
 
 /**
  * Socket.io connection manager
@@ -194,9 +195,7 @@ class SocketIOManager {
 
 // Get Socket.io URL from environment or construct from API URL
 const getSocketIOUrl = (): string => {
-  const apiUrl = import.meta.env.VITE_HOSPITALRUN_API || 'http://localhost:3000'
-  const wsUrl = import.meta.env.VITE_SOCKETIO_URL || apiUrl
-  return wsUrl
+  return getSocketIOBaseUrl()
 }
 
 // Export singleton instance
@@ -234,4 +233,3 @@ export const useSocketIOStatus = () => {
 
   return status
 }
-
