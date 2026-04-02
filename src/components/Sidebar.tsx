@@ -3,9 +3,14 @@ import { List, ListItem, Icon } from '@lahim/components'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useUIStore } from '../store/ui-store'
+import { useUserStore } from '../store/user-store'
+import Permissions from '../model/Permissions'
 
 const Sidebar = () => {
   const { sidebarCollapsed, toggleSidebar } = useUIStore()
+  const permissions = useUserStore((state) => state.permissions)
+  const canReadFinancialReports = permissions.includes(Permissions.ReadFinancialReports)
+  const canApproveBillingOverrides = permissions.includes(Permissions.ApproveBillingOverride)
 
   const { t } = useTranslation()
   const path = useLocation()
@@ -13,7 +18,10 @@ const Sidebar = () => {
   const { pathname } = path
   const splittedPath = pathname.split('/')
 
-  const navText = (key: string, fallback: string) => navText(key, fallback)
+  const navText = (key: string, fallback: string) => {
+    const translated = t(key, fallback)
+    return translated === key ? fallback : String(translated)
+  }
 
   const navigateTo = (location: string) => {
     navigate(location)
@@ -440,15 +448,17 @@ const Sidebar = () => {
             <Icon icon="chart-bar" style={iconMargin} />
             {!sidebarCollapsed && navText('reports.administrative', 'Administrative Reports')}
           </ListItem>
-          <ListItem
-            className="nav-item"
-            style={listSubItemStyle}
-            onClick={() => navigateTo('/reports/financial')}
-            active={splittedPath[1].includes('reports') && splittedPath[2] === 'financial'}
-          >
-            <Icon icon="chart-bar" style={iconMargin} />
-            {!sidebarCollapsed && navText('reports.financial', 'Financial Reports')}
-          </ListItem>
+          {canReadFinancialReports && (
+            <ListItem
+              className="nav-item"
+              style={listSubItemStyle}
+              onClick={() => navigateTo('/reports/financial')}
+              active={splittedPath[1].includes('reports') && splittedPath[2] === 'financial'}
+            >
+              <Icon icon="chart-bar" style={iconMargin} />
+              {!sidebarCollapsed && navText('reports.financial', 'Financial Reports')}
+            </ListItem>
+          )}
           <ListItem
             className="nav-item"
             style={listSubItemStyle}
@@ -846,6 +856,17 @@ const Sidebar = () => {
                 <Icon icon="add" style={iconMargin} />
                 {!sidebarCollapsed && navText('billing.charges.label', 'Charges')}
               </ListItem>
+              {canApproveBillingOverrides && (
+                <ListItem
+                  className="nav-item"
+                  style={listSubItemStyle}
+                  onClick={() => navigateTo('/billing/overrides')}
+                  active={splittedPath[1].includes('billing') && splittedPath[2] === 'overrides'}
+                >
+                  <Icon icon="file" style={iconMargin} />
+                  {!sidebarCollapsed && navText('billing.overrides.label', 'Billing Overrides')}
+                </ListItem>
+              )}
             </List>
           )}
           <ListItem

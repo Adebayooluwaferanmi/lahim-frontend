@@ -24,6 +24,10 @@ export const useUserStore = create<UserState>()(
         Permissions.RequestLab,
         Permissions.CompleteLab,
         Permissions.CancelLab,
+        Permissions.ReadFinancial,
+        Permissions.WriteFinancial,
+        Permissions.ApproveBillingOverride,
+        Permissions.ReadFinancialReports,
       ],
 
       fetchPermissions: (permissions: Permissions[]) =>

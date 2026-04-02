@@ -20,6 +20,7 @@ import Note from '../notes/NoteTab'
 import Labs from '../labs/LabsTab'
 import VisitsList from '../visits/VisitsList'
 import PatientInsurance from '../insurance/PatientInsurance'
+import PatientFinancial from '../financial/PatientFinancial'
 
 const getPatientCode = (p: Patient): string => {
   if (p) {
@@ -38,6 +39,7 @@ const ViewPatient = () => {
   const status = usePatientStore((s) => s.status)
   const fetchPatient = usePatientStore((s) => s.fetchPatient)
   const permissions = useUserStore((s) => s.permissions)
+  const canReadFinancial = permissions.includes(Permissions.ReadFinancial)
 
   useTitle(`${getPatientFullName(patient)} (${getPatientCode(patient)})`)
 
@@ -131,6 +133,13 @@ const ViewPatient = () => {
           label={String(t('patient.insurance.label', 'Insurance'))}
           onClick={() => navigate(`/patients/${patient.id}/insurance`)}
         />
+        {canReadFinancial && (
+          <Tab
+            active={location.pathname === `/patients/${patient.id}/financial`}
+            label={String(t('billing.financial.label', 'Patient Finance'))}
+            onClick={() => navigate(`/patients/${patient.id}/financial`)}
+          />
+        )}
       </TabsHeader>
       <Panel>
         <Route path="/patients/:id">
@@ -160,6 +169,11 @@ const ViewPatient = () => {
         <Route path="/patients/:id/insurance">
           <PatientInsurance patient={patient} />
         </Route>
+        {canReadFinancial && (
+          <Route path="/patients/:id/financial">
+            <PatientFinancial patientId={patient.id} />
+          </Route>
+        )}
       </Panel>
     </div>
   )

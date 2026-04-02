@@ -5,6 +5,8 @@ import { Button, Panel, Alert, Spinner, Container, Row, Column, Table } from '@l
 import { useVisit, useUpdateVisit, useDischargePatient } from '../hooks/useVisits'
 import { useImaging } from '../hooks/useImaging'
 import { useIncidents } from '../hooks/useIncidents'
+import { usePatientFinancialSummary } from '../hooks/usePatientFinance'
+import usePatientFinanceRealtime from '../hooks/usePatientFinanceRealtime'
 import useTitle from '../page-header/useTitle'
 import useAddBreadcrumbs from '../breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from '../page-header/ButtonBarProvider'
@@ -12,6 +14,8 @@ import TextInputWithLabelFormGroup from '../components/input/TextInputWithLabelF
 import SelectWithLableFormGroup from '../components/input/SelectWithLableFormGroup'
 import DatePickerWithLabelFormGroup from '../components/input/DatePickerWithLabelFormGroup'
 import Visit, { VisitType, VisitStatus } from '../model/Visit'
+import Permissions from '../model/Permissions'
+import { useUserStore } from '../store/user-store'
 
 const ViewVisit = () => {
   const { id } = useParams<{ id: string }>()
@@ -22,6 +26,9 @@ const ViewVisit = () => {
   const { mutate: dischargePatient, isPending: isDischarging } = useDischargePatient(id || '')
   const { data: imagingOrders = [] } = useImaging({ visitId: id })
   const { data: incidents = [] } = useIncidents({ visitId: id })
+  const permissions = useUserStore((state) => state.permissions)
+  const canReadFinancial = permissions.includes(Permissions.ReadFinancial)
+  const { data: patientFinancialSummary } = usePatientFinancialSummary(visit?.patientId)
 
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<Partial<Visit>>({})
@@ -36,6 +43,11 @@ const ViewVisit = () => {
     true
   )
   const setButtonToolBar = useButtonToolbarSetter()
+
+  usePatientFinanceRealtime({
+    patientId: visit?.patientId,
+    includePortfolioSummary: true,
+  })
 
   useEffect(() => {
     if (visit) {
@@ -205,11 +217,84 @@ const ViewVisit = () => {
     return new Date(dateString).toLocaleString()
   }
 
+  const formatCurrency = (amount: number, currency = 'NGN') =>
+    new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+    }).format(amount || 0)
+
+  const renderFinanceStatus = () => {
+    if (!canReadFinancial || !patientFinancialSummary) return null
+
+    return (
+      <Panel title={String(t('billing.financial.serviceClearance', 'Service Clearance'))}>
+        <Row>
+          <Column md={8}>
+            <Alert
+              color={
+                patientFinancialSummary.serviceClearance.canProceed
+                  ? 'success'
+                  : patientFinancialSummary.serviceClearance.status === 'wallet-available'
+                  ? 'info'
+                  : patientFinancialSummary.serviceClearance.status === 'override'
+                  ? 'warning'
+                  : 'danger'
+              }
+              title={String(t('billing.financial.status', 'Financial Status'))}
+              message={patientFinancialSummary.serviceClearance.reason}
+            />
+          </Column>
+          <Column md={4}>
+            <p>
+              <strong>{t('billing.financial.requiredAmount', 'Required Amount')}:</strong>{' '}
+              {formatCurrency(
+                patientFinancialSummary.serviceClearance.requiredAmount,
+                patientFinancialSummary.wallet.currency,
+              )}
+            </p>
+            <p>
+              <strong>{t('billing.financial.availableCoverage', 'Available Coverage')}:</strong>{' '}
+              {formatCurrency(
+                patientFinancialSummary.totals.availableCoverage,
+                patientFinancialSummary.wallet.currency,
+              )}
+            </p>
+            <p>
+              <strong>{t('billing.financial.walletBalance', 'Wallet Balance')}:</strong>{' '}
+              {formatCurrency(
+                patientFinancialSummary.totals.walletBalance,
+                patientFinancialSummary.wallet.currency,
+              )}
+            </p>
+            <div className="d-flex flex-wrap gap-2">
+              <Button
+                color="primary"
+                onClick={() => navigate(`/patients/${visit?.patientId}/financial`)}
+              >
+                {String(t('billing.financial.openFinance', 'Open Patient Finance'))}
+              </Button>
+              <Button
+                outlined
+                color="secondary"
+                onClick={() => navigate(`/billing/invoices?patientId=${visit?.patientId}`)}
+              >
+                {String(t('billing.invoices.label', 'Invoices'))}
+              </Button>
+            </div>
+          </Column>
+        </Row>
+      </Panel>
+    )
+  }
+
   return (
     <Container>
       {submitError && (
         <Alert color="danger" title={String(t('states.error', 'Error'))} message={submitError} />
       )}
+
+      {renderFinanceStatus()}
 
       <Panel title={String(t('visits.view', 'View Visit'))}>
         <Row>

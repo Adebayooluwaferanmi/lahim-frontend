@@ -29,6 +29,7 @@ import NewInvoice from './billing/NewInvoice'
 import ViewInvoice from './billing/ViewInvoice'
 import Charges from './billing/Charges'
 import NewCharge from './billing/NewCharge'
+import BillingOverrides from './billing/BillingOverrides'
 import Imaging from './imaging/Imaging'
 import NewImaging from './imaging/NewImaging'
 import ViewImaging from './imaging/ViewImaging'
@@ -245,6 +246,14 @@ const LaHIM = () => {
                     }
                   />
                   <Route
+                    path="/billing/overrides"
+                    element={
+                      <PrivateRoute isAuthenticated={permissions.includes(Permissions.ApproveBillingOverride)}>
+                        <BillingOverrides />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
                     path="/imaging"
                     element={
                       <PrivateRoute isAuthenticated>
@@ -319,7 +328,7 @@ const LaHIM = () => {
                   <Route
                     path="/reports/financial"
                     element={
-                      <PrivateRoute isAuthenticated>
+                      <PrivateRoute isAuthenticated={permissions.includes(Permissions.ReadFinancialReports)}>
                         <FinancialReports />
                       </PrivateRoute>
                     }

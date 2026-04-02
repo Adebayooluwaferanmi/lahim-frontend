@@ -1,5 +1,8 @@
+import { useMutation } from '@tanstack/react-query'
 import { useApiQuery, useApiQueryWithParams } from '../lib/queries'
 import { useCreateMutation } from '../lib/mutations'
+import { apiClient } from '../lib/api-client'
+import { invalidateQueries } from '../lib/query-client'
 import {
   BillingOverride,
   FinancialPortfolioSummary,
@@ -140,16 +143,21 @@ export const useCreateBillingOverride = () => {
   )
 }
 
-export const useRevokeBillingOverride = (overrideId: string, patientId?: string) => {
-  return useCreateMutation<BillingOverride, { revokedBy?: string; reason?: string }>(
-    `/financial/overrides/${overrideId}/revoke`,
-    {
-      queryKey: ['billing-overrides'],
-      invalidateQueries: [
-        ['billing-overrides'],
-        ['financial-summary'],
-        ...(patientId ? [['patient-financial-summary', patientId]] : []),
-      ],
+export const useRevokeBillingOverride = (patientId?: string) => {
+  return useMutation<
+    BillingOverride,
+    Error,
+    { overrideId: string; revokedBy?: string; reason?: string }
+  >({
+    mutationFn: async ({ overrideId, ...payload }) => {
+      return apiClient.post<BillingOverride>(`/financial/overrides/${overrideId}/revoke`, payload)
     },
-  )
+    onSuccess: () => {
+      invalidateQueries(['billing-overrides'])
+      invalidateQueries(['financial-summary'])
+      if (patientId) {
+        invalidateQueries(['patient-financial-summary', patientId])
+      }
+    },
+  })
 }

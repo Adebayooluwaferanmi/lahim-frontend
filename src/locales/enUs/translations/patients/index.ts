@@ -5,6 +5,7 @@ export default {
     viewPatients: 'View Patients',
     viewPatient: 'View Patient',
     newPatient: 'New Patient',
+    financial: 'Patient Finance',
     successfullyCreated: 'Successfully created patient',
     successfullyAddedNote: 'Successfully added the new note',
     successfullyAddedRelatedPerson: 'Successfully added a new related person',

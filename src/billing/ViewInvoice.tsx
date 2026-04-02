@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button, Panel, Alert, Spinner, Container, Row, Column, Table } from '@lahim/components'
 import { useInvoice, useAddPayment } from '../hooks/useBilling'
+import { usePatientFinancialSummary, useSettleInvoiceFromWallet } from '../hooks/usePatientFinance'
+import usePatientFinanceRealtime from '../hooks/usePatientFinanceRealtime'
 import useTitle from '../page-header/useTitle'
 import useAddBreadcrumbs from '../breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from '../page-header/ButtonBarProvider'
@@ -10,6 +12,8 @@ import TextInputWithLabelFormGroup from '../components/input/TextInputWithLabelF
 import DatePickerWithLabelFormGroup from '../components/input/DatePickerWithLabelFormGroup'
 import SelectWithLableFormGroup from '../components/input/SelectWithLableFormGroup'
 import { Invoice, Payment, PaymentMethod } from '../model/Billing'
+import Permissions from '../model/Permissions'
+import { useUserStore } from '../store/user-store'
 
 const ViewInvoice = () => {
   const { id } = useParams<{ id: string }>()
@@ -17,12 +21,26 @@ const ViewInvoice = () => {
   const navigate = useNavigate()
   const { data: invoice, isLoading, error } = useInvoice(id)
   const { mutate: addPayment, isPending: isAddingPayment } = useAddPayment(id || '')
+  const permissions = useUserStore((state) => state.permissions)
+  const canWriteFinancial = permissions.includes(Permissions.WriteFinancial)
+  const { data: patientFinancialSummary } = usePatientFinancialSummary(invoice?.patientId)
+  const { mutate: settleFromWallet, isPending: isSettlingFromWallet } = useSettleInvoiceFromWallet(
+    id || '',
+    invoice?.patientId,
+  )
 
   const [showPaymentForm, setShowPaymentForm] = useState(false)
+  const [showWalletSettlementForm, setShowWalletSettlementForm] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [paymentData, setPaymentData] = useState<Partial<Payment>>({
     amount: 0,
     paymentDate: new Date().toISOString(),
     paymentMethod: 'cash',
+  })
+  const [walletSettlementData, setWalletSettlementData] = useState({
+    amount: '',
+    referenceNumber: '',
+    notes: '',
   })
 
   useTitle(invoice ? t('billing.invoices.view', 'View Invoice') : t('billing.invoices.loading', 'Loading Invoice'))
@@ -34,6 +52,12 @@ const ViewInvoice = () => {
     true
   )
   const setButtonToolBar = useButtonToolbarSetter()
+
+  usePatientFinanceRealtime({
+    patientId: invoice?.patientId,
+    invoiceId: id,
+    includePortfolioSummary: true,
+  })
 
   useEffect(() => {
     const buttons = [
@@ -49,6 +73,17 @@ const ViewInvoice = () => {
 
     if (invoice && invoice.balance > 0) {
       buttons.unshift(
+        ...(canWriteFinancial
+          ? [
+              <Button
+                key="settleFromWalletButton"
+                color="info"
+                onClick={() => setShowWalletSettlementForm(!showWalletSettlementForm)}
+              >
+                {String(t('billing.financial.settleFromWallet', 'Settle From Wallet'))}
+              </Button>,
+            ]
+          : []),
         <Button
           key="addPaymentButton"
           color="success"
@@ -64,10 +99,12 @@ const ViewInvoice = () => {
     return () => {
       setButtonToolBar([])
     }
-  }, [invoice, showPaymentForm, setButtonToolBar, navigate, t])
+  }, [invoice, showPaymentForm, showWalletSettlementForm, setButtonToolBar, navigate, t, canWriteFinancial])
 
   const handleAddPayment = () => {
+    setSubmitError(null)
     if (!paymentData.amount || !paymentData.paymentDate) {
+      setSubmitError(t('billing.payments.invalid', 'Enter a valid payment amount and date'))
       return
     }
 
@@ -81,6 +118,32 @@ const ViewInvoice = () => {
         })
       },
     })
+  }
+
+  const handleSettleFromWallet = () => {
+    setSubmitError(null)
+    settleFromWallet(
+      {
+        amount: walletSettlementData.amount ? Number(walletSettlementData.amount) : undefined,
+        referenceNumber: walletSettlementData.referenceNumber || undefined,
+        notes: walletSettlementData.notes || undefined,
+      },
+      {
+        onSuccess: () => {
+          setShowWalletSettlementForm(false)
+          setWalletSettlementData({
+            amount: '',
+            referenceNumber: '',
+            notes: '',
+          })
+        },
+        onError: (mutationError) => {
+          setSubmitError(
+            mutationError.message || t('billing.financial.settleFromWalletError', 'Failed to settle invoice from wallet'),
+          )
+        },
+      },
+    )
   }
 
   if (isLoading) {
@@ -104,7 +167,7 @@ const ViewInvoice = () => {
   }
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
+    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(amount)
   }
 
   const formatDate = (dateString?: string) => {
@@ -114,6 +177,10 @@ const ViewInvoice = () => {
 
   return (
     <Container>
+      {submitError && (
+        <Alert color="danger" title={String(t('states.error', 'Error'))} message={submitError} />
+      )}
+
       <Panel title={String(t('billing.invoices.view', 'View Invoice'))}>
         <Row>
           <Column md={6}>
@@ -131,6 +198,31 @@ const ViewInvoice = () => {
             <p><strong>{t('billing.invoices.balance', 'Balance')}:</strong> {formatCurrency(invoice.balance)}</p>
           </Column>
         </Row>
+
+        {patientFinancialSummary && (
+          <Panel title={String(t('billing.financial.summary', 'Financial Summary'))} className="mt-3">
+            <Row>
+              <Column md={4}>
+                <p>
+                  <strong>{t('billing.financial.walletBalance', 'Wallet Balance')}:</strong>{' '}
+                  {formatCurrency(patientFinancialSummary.totals.walletBalance)}
+                </p>
+              </Column>
+              <Column md={4}>
+                <p>
+                  <strong>{t('billing.financial.availableCoverage', 'Available Coverage')}:</strong>{' '}
+                  {formatCurrency(patientFinancialSummary.totals.availableCoverage)}
+                </p>
+              </Column>
+              <Column md={4}>
+                <p>
+                  <strong>{t('billing.financial.serviceClearance', 'Service Clearance')}:</strong>{' '}
+                  {patientFinancialSummary.serviceClearance.status}
+                </p>
+              </Column>
+            </Row>
+          </Panel>
+        )}
 
         {showPaymentForm && (
           <Panel title={String(t('billing.payments.add', 'Add Payment'))} className="mt-3">
@@ -194,6 +286,54 @@ const ViewInvoice = () => {
                   className="ml-2"
                 >
                   {String(t('actions.cancel', 'Cancel'))}
+                </Button>
+              </Column>
+            </Row>
+          </Panel>
+        )}
+
+        {showWalletSettlementForm && canWriteFinancial && (
+          <Panel title={String(t('billing.financial.settleFromWallet', 'Settle From Wallet'))} className="mt-3">
+            <Row>
+              <Column md={6}>
+                <TextInputWithLabelFormGroup
+                  label={String(t('billing.payments.amount', 'Amount'))}
+                  name="walletSettlementAmount"
+                  type="number"
+                  value={walletSettlementData.amount}
+                  onChange={(event) => setWalletSettlementData({ ...walletSettlementData, amount: event.target.value })}
+                  isEditable
+                />
+              </Column>
+              <Column md={6}>
+                <TextInputWithLabelFormGroup
+                  label={String(t('billing.payments.referenceNumber', 'Reference Number'))}
+                  name="walletSettlementReference"
+                  type="text"
+                  value={walletSettlementData.referenceNumber}
+                  onChange={(event) =>
+                    setWalletSettlementData({ ...walletSettlementData, referenceNumber: event.target.value })
+                  }
+                  isEditable
+                />
+              </Column>
+            </Row>
+            <Row>
+              <Column>
+                <TextInputWithLabelFormGroup
+                  label={String(t('billing.financial.notes', 'Notes'))}
+                  name="walletSettlementNotes"
+                  type="text"
+                  value={walletSettlementData.notes}
+                  onChange={(event) => setWalletSettlementData({ ...walletSettlementData, notes: event.target.value })}
+                  isEditable
+                />
+              </Column>
+            </Row>
+            <Row>
+              <Column>
+                <Button color="info" onClick={handleSettleFromWallet} disabled={isSettlingFromWallet}>
+                  {String(t('billing.financial.settleFromWallet', 'Settle From Wallet'))}
                 </Button>
               </Column>
             </Row>

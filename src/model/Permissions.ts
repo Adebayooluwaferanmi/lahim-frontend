@@ -11,6 +11,10 @@ enum Permissions {
   CompleteLab = 'complete:lab',
   ViewLab = 'read:lab',
   ViewLabs = 'read:labs',
+  ReadFinancial = 'read:financial',
+  WriteFinancial = 'write:financial',
+  ApproveBillingOverride = 'approve:billing-override',
+  ReadFinancialReports = 'read:financial-reports',
 }
 
 export default Permissions

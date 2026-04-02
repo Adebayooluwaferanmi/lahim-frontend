@@ -13,6 +13,7 @@ export default {
     selectFieldsMessage: 'Please select at least one field',
     generate: 'Generate Report',
     generateError: 'Failed to generate report',
+    generatedOn: 'Generated On',
     results: 'Report Results',
     categories: {
       patient: 'Patient',
@@ -25,6 +26,10 @@ export default {
       payments: 'Payments Report',
       outstandingBalances: 'Outstanding Balances',
       profitability: 'Profitability Analysis',
+      summary: 'Finance Summary',
+      walletBalances: 'Wallet Balances',
+      overrideExposure: 'Override Exposure',
+      collections: 'Collections Report',
       patientDemographics: 'Patient Demographics',
       appointmentStatistics: 'Appointment Statistics',
       resourceUtilization: 'Resource Utilization',
