@@ -50,6 +50,8 @@ const resources = {
   },
 }
 
+const supportedLngs = Object.keys(resources)
+
 i18n
   // detect user language
   // learn more: https://github.com/i18next/i18next-browser-languageDetector
@@ -59,9 +61,15 @@ i18n
   // init i18next
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
-    fallbackLng: 'en',
+    fallbackLng: ['en'],
+    supportedLngs,
+    nonExplicitSupportedLngs: true,
+    load: 'languageOnly',
+    cleanCode: true,
     debug: import.meta.env.DEV,
     resources,
+    returnNull: false,
+    returnEmptyString: false,
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },

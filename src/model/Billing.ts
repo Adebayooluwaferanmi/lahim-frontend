@@ -1,7 +1,7 @@
 import AbstractDBModel from './AbstractDBModel'
 
 export type InvoiceStatus = 'Draft' | 'Billed' | 'Paid' | 'PartiallyPaid' | 'Cancelled' | 'Waived'
-export type PaymentMethod = 'cash' | 'card' | 'check' | 'bank_transfer' | 'insurance' | 'other'
+export type PaymentMethod = 'cash' | 'card' | 'check' | 'bank_transfer' | 'digital_payment' | 'insurance' | 'wallet' | 'other'
 
 export interface Charge extends AbstractDBModel {
   patientId: string

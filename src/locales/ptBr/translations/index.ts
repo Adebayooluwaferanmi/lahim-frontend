@@ -1,3 +1,4 @@
+import enUs from '../../enUs/translations'
 import actions from './actions'
 import dashboard from './dashboard'
 import patient from './patient'
@@ -8,6 +9,7 @@ import sex from './sex'
 import labs from './labs'
 
 export default {
+  ...enUs,
   ...actions,
   ...dashboard,
   ...patient,

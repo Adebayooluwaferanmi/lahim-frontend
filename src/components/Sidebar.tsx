@@ -13,6 +13,8 @@ const Sidebar = () => {
   const { pathname } = path
   const splittedPath = pathname.split('/')
 
+  const navText = (key: string, fallback: string) => navText(key, fallback)
+
   const navigateTo = (location: string) => {
     navigate(location)
   }
@@ -102,7 +104,7 @@ const Sidebar = () => {
         className="nav-item"
         style={listItemStyle}
       >
-        <Icon icon="dashboard" /> {!sidebarCollapsed && String(t('dashboard.label'))}
+        <Icon icon="dashboard" /> {!sidebarCollapsed && navText('dashboard.label', 'Dashboard')}
       </ListItem>
     </>
   )
@@ -131,7 +133,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="patients" /> {!sidebarCollapsed && String(t('patients.label'))}
+        <Icon icon="patients" /> {!sidebarCollapsed && navText('patients.label', 'Patients')}
       </ListItem>
       {splittedPath[1].includes('patient') && expandedItem === 'patient' && (
         <List layout="flush">
@@ -142,7 +144,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('patients') && splittedPath.length > 2}
           >
             <Icon icon="patient-add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('patients.newPatient'))}
+            {!sidebarCollapsed && navText('patients.newPatient', 'New Patient')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -151,7 +153,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('patients') && splittedPath.length < 3}
           >
             <Icon icon="incident" style={iconMargin} />
-            {!sidebarCollapsed && String(t('patients.patientsList'))}
+            {!sidebarCollapsed && navText('patients.patientsList', 'Patients List')}
           </ListItem>
         </List>
       )}
@@ -177,7 +179,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="appointment" /> {!sidebarCollapsed && String(t('scheduling.label'))}
+        <Icon icon="appointment" /> {!sidebarCollapsed && navText('scheduling.label', 'Scheduling')}
       </ListItem>
       {splittedPath[1].includes('appointment') && expandedItem === 'appointment' && (
         <List layout="flush" className="nav flex-column">
@@ -188,7 +190,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('appointments') && splittedPath.length > 2}
           >
             <Icon icon="appointment-add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('scheduling.appointments.new'))}
+            {!sidebarCollapsed && navText('scheduling.appointments.new', 'New Appointment')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -197,7 +199,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('appointments') && splittedPath.length < 3}
           >
             <Icon icon="incident" style={iconMargin} />
-            {!sidebarCollapsed && String(t('scheduling.appointments.schedule'))}
+            {!sidebarCollapsed && navText('scheduling.appointments.schedule', 'Appointment Schedule')}
           </ListItem>
         </List>
       )}
@@ -223,7 +225,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="lab" /> {!sidebarCollapsed && String(t('labs.label'))}
+        <Icon icon="lab" /> {!sidebarCollapsed && navText('labs.label', 'Labs')}
       </ListItem>
       {splittedPath[1].includes('labs') && expandedItem === 'labs' && (
         <List layout="flush" className="nav flex-column">
@@ -234,7 +236,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('labs') && splittedPath.length > 2}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('labs.requests.new'))}
+            {!sidebarCollapsed && navText('labs.requests.new', 'New Lab Request')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -243,7 +245,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('labs') && splittedPath.length < 3}
           >
             <Icon icon="incident" style={iconMargin} />
-            {!sidebarCollapsed && String(t('labs.requests.label'))}
+            {!sidebarCollapsed && navText('labs.requests.label', 'Lab Requests')}
           </ListItem>
         </List>
       )}
@@ -269,7 +271,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="appointment" /> {!sidebarCollapsed && String(t('visits.label', 'Visits'))}
+        <Icon icon="appointment" /> {!sidebarCollapsed && navText('visits.label', 'Visits')}
       </ListItem>
       {splittedPath[1].includes('visits') && expandedItem === 'visits' && (
         <List layout="flush" className="nav flex-column">
@@ -280,7 +282,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('visits') && splittedPath.length > 2 && splittedPath[2] === 'new'}
           >
             <Icon icon="appointment-add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('visits.new', 'New Visit'))}
+            {!sidebarCollapsed && navText('visits.new', 'New Visit')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -289,7 +291,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('visits') && splittedPath.length < 3}
           >
             <Icon icon="appointment" style={iconMargin} />
-            {!sidebarCollapsed && String(t('visits.list', 'Visit List'))}
+            {!sidebarCollapsed && navText('visits.list', 'Visit List')}
           </ListItem>
         </List>
       )}
@@ -315,7 +317,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="incident" /> {!sidebarCollapsed && String(t('incidents.label', 'Incidents'))}
+        <Icon icon="incident" /> {!sidebarCollapsed && navText('incidents.label', 'Incidents')}
       </ListItem>
       {splittedPath[1].includes('incidents') && expandedItem === 'incidents' && (
         <List layout="flush" className="nav flex-column">
@@ -326,7 +328,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('incidents') && splittedPath.length > 2 && splittedPath[2] === 'new'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('incidents.new', 'New Incident'))}
+            {!sidebarCollapsed && navText('incidents.new', 'New Incident')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -335,7 +337,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('incidents') && splittedPath.length < 3}
           >
             <Icon icon="incident" style={iconMargin} />
-            {!sidebarCollapsed && String(t('incidents.list', 'Incidents List'))}
+            {!sidebarCollapsed && navText('incidents.list', 'Incidents List')}
           </ListItem>
         </List>
       )}
@@ -361,7 +363,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="image" /> {!sidebarCollapsed && String(t('imaging.label', 'Imaging'))}
+        <Icon icon="image" /> {!sidebarCollapsed && navText('imaging.label', 'Imaging')}
       </ListItem>
       {splittedPath[1].includes('imaging') && expandedItem === 'imaging' && (
         <List layout="flush" className="nav flex-column">
@@ -372,7 +374,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('imaging') && splittedPath.length > 2 && splittedPath[2] === 'new'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('imaging.new', 'New Imaging Order'))}
+            {!sidebarCollapsed && navText('imaging.new', 'New Imaging Order')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -381,7 +383,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('imaging') && splittedPath.length < 3}
           >
             <Icon icon="image" style={iconMargin} />
-            {!sidebarCollapsed && String(t('imaging.list', 'Imaging Orders'))}
+            {!sidebarCollapsed && navText('imaging.list', 'Imaging Orders')}
           </ListItem>
         </List>
       )}
@@ -407,7 +409,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="chart-bar" /> {!sidebarCollapsed && String(t('reports.label', 'Reports'))}
+        <Icon icon="chart-bar" /> {!sidebarCollapsed && navText('reports.label', 'Reports')}
       </ListItem>
       {splittedPath[1].includes('reports') && expandedItem === 'reports' && (
         <List layout="flush" className="nav flex-column">
@@ -418,7 +420,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('reports') && splittedPath.length === 2}
           >
             <Icon icon="chart-bar" style={iconMargin} />
-            {!sidebarCollapsed && String(t('reports.list', 'Reports List'))}
+            {!sidebarCollapsed && navText('reports.list', 'Reports List')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -427,7 +429,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('reports') && splittedPath[2] === 'analytics'}
           >
             <Icon icon="chart-bar" style={iconMargin} />
-            {!sidebarCollapsed && String(t('reports.analytics', 'Analytics'))}
+            {!sidebarCollapsed && navText('reports.analytics', 'Analytics')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -436,7 +438,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('reports') && splittedPath[2] === 'administrative'}
           >
             <Icon icon="chart-bar" style={iconMargin} />
-            {!sidebarCollapsed && String(t('reports.administrative', 'Administrative Reports'))}
+            {!sidebarCollapsed && navText('reports.administrative', 'Administrative Reports')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -445,7 +447,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('reports') && splittedPath[2] === 'financial'}
           >
             <Icon icon="chart-bar" style={iconMargin} />
-            {!sidebarCollapsed && String(t('reports.financial', 'Financial Reports'))}
+            {!sidebarCollapsed && navText('reports.financial', 'Financial Reports')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -454,7 +456,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('reports') && splittedPath[2] === 'custom'}
           >
             <Icon icon="chart-bar" style={iconMargin} />
-            {!sidebarCollapsed && String(t('reports.customBuilder', 'Custom Report Builder'))}
+            {!sidebarCollapsed && navText('reports.customBuilder', 'Custom Report Builder')}
           </ListItem>
         </List>
       )}
@@ -480,7 +482,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="file" /> {!sidebarCollapsed && String(t('documents.label', 'Documents'))}
+        <Icon icon="file" /> {!sidebarCollapsed && navText('documents.label', 'Documents')}
       </ListItem>
       {splittedPath[1].includes('documents') && expandedItem === 'documents' && (
         <List layout="flush" className="nav flex-column">
@@ -491,7 +493,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('documents') && splittedPath.length > 2 && splittedPath[2] === 'upload'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('documents.upload', 'Upload Document'))}
+            {!sidebarCollapsed && navText('documents.upload', 'Upload Document')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -500,7 +502,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('documents') && splittedPath.length < 3}
           >
             <Icon icon="file" style={iconMargin} />
-            {!sidebarCollapsed && String(t('documents.list', 'Documents List'))}
+            {!sidebarCollapsed && navText('documents.list', 'Documents List')}
           </ListItem>
         </List>
       )}
@@ -526,7 +528,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="medication" /> {!sidebarCollapsed && String(t('pharmacy.label', 'Pharmacy'))}
+        <Icon icon="medication" /> {!sidebarCollapsed && navText('pharmacy.label', 'Pharmacy')}
       </ListItem>
       {splittedPath[1].includes('pharmacy') && expandedItem === 'pharmacy' && (
         <List layout="flush" className="nav flex-column">
@@ -537,7 +539,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('pharmacy') && splittedPath.length > 2 && splittedPath[2] === 'new'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('pharmacy.new', 'New Pharmacy'))}
+            {!sidebarCollapsed && navText('pharmacy.new', 'New Pharmacy')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -546,7 +548,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('pharmacy') && splittedPath.length < 3}
           >
             <Icon icon="medication" style={iconMargin} />
-            {!sidebarCollapsed && String(t('pharmacy.list', 'Pharmacies'))}
+            {!sidebarCollapsed && navText('pharmacy.list', 'Pharmacies')}
           </ListItem>
         </List>
       )}
@@ -572,7 +574,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="file" /> {!sidebarCollapsed && String(t('insurance.label', 'Insurance'))}
+        <Icon icon="file" /> {!sidebarCollapsed && navText('insurance.label', 'Insurance')}
       </ListItem>
       {splittedPath[1].includes('insurance') && expandedItem === 'insurance' && (
         <List layout="flush" className="nav flex-column">
@@ -583,7 +585,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('insurance') && splittedPath.length > 3 && splittedPath[3] === 'new'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('insurance.providers.new', 'New Provider'))}
+            {!sidebarCollapsed && navText('insurance.providers.new', 'New Provider')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -592,7 +594,7 @@ const Sidebar = () => {
             active={splittedPath[1].includes('insurance') && splittedPath.length < 4}
           >
             <Icon icon="file" style={iconMargin} />
-            {!sidebarCollapsed && String(t('insurance.providers.label', 'Providers'))}
+            {!sidebarCollapsed && navText('insurance.providers.label', 'Providers')}
           </ListItem>
         </List>
       )}
@@ -618,7 +620,7 @@ const Sidebar = () => {
           }
           style={expandibleArrow}
         />
-        <Icon icon="lab" /> {!sidebarCollapsed && String(t('lims.label'))}
+        <Icon icon="lab" /> {!sidebarCollapsed && navText('lims.label', 'LIMS')}
       </ListItem>
       {splittedPath[1].includes('lims') && expandedItem === 'lims' && (
         <List layout="flush" className="nav flex-column">
@@ -629,7 +631,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'test-catalog'}
           >
             <Icon icon="setting" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.testCatalog.label'))}
+            {!sidebarCollapsed && navText('lims.testCatalog.label', 'Test Catalog')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -638,7 +640,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'lab-orders'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.labOrders.label'))}
+            {!sidebarCollapsed && navText('lims.labOrders.label', 'Lab Orders')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -647,7 +649,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'specimens'}
           >
             <Icon icon="lab" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.specimens.label'))}
+            {!sidebarCollapsed && navText('lims.specimens.label', 'Specimens')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -656,7 +658,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'qc-results'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.qcResults.label'))}
+            {!sidebarCollapsed && navText('lims.qcResults.label', 'QC Results')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -665,7 +667,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'instruments'}
           >
             <Icon icon="setting" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.instruments.label'))}
+            {!sidebarCollapsed && navText('lims.instruments.label', 'Instruments')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -674,7 +676,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'reports'}
           >
             <Icon icon="incident" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.reports.label'))}
+            {!sidebarCollapsed && navText('lims.reports.label', 'Reports')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -683,7 +685,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'worklists'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.worklists.label'))}
+            {!sidebarCollapsed && navText('lims.worklists.label', 'Worklists')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -692,7 +694,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'critical-values'}
           >
             <Icon icon="incident" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.criticalValues.label'))}
+            {!sidebarCollapsed && navText('lims.criticalValues.label', 'Critical Values')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -701,7 +703,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'inventory' && splittedPath[3] === 'items'}
           >
             <Icon icon="add" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.inventory.items', 'Inventory Items'))}
+            {!sidebarCollapsed && navText('lims.inventory.items', 'Inventory Items')}
           </ListItem>
           <ListItem
             className="nav-item"
@@ -710,7 +712,7 @@ const Sidebar = () => {
             active={splittedPath[2] === 'inventory' && splittedPath[3] === 'stock-levels'}
           >
             <Icon icon="setting" style={iconMargin} />
-            {!sidebarCollapsed && String(t('lims.inventory.stockLevels', 'Stock Levels'))}
+            {!sidebarCollapsed && navText('lims.inventory.stockLevels', 'Stock Levels')}
           </ListItem>
         </List>
       )}
@@ -763,7 +765,7 @@ const Sidebar = () => {
               }
               style={expandibleArrow}
             />
-            <Icon icon="medication" /> {!sidebarCollapsed && String(t('medications.label', 'Medications'))}
+            <Icon icon="medication" /> {!sidebarCollapsed && navText('medications.label', 'Medications')}
           </ListItem>
           {(splittedPath[1].includes('medications') || splittedPath[1].includes('prescriptions')) && expandedItem === 'medications' && (
             <List layout="flush" className="nav flex-column">
@@ -774,7 +776,7 @@ const Sidebar = () => {
                 active={splittedPath[1].includes('prescriptions') && splittedPath.length > 2 && splittedPath[2] === 'new'}
               >
                 <Icon icon="add" style={iconMargin} />
-                {!sidebarCollapsed && String(t('prescriptions.new', 'New Prescription'))}
+                {!sidebarCollapsed && navText('prescriptions.new', 'New Prescription')}
               </ListItem>
               <ListItem
                 className="nav-item"
@@ -783,7 +785,7 @@ const Sidebar = () => {
                 active={splittedPath[1].includes('prescriptions') && splittedPath.length < 3}
               >
                 <Icon icon="medication" style={iconMargin} />
-                {!sidebarCollapsed && String(t('prescriptions.label', 'Prescriptions'))}
+                {!sidebarCollapsed && navText('prescriptions.label', 'Prescriptions')}
               </ListItem>
               <ListItem
                 className="nav-item"
@@ -792,7 +794,7 @@ const Sidebar = () => {
                 active={splittedPath[1].includes('medications')}
               >
                 <Icon icon="setting" style={iconMargin} />
-                {!sidebarCollapsed && String(t('medications.catalog', 'Medication Catalog'))}
+                {!sidebarCollapsed && navText('medications.catalog', 'Medication Catalog')}
               </ListItem>
             </List>
           )}
@@ -813,7 +815,7 @@ const Sidebar = () => {
               }
               style={expandibleArrow}
             />
-            <Icon icon="dollar-sign" /> {!sidebarCollapsed && String(t('billing.label', 'Billing'))}
+            <Icon icon="dollar-sign" /> {!sidebarCollapsed && navText('billing.label', 'Billing')}
           </ListItem>
           {splittedPath[1].includes('billing') && expandedItem === 'billing' && (
             <List layout="flush" className="nav flex-column">
@@ -824,7 +826,7 @@ const Sidebar = () => {
                 active={splittedPath[1].includes('billing') && splittedPath[2] === 'invoices' && splittedPath.length > 3 && splittedPath[3] === 'new'}
               >
                 <Icon icon="add" style={iconMargin} />
-                {!sidebarCollapsed && String(t('billing.invoices.new', 'New Invoice'))}
+                {!sidebarCollapsed && navText('billing.invoices.new', 'New Invoice')}
               </ListItem>
               <ListItem
                 className="nav-item"
@@ -833,7 +835,7 @@ const Sidebar = () => {
                 active={splittedPath[1].includes('billing') && splittedPath[2] === 'invoices' && splittedPath.length < 4}
               >
                 <Icon icon="dollar-sign" style={iconMargin} />
-                {!sidebarCollapsed && String(t('billing.invoices.label', 'Invoices'))}
+                {!sidebarCollapsed && navText('billing.invoices.label', 'Invoices')}
               </ListItem>
               <ListItem
                 className="nav-item"
@@ -842,7 +844,7 @@ const Sidebar = () => {
                 active={splittedPath[1].includes('billing') && splittedPath[2] === 'charges'}
               >
                 <Icon icon="add" style={iconMargin} />
-                {!sidebarCollapsed && String(t('billing.charges.label', 'Charges'))}
+                {!sidebarCollapsed && navText('billing.charges.label', 'Charges')}
               </ListItem>
             </List>
           )}
@@ -852,7 +854,7 @@ const Sidebar = () => {
             className="nav-item"
             style={listItemStyle}
           >
-            <Icon icon="setting" /> {!sidebarCollapsed && String(t('settings.label', 'Settings'))}
+            <Icon icon="setting" /> {!sidebarCollapsed && navText('settings.label', 'Settings')}
           </ListItem>
         </List>
       </div>
